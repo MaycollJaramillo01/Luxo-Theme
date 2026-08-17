@@ -193,14 +193,20 @@
   .luxo-collection-cover__media img {
     object-fit: cover;
     object-position: var(--cover-position);
+    /*
+      El desenfoque va sobre la imagen, no sobre el velo. backdrop-filter
+      depende del backdrop root y aqui no se aplicaba de forma fiable; filter
+      siempre funciona y cubre la portada entera por definicion.
+      El scale compensa los bordes translucidos que deja el desenfoque.
+    */
+    filter: blur(var(--cover-blur, 0px));
+    transform: scale(1.06);
   }
 
   .luxo-collection-cover__overlay {
     position: absolute;
     z-index: 1;
     inset: 0;
-    backdrop-filter: blur(var(--cover-blur, 0px));
-    -webkit-backdrop-filter: blur(var(--cover-blur, 0px));
     background:
       linear-gradient(90deg, rgba(var(--cover-tint), calc(var(--cover-overlay) + 0.28)) 0%, rgba(var(--cover-tint), var(--cover-overlay)) 48%, rgba(var(--cover-tint), 0.08) 78%),
       linear-gradient(0deg, rgba(var(--cover-tint), 0.28), transparent 42%);
