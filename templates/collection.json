@@ -28,9 +28,9 @@
         "desktop_height": 620,
         "mobile_height": 620,
         "overlay_color": "#191716",
-        "overlay_opacity": 40,
+        "overlay_opacity": 15,
         "overlay_blur": 6,
-        "scrim_opacity": 45
+        "scrim_opacity": 10
       }
     },
     "collection_trust": {
