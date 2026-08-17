@@ -206,13 +206,16 @@
       linear-gradient(0deg, rgba(var(--cover-tint), 0.28), transparent 42%);
   }
 
-  /* Panel oscuro y difuminado detrás del texto: legibilidad sin tapar la foto */
+  /*
+    Panel oscuro detrás del texto: solo aporta contraste, sin desenfoque propio.
+    Llevaba su propio backdrop-filter y eso partía el hero en dos: la mitad del
+    texto salía más desenfocada que el resto de la foto. El único blur es el
+    del velo, que cubre la portada entera.
+  */
   .luxo-collection-cover__content::before {
     position: absolute;
     z-index: -1;
     inset: -32px -48px -32px -50vw;
-    backdrop-filter: blur(calc(var(--cover-blur, 0px) * 1.6));
-    -webkit-backdrop-filter: blur(calc(var(--cover-blur, 0px) * 1.6));
     background: linear-gradient(90deg, rgba(var(--cover-tint), var(--cover-scrim, 0)) 55%, rgba(var(--cover-tint), 0) 100%);
     content: "";
     pointer-events: none;
