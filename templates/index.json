@@ -1,9 +1,18 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "luxo_hero": {
       "type": "luxo-commerce-hero",
       "settings": {
-        "image_position": "center center",
+        "image_position": "center top",
         "kicker": "NUEVA EDICIÓN",
         "heading": "Soporte que se siente tuyo.",
         "copy": "<p>Diseñadas para cada etapa. Hechas para acompañar cómo te mueves, trabajas y vives.</p>",
@@ -60,21 +69,24 @@
           "type": "category",
           "settings": {
             "collection": "fajas-de-mediana-compresion",
-            "title": "COMPRESIÓN DIARIA"
+            "title": "COMPRESIÓN DIARIA",
+            "link": ""
           }
         },
         "postpartum": {
           "type": "category",
           "settings": {
             "collection": "fajas-de-maxima-compresion",
-            "title": "POSTPARTO"
+            "title": "POSTPARTO",
+            "link": ""
           }
         },
         "fashion": {
           "type": "category",
           "settings": {
             "collection": "top-picks",
-            "title": "MODA QUE ACOMPAÑA"
+            "title": "MODA QUE ACOMPAÑA",
+            "link": ""
           }
         }
       },
@@ -94,6 +106,7 @@
         "heading": "Las que siempre vuelven al carrito",
         "collection": "top-picks",
         "products_to_show": 4,
+        "columns": 4,
         "view_all_label": "VER TODA LA SELECCIÓN"
       }
     },
@@ -104,6 +117,7 @@
         "heading": "Encuentra tu nivel de compresión",
         "collection": "fajas-de-mediana-compresion",
         "products_to_show": 4,
+        "columns": 4,
         "view_all_label": "COMPRAR COMPRESIÓN MEDIA"
       }
     },
@@ -132,8 +146,8 @@
         "sticky_mobile_label": "COMPRAR AHORA",
         "sticky_mobile_url": "shopify://collections/fajas-de-mediana-compresion",
         "dark_color": "#171513",
-        "border_color": "#D8D1C9",
-        "muted_color": "#6F675D"
+        "border_color": "#d8d1c9",
+        "muted_color": "#6f675d"
       }
     }
   },
