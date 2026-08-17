@@ -1,0 +1,374 @@
+{
+  "sections": {
+    "custom_liquid_7Trybh": {
+      "type": "custom-liquid",
+      "name": "t:sections.custom-liquid.presets.name",
+      "settings": {
+        "custom_liquid": "<style>\n  @import url('https:\/\/fonts.googleapis.com\/css2?family=Poppins:wght@400;600;700&display=swap');\n  \n  .luxo-custom-section{\n    position:relative;\n    width:100%;\n    overflow:hidden;\n    display:flex;\n    flex-direction:column;\n    font-family:'Poppins',sans-serif;\n  }\n\n  \/* --- Banner wrapper: altura automática = sin recortes --- *\/\n  .luxo-banner-wrapper{\n    position:relative;\n    display:block;\n    width:100%;\n  }\n\n  \/* Imagen completa sin crop *\/\n  .luxo-banner-image{\n    width:100%;\n    height:auto;\n    display:block;\n  }\n\n  \/* Botón superpuesto *\/\n  .luxo-button{\n    position:absolute;\n    left: 38%;\n    bottom: 12%;\n    transform: translateX(-50%);\n    background-color:#ffffff;\n    color:#000000;\n    padding: 12px 32px;\n    border-radius: 30px;\n    font-weight:700;\n    font-size:14px;\n    text-decoration:none;\n    text-transform:uppercase;\n    letter-spacing:.5px;\n    box-shadow:0 4px 12px rgba(0,0,0,.15);\n    transition: all .3s ease;\n    z-index:2;\n    white-space:nowrap;\n  }\n  .luxo-button:hover{\n    background-color:#f4f4f4;\n    transform: translateX(-50%) scale(1.03);\n    box-shadow:0 6px 15px rgba(0,0,0,.2);\n  }\n\n  \/* --- Carrusel (Marquee) --- *\/\n  .luxo-marquee-container{\n    background-color:#fd9bc9;\n    color:#ffffff;\n    padding:12px 0;\n    display:flex;\n    overflow:hidden;\n    white-space:nowrap;\n    position:relative;\n    width:100%;\n  }\n  .luxo-marquee-track{\n    display:flex;\n    width:fit-content;\n    animation: scrollMarquee 25s linear infinite;\n  }\n  .luxo-marquee-track:hover{ animation-play-state: paused; }\n  .luxo-marquee-content{\n    display:flex;\n    flex-shrink:0;\n  }\n  .luxo-marquee-item{\n    font-weight:600;\n    font-size:14px;\n    padding:0 40px;\n  }\n  @keyframes scrollMarquee{\n    0%{ transform: translateX(0); }\n    100%{ transform: translateX(-50%); }\n  }\n\n  \/* --- Móvil --- *\/\n  @media screen and (max-width: 768px){\n    .luxo-button{\n      left:50%;\n      bottom:8%;\n      padding:10px 24px;\n      font-size:12px;\n    }\n    .luxo-marquee-item{\n      font-size:13px;\n      padding:0 20px;\n    }\n  }\n<\/style>\n\n<div class=\"luxo-custom-section\">\n  <div class=\"luxo-banner-wrapper\">\n    <a href=\"https:\/\/www.luxoboutique.com\/collections\/fajas-body-invisibles\" aria-label=\"Ver colección\">\n      <picture>\n        <!-- Imagen para móvil -->\n        <source\n          media=\"(max-width: 768px)\"\n          srcset=\"https:\/\/cdn.shopify.com\/s\/files\/1\/0483\/6697\/7184\/files\/IMG_5255.jpg?v=1774458712\">\n        <!-- Imagen para desktop (completa) -->\n        <img\n          src=\"https:\/\/cdn.shopify.com\/s\/files\/1\/0483\/6697\/7184\/files\/IMG_5243_1.png?v=1774451846\"\n          alt=\"Marzo, un mes para celebrar su fuerza, seguridad y poder\"\n          class=\"luxo-banner-image\"\n          loading=\"lazy\">\n      <\/picture>\n    <\/a>\n    <a href=\"https:\/\/www.luxoboutique.com\/collections\/fajas-body-invisibles\" class=\"luxo-button\">\n      VER PRODUCTOS\n    <\/a>\n  <\/div>\n\n   <!-- Imagen para móvil\n<div class=\"luxo-marquee-container\">\n    <div class=\"luxo-marquee-track\">\n      <div class=\"luxo-marquee-content\">\n        <span class=\"luxo-marquee-item\">20% OFF Productos de Belleza<\/span>\n        <span class=\"luxo-marquee-item\">20% OFF Productos para Adelgazar<\/span>\n        <span class=\"luxo-marquee-item\">20% OFF En toda la Tienda<\/span>\n        <span class=\"luxo-marquee-item\">20% OFF Fajas Moldeadoras<\/span>\n      <\/div>\n      <div class=\"luxo-marquee-content\" aria-hidden=\"true\">\n        <span class=\"luxo-marquee-item\">20% OFF Productos de Belleza<\/span>\n        <span class=\"luxo-marquee-item\">20% OFF Productos para Adelgazar<\/span>\n        <span class=\"luxo-marquee-item\">20% OFF En toda la Tienda<\/span>\n        <span class=\"luxo-marquee-item\">20% OFF Fajas Moldeadoras<\/span>\n      <\/div>\n    <\/div>\n  <\/div>\n --> \n<\/div>",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "luxo_pascua_product_carousel_NbWFbB": {
+      "type": "luxo-pascua-product-carousel",
+      "disabled": true,
+      "name": "Carrusel Productos Pascua",
+      "settings": {
+        "kicker": "NUESTRAS FAVORITAS",
+        "title": "EASTER SALE",
+        "collection": "promociones",
+        "product_limit": 8,
+        "carousel_speed": 20,
+        "bg_color": "#ffffff",
+        "text_color": "#111111",
+        "padding_top": 80,
+        "padding_bottom": 80
+      }
+    },
+    "luxo_pascua_manifesto_Mp4diz": {
+      "type": "luxo-pascua-manifesto",
+      "disabled": true,
+      "name": "Minimal Pascua Manifesto",
+      "settings": {
+        "kicker": "",
+        "title": "aPROVECHA NUESTRAS OFERTAS DE EASTER",
+        "text": "<p>Una colección pensada para la comodidad sin sacrificar la elegancia. Diseñada con tonos neutros que se adaptan a ti, celebrando la simplicidad y el estilo puro en este Easter.<\/p>",
+        "btn_text": "VER PROMOCIONES",
+        "btn_link": "",
+        "show_marquee": true,
+        "marquee_text": "APROVECHA NUESTRAS PROMOCIONES DE EASTER",
+        "marquee_bg_color": "#f8d7da",
+        "marquee_text_color": "#111111",
+        "marquee_speed": 30,
+        "bg_image": "shopify:\/\/shop_images\/Component_1_7.png",
+        "bg_color": "#faf9f6",
+        "bg_overlay_opacity": 0,
+        "text_color": "#111111",
+        "text_alignment": "center",
+        "max_width": 800,
+        "padding_top": 100,
+        "padding_bottom": 100
+      }
+    },
+    "luxo_top_picks_kFETYD": {
+      "type": "luxo-top-picks",
+      "custom_css": [
+        ".lux-pure-card__media {border: 2px solid;}"
+      ],
+      "name": "Luxo Top Picks (Code)",
+      "settings": {
+        "title": "Top picks for you",
+        "collection": "top-picks",
+        "global_discount": 0,
+        "limit": 20,
+        "items_desktop": 3,
+        "show_arrows": true,
+        "infinite_loop": true,
+        "title_font": "theme",
+        "title_size": 42,
+        "title_weight": "400",
+        "title_style": "normal",
+        "product_title_size": 14,
+        "product_title_weight": "400",
+        "product_title_style": "normal",
+        "bg_color": "#ffffff",
+        "card_img_bg": "#ffffff",
+        "text_color": "#1a1a1a",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "bestsellers_FeHVnk": {
+      "type": "bestsellers",
+      "blocks": {
+        "tab_jb9L8B": {
+          "type": "tab",
+          "settings": {
+            "tab_label": "Bienestar",
+            "collection": "productos-para-perder-peso"
+          }
+        }
+      },
+      "block_order": [
+        "tab_jb9L8B"
+      ],
+      "name": "Luxo Bestseller Tabs",
+      "settings": {
+        "title": "Bestsellers",
+        "fs_h2": 28,
+        "bg": "#ffffff",
+        "text_color": "#000000",
+        "global_discount": 0,
+        "border_color": "#00000014",
+        "tab_active_color": "#000000",
+        "tab_inactive_color": "#888888",
+        "card_text_color": "#252525",
+        "card_price_color": "#252525",
+        "fs_card": 11,
+        "img_ratio": "3\/4",
+        "grid_gap": 0,
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "custom_liquid_E6A97F": {
+      "type": "custom-liquid",
+      "name": "t:sections.custom-liquid.presets.name",
+      "settings": {
+        "custom_liquid": "",
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "home_collection_AFFD9k": {
+      "type": "home-collection",
+      "blocks": {
+        "collection_card_eeLThi": {
+          "type": "collection_card",
+          "disabled": true,
+          "settings": {
+            "collection": "fajas-strapless",
+            "label": ""
+          }
+        },
+        "collection_card_6kTL43": {
+          "type": "collection_card",
+          "disabled": true,
+          "settings": {
+            "collection": "fajas-postquirurgicas-colombianas",
+            "label": ""
+          }
+        },
+        "collection_card_gCAtUV": {
+          "type": "collection_card",
+          "settings": {
+            "collection": "fajas-de-mediana-compresion",
+            "label": ""
+          }
+        },
+        "collection_card_mgyEXG": {
+          "type": "collection_card",
+          "settings": {
+            "collection": "fajas-short-con-levantamiento-de-gluteos",
+            "label": ""
+          }
+        },
+        "collection_card_HaHjFc": {
+          "type": "collection_card",
+          "disabled": true,
+          "settings": {
+            "collection": "fajas-body-invisibles",
+            "label": ""
+          }
+        },
+        "collection_card_WtFEHU": {
+          "type": "collection_card",
+          "disabled": true,
+          "settings": {
+            "collection": "brasieres",
+            "label": ""
+          }
+        },
+        "collection_card_Yq7BCi": {
+          "type": "collection_card",
+          "settings": {
+            "collection": "fajas-de-maxima-compresion",
+            "label": ""
+          }
+        },
+        "collection_card_hBpM46": {
+          "type": "collection_card",
+          "settings": {
+            "collection": "fajas-strapless",
+            "label": ""
+          }
+        }
+      },
+      "block_order": [
+        "collection_card_eeLThi",
+        "collection_card_6kTL43",
+        "collection_card_gCAtUV",
+        "collection_card_mgyEXG",
+        "collection_card_HaHjFc",
+        "collection_card_WtFEHU",
+        "collection_card_Yq7BCi",
+        "collection_card_hBpM46"
+      ],
+      "name": "Luxo Editorial Grid",
+      "settings": {
+        "full_bleed": true,
+        "heading": "Encuentra tu Estilo",
+        "bg": "#ffffff",
+        "text_color": "#1a1a1a",
+        "global_discount": 0,
+        "gap": 10,
+        "border_width": 1,
+        "border_color": "#716a56",
+        "border_radius": 10,
+        "padding_top": 20,
+        "padding_bottom": 20
+      }
+    },
+    "featured_banner_dwKr9w": {
+      "type": "featured-banner",
+      "blocks": {
+        "item_jzmbnE": {
+          "type": "item",
+          "settings": {
+            "product": "short-024",
+            "eyebrow": "THE SHAPER SHORT",
+            "heading": "",
+            "button_label": "TRY IT FOR YOURSELF"
+          }
+        },
+        "item_EGFjyd": {
+          "type": "item",
+          "settings": {
+            "product": "faja-completa-con-broches-031",
+            "eyebrow": "THE SHAPER SHORT",
+            "heading": "",
+            "button_label": "TRY IT FOR YOURSELF"
+          }
+        }
+      },
+      "block_order": [
+        "item_jzmbnE",
+        "item_EGFjyd"
+      ],
+      "name": "Luxo Featured Items",
+      "settings": {
+        "title": "Luxo Todo para mujer en un Solo Lugar™",
+        "title_color": "#1a1a1a",
+        "bottom_text": "",
+        "accent_color": "#0a0a0a",
+        "bg_color": "#ffffff",
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "grid_gap": 20
+      }
+    },
+    "luxo_antes_despues_videos_DBgtBY": {
+      "type": "luxo-antes-despues-videos",
+      "name": "Luxo Antes y Después",
+      "settings": {
+        "etiqueta": "Antes y después",
+        "titulo": "Mira la transformación",
+        "descripcion": "",
+        "centrar_encabezado": true,
+        "video_antes": "shopify:\/\/files\/videos\/Nuestro Short Faja Top Secret combina comodidad con compresión. ¡Consíguelo ahora con un 20% de .mp4",
+        "label_antes": " Short Faja Top Secret",
+        "titulo_antes": "",
+        "texto_antes": "<p>Nuestro Short Faja Top Secret combina comodidad con compresión. ¡Consíguelo ahora con un 20% de descuento!<\/p>",
+        "video_despues": "shopify:\/\/files\/videos\/La Mini JHOA strapless es perfecta si quieres mejorar tu figura, estar cómoda y sobretodo que no.mp4",
+        "label_despues": "Mini JHOA",
+        "titulo_despues": "",
+        "texto_despues": "<p>La Mini JHOA strapless es perfecta si quieres mejorar tu figura, estar cómoda y sobretodo que no se te note. ✨ Consíguela ahora en: Luxoboutique.com<br\/><br\/><\/p>",
+        "autoplay": false,
+        "mute": true,
+        "loop": true,
+        "controles": true,
+        "color_fondo": "#f8f4ef",
+        "color_tarjeta": "#ffffff",
+        "color_texto": "#1a1a1a",
+        "color_texto_secundario": "#5c5c5c",
+        "color_badge_fondo": "#111111",
+        "color_badge_texto": "#ffffff",
+        "radio_borde": 24,
+        "espacio_columnas": 24,
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "reels_xdUfWk": {
+      "type": "reels",
+      "blocks": {
+        "reel_Kz8c4T": {
+          "type": "reel",
+          "settings": {
+            "video": "shopify:\/\/files\/videos\/Así de fácil preparas este aperitivo con tu Slimming Coffee- práctico, diferente y perfecto para.mp4",
+            "author": "luxo_7",
+            "caption": "<p>Así de fácil preparas este aperitivo con tu Slimming Coffee: práctico, diferente y perfecto para cuando quieres algo rico sin salirte de tu rutina 💛<br\/>Guarda esta receta y pruébala esta semana 🍮✨<br\/><br\/>📱Contáctanos: 832-766-6540<br\/>🌐Visita a nuestro sitio web: Luxoboutique.com<br\/><br\/><\/p>",
+            "product_1": "3-cafes-x-129-99",
+            "product_2": "cafe-instantaneo",
+            "product_url": "",
+            "btn_text": "Shop the Look"
+          }
+        },
+        "reel_CA73in": {
+          "type": "reel",
+          "settings": {
+            "video": "shopify:\/\/files\/videos\/Hoy nuestra hermosa clienta nos comparte cómo ha sido su experiencia utilizando su jugo verde de.mp4",
+            "author": "officially.val",
+            "caption": "<p>Hoy nuestra hermosa clienta nos comparte cómo ha sido su experiencia utilizando su jugo verde de Luxo🫶🏻✨ Cada experiencia compartida nos recuerda por qué hacemos lo que hacemos. Gracias por confiar, recomendarnos y ser parte de esta comunidad❤️ 📱Contáctanos: 832-766-6540 🌐Visita a nuestro sitio web: Luxoboutique.com #reseña #parati #jugoverde<br\/><\/p>",
+            "product_1": "jugo-3-en-1-instantaneo-copia",
+            "product_2": "detox-jugo",
+            "product_url": "",
+            "btn_text": "Adquiere este look"
+          }
+        },
+        "reel_PRi9wX": {
+          "type": "reel",
+          "settings": {
+            "video": "shopify:\/\/files\/videos\/Si nunca te as fajado y quieres comenzar hacerlo!! Está faja es para ti FAJA JHOA disponible ya .mp4",
+            "author": "luxo_7",
+            "caption": "<p>Si nunca te as fajado y quieres comenzar hacerlo!! Está faja es para ti FAJA JHOA disponible ya en sucursales o LUXOBOUTIQUE.COM<br\/><\/p>",
+            "product_1": "faja-jhoa-strapless",
+            "product_2": "",
+            "product_url": "shopify:\/\/products\/faja-jhoa",
+            "btn_text": "Adquiere este look"
+          }
+        },
+        "reel_pE9ktP": {
+          "type": "reel",
+          "settings": {
+            "video": "shopify:\/\/files\/videos\/Buscas una faja post parto,post operatoria o para uso diario Esta faja es la perfecta para ti!! .mp4",
+            "author": "luxo_7",
+            "caption": "<p>Buscas una faja post parto,post operatoria o para uso diario? Esta faja es la perfecta para ti!! Y hoy te enseño cómo colacargela correctamente.<\/p>",
+            "product_1": "",
+            "product_2": "",
+            "product_url": "",
+            "btn_text": "Adquiere este look"
+          }
+        }
+      },
+      "block_order": [
+        "reel_Kz8c4T",
+        "reel_CA73in",
+        "reel_PRi9wX",
+        "reel_pE9ktP"
+      ],
+      "name": "Luxo Reels UGC",
+      "settings": {
+        "title": "Luxo in real life",
+        "title_font": "theme",
+        "ig_handle": "@luxo_7",
+        "ig_link": "",
+        "show_arrows": true,
+        "default_author": "luxo_7",
+        "default_avatar": "shopify:\/\/shop_images\/623010201_18403974049192167_5350376237272289881_n.jpg",
+        "products_heading": "Get the look",
+        "product_cta_text": "Adquiere este look",
+        "bg_color": "#ffffff",
+        "surface_color": "#ffffff",
+        "text_color": "#1a1a1a",
+        "accent_color": "#111111",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    }
+  },
+  "order": [
+    "custom_liquid_7Trybh",
+    "luxo_pascua_product_carousel_NbWFbB",
+    "luxo_pascua_manifesto_Mp4diz",
+    "luxo_top_picks_kFETYD",
+    "bestsellers_FeHVnk",
+    "custom_liquid_E6A97F",
+    "home_collection_AFFD9k",
+    "featured_banner_dwKr9w",
+    "luxo_antes_despues_videos_DBgtBY",
+    "reels_xdUfWk"
+  ]
+}

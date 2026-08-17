@@ -1,0 +1,265 @@
+{% comment %}
+  File: sections/luxo-collections.liquid
+  Versión corregida: Estilo SKIMS + Espaciado editable + Recuadro personalizable
+  - NUEVO: Slider global para mostrar etiqueta visual de descuento ("15% OFF") en todas las tarjetas de la sección.
+{% endcomment %}
+
+<section class="luxo-editorial luxe--{{ section.id }}">
+  <style>
+    .luxe--{{ section.id }} {
+      --lux-bg: {{ section.settings.bg }};
+      --lux-text-main: {{ section.settings.text_color }};
+      --lux-gap: {{ section.settings.gap }}px;
+      --lux-pt: {{ section.settings.padding_top }}px;
+      --lux-pb: {{ section.settings.padding_bottom }}px;
+      
+      /* === Recuadro personalizable (ligero) === */
+      --lux-border-width: {{ section.settings.border_width }}px;
+      --lux-border-color: {{ section.settings.border_color }};
+      --lux-border-radius: {{ section.settings.border_radius }}px;
+    }
+
+    .luxo-editorial {
+      background: var(--lux-bg);
+      padding-top: var(--lux-pt);
+      padding-bottom: var(--lux-pb);
+    }
+
+    .luxo-editorial__inner--full { 
+      max-width: 100%; 
+      padding: 0; 
+    }
+
+    /* Título de sección */
+    .luxo-editorial__header {
+      padding: 0 20px 52px;
+      text-align: center;
+    }
+
+    .luxo-editorial__title {
+      font-size: clamp(34px, 5.2vw, 60px);
+      font-weight: 680;
+      letter-spacing: -0.03em;
+      margin: 0;
+      color: var(--lux-text-main);
+      text-transform: none;
+    }
+
+    /* Grid con espaciado editable */
+    .luxo-editorial__grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--lux-gap);
+    }
+
+    .luxo-editorial__card {
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* === RECUADRO PERSONALIZABLE === */
+    .luxo-editorial__media-wrap {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      overflow: hidden;
+      position: relative;
+      
+      /* Borde ligero y personalizable */
+      border: var(--lux-border-width) solid var(--lux-border-color);
+      border-radius: var(--lux-border-radius);
+      box-sizing: border-box; /* evita que el borde rompa el grid */
+    }
+
+    .luxo-editorial__media {
+      width: 100%;
+      height: 100%;
+      transition: transform 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .luxo-editorial__img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Labels debajo con soporte para etiqueta de promoción */
+    .luxo-editorial__label {
+      padding: 28px 20px 36px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .luxo-editorial__label-text {
+      font-size: 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.9px;
+      line-height: 1.2;
+      color: #0f0f0f;
+    }
+
+    /* === ETIQUETA VISUAL DE DESCUENTO === */
+    .luxo-editorial__promo {
+      font-size: 14px;
+      font-weight: 700;
+      color: #c02b2b; /* Rojo para destacar la oferta */
+      letter-spacing: 1px;
+    }
+
+    /* Hover premium SKIMS */
+    @media (hover: hover) {
+      .luxo-editorial__card:hover .luxo-editorial__media {
+        transform: scale(1.06);
+      }
+    }
+
+    /* MOBILE */
+    @media (max-width: 768px) {
+      .luxo-editorial__grid { 
+        grid-template-columns: repeat(2, 1fr); 
+      }
+      
+      .luxo-editorial__label {
+        padding: 22px 14px 28px;
+        gap: 4px;
+      }
+      
+      .luxo-editorial__label-text {
+        font-size: 14px;
+        letter-spacing: 1.5px;
+      }
+
+      .luxo-editorial__promo {
+        font-size: 12px;
+      }
+    }
+  </style>
+
+  <div class="luxo-editorial__inner {% if section.settings.full_bleed %}luxo-editorial__inner--full{% else %}page-width{% endif %}">
+    {% if section.settings.heading != blank %}
+      <header class="luxo-editorial__header">
+        <h2 class="luxo-editorial__title">{{ section.settings.heading }}</h2>
+      </header>
+    {% endif %}
+
+    <div class="luxo-editorial__grid">
+      {% for block in section.blocks %}
+        {% assign c = block.settings.collection %}
+        {% if c != blank %}
+          <a class="luxo-editorial__card" href="{{ c.url }}">
+            <div class="luxo-editorial__media-wrap">
+              <div class="luxo-editorial__media">
+                {% if c.featured_image %}
+                  {{ c.featured_image | image_url: width: 1200 | image_tag: 
+                     loading: 'lazy', 
+                     class: 'luxo-editorial__img',
+                     alt: c.title }}
+                {% else %}
+                  {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="luxo-editorial__label">
+              <span class="luxo-editorial__label-text">
+                {% if block.settings.label != blank %}
+                  {{ block.settings.label }}
+                {% else %}
+                  {{ c.title | upcase }}
+                {% endif %}
+              </span>
+              
+              {%- if section.settings.global_discount > 0 -%}
+                <span class="luxo-editorial__promo">{{ section.settings.global_discount }}% OFF</span>
+              {%- endif -%}
+            </div>
+          </a>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxo Editorial Grid",
+  "settings": [
+    { "type": "checkbox", "id": "full_bleed", "label": "Ancho completo", "default": true },
+    { "type": "text", "id": "heading", "label": "Título", "default": "Encuentra tu Ajuste" },
+    { "type": "color", "id": "bg", "label": "Fondo Sección", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "Color Título", "default": "#1a1a1a" },
+    
+    { 
+      "type": "header",
+      "content": "Promociones"
+    },
+    {
+      "type": "range",
+      "id": "global_discount",
+      "label": "Etiqueta visual de descuento (%)",
+      "info": "Muestra un texto de rebaja bajo cada colección (0 para ocultar).",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "default": 0
+    },
+
+    { 
+      "type": "range", 
+      "id": "gap", 
+      "label": "Espaciado entre imágenes", 
+      "min": 0, 
+      "max": 40, 
+      "step": 2, 
+      "default": 16,
+      "unit": "px"
+    },
+    
+    { 
+      "type": "header",
+      "content": "Recuadro alrededor de cada imagen"
+    },
+    { 
+      "type": "range", 
+      "id": "border_width", 
+      "label": "Ancho del borde", 
+      "min": 0, 
+      "max": 20, 
+      "step": 1, 
+      "default": 4,
+      "unit": "px"
+    },
+    { "type": "color", "id": "border_color", "label": "Color del borde", "default": "#111111" },
+    { 
+      "type": "range", 
+      "id": "border_radius", 
+      "label": "Redondeo de esquinas", 
+      "min": 0, 
+      "max": 40, 
+      "step": 1, 
+      "default": 0,
+      "unit": "px"
+    },
+    
+    { "type": "range", "id": "padding_top", "label": "Padding Top", "min": 20, "max": 120, "default": 60 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding Bottom", "min": 20, "max": 120, "default": 80 }
+  ],
+  "blocks": [
+    {
+      "type": "collection_card",
+      "name": "Colección",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Colección" },
+        { "type": "text", "id": "label", "label": "Nombre personalizado (opcional)" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Luxo Editorial Grid - SKIMS con Gap y Recuadro" }
+  ]
+}
+{% endschema %}

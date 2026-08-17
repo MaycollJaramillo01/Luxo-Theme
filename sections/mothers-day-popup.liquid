@@ -1,0 +1,506 @@
+{% liquid
+  assign popup_id = 'mothers-day-popup-' | append: section.id
+  assign discount_code = section.settings.discount_code | default: ''
+  assign cta_link = section.settings.cta_link | default: routes.all_products_collection_url
+%}
+
+{% if request.page_type == 'index' %}
+  <section
+    id="{{ popup_id }}"
+    class="md-popup"
+    data-md-popup
+    data-delay="{{ section.settings.delay_seconds | times: 1000 }}"
+    data-enabled="{{ section.settings.enable_popup }}"
+    aria-hidden="true"
+  >
+    <div class="md-popup__overlay" data-md-close></div>
+
+    <div class="md-popup__dialog" role="dialog" aria-modal="true" aria-labelledby="{{ popup_id }}-title">
+      <button class="md-popup__close" type="button" data-md-close aria-label="Cerrar popup">
+        <span aria-hidden="true">&times;</span>
+      </button>
+
+      <div class="md-popup__shine" aria-hidden="true"></div>
+
+      <div class="md-popup__petals" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <div class="md-popup__content">
+        {% if section.settings.eyebrow != blank %}
+          <p class="md-popup__eyebrow">
+            {{ section.settings.eyebrow }}
+          </p>
+        {% endif %}
+
+        {% if section.settings.heading != blank %}
+          <h2 id="{{ popup_id }}-title" class="md-popup__title">
+            {{ section.settings.heading }}
+          </h2>
+        {% endif %}
+
+        {% if section.settings.copy != blank %}
+          <p class="md-popup__copy">
+            {{ section.settings.copy }}
+          </p>
+        {% endif %}
+
+        <div class="md-popup__discount" aria-label="Descuento del 20 por ciento">
+          <span>{{ section.settings.discount_number }}</span>
+          <small>{{ section.settings.discount_label }}</small>
+        </div>
+
+        {% if discount_code != blank %}
+          <div class="md-popup__code">
+            <span>{{ section.settings.code_label }}</span>
+            <strong>{{ discount_code }}</strong>
+          </div>
+        {% endif %}
+
+        {% if section.settings.cta_text != blank %}
+          <a class="md-popup__cta" href="{{ cta_link }}">
+            {{ section.settings.cta_text }}
+          </a>
+        {% endif %}
+
+        {% if section.settings.dismiss_text != blank %}
+          <button class="md-popup__secondary" type="button" data-md-close>
+            {{ section.settings.dismiss_text }}
+          </button>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <style>
+    #{{ popup_id }} {
+      --md-rose: {{ section.settings.accent_color }};
+      --md-ink: {{ section.settings.text_color }};
+      --md-paper: {{ section.settings.background_color }};
+      --md-gold: #f7c873;
+      --md-shadow: rgba(80, 28, 38, 0.28);
+      font-family: "Georgia", "Times New Roman", serif;
+    }
+
+    #{{ popup_id }}.md-popup {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 240ms ease, visibility 240ms ease;
+    }
+
+    #{{ popup_id }}.md-popup.is-visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    #{{ popup_id }} .md-popup__overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(247, 200, 115, 0.22), transparent 28%),
+        radial-gradient(circle at 80% 85%, rgba(255, 135, 164, 0.24), transparent 30%),
+        rgba(32, 18, 20, 0.64);
+      backdrop-filter: blur(5px);
+    }
+
+    #{{ popup_id }} .md-popup__dialog {
+      position: relative;
+      width: min(94vw, 460px);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      border-radius: 30px;
+      color: var(--md-ink);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(255, 247, 239, 0.72)),
+        radial-gradient(circle at 10% 0%, rgba(247, 200, 115, 0.42), transparent 34%),
+        var(--md-paper);
+      box-shadow: 0 26px 80px var(--md-shadow);
+      transform: translateY(18px) scale(0.96);
+      transition: transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    #{{ popup_id }}.is-visible .md-popup__dialog {
+      transform: translateY(0) scale(1);
+    }
+
+    #{{ popup_id }} .md-popup__content {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      justify-items: center;
+      padding: 42px 30px 32px;
+      text-align: center;
+    }
+
+    #{{ popup_id }} .md-popup__close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 3;
+      width: 38px;
+      height: 38px;
+      border: 0;
+      border-radius: 999px;
+      color: var(--md-ink);
+      background: rgba(255, 255, 255, 0.72);
+      cursor: pointer;
+      font-size: 28px;
+      line-height: 1;
+      transition: transform 180ms ease, background 180ms ease;
+    }
+
+    #{{ popup_id }} .md-popup__close:hover {
+      transform: rotate(8deg) scale(1.05);
+      background: #ffffff;
+    }
+
+    #{{ popup_id }} .md-popup__eyebrow {
+      margin: 0 0 12px;
+      color: var(--md-rose);
+      font-family: "Trebuchet MS", sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    #{{ popup_id }} .md-popup__title {
+      max-width: 360px;
+      margin: 0;
+      color: var(--md-ink);
+      font-size: clamp(34px, 8vw, 56px);
+      line-height: 0.9;
+      letter-spacing: -0.05em;
+    }
+
+    #{{ popup_id }} .md-popup__copy {
+      max-width: 330px;
+      margin: 18px 0 0;
+      font-family: "Trebuchet MS", sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+    }
+
+    #{{ popup_id }} .md-popup__discount {
+      display: flex;
+      align-items: end;
+      gap: 7px;
+      margin: 24px 0 16px;
+      padding: 12px 22px 10px;
+      border: 2px dashed rgba(104, 48, 56, 0.35);
+      border-radius: 22px;
+      background: linear-gradient(135deg, var(--md-rose), #ff8ba7);
+      color: #ffffff;
+      box-shadow: 0 14px 34px rgba(210, 75, 105, 0.3);
+      transform: rotate(-2deg);
+    }
+
+    #{{ popup_id }} .md-popup__discount span {
+      font-size: 52px;
+      font-weight: 900;
+      line-height: 0.82;
+    }
+
+    #{{ popup_id }} .md-popup__discount small {
+      padding-bottom: 5px;
+      font-family: "Trebuchet MS", sans-serif;
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+    }
+
+    #{{ popup_id }} .md-popup__code {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 22px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.7);
+      font-family: "Trebuchet MS", sans-serif;
+      font-size: 13px;
+    }
+
+    #{{ popup_id }} .md-popup__code strong {
+      color: var(--md-rose);
+      letter-spacing: 0.12em;
+    }
+
+    #{{ popup_id }} .md-popup__cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 220px;
+      padding: 15px 24px;
+      border-radius: 999px;
+      color: #ffffff;
+      background: linear-gradient(135deg, var(--md-ink), #7d3b48);
+      font-family: "Trebuchet MS", sans-serif;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      text-transform: uppercase;
+      box-shadow: 0 15px 30px rgba(70, 32, 39, 0.25);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    #{{ popup_id }} .md-popup__cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 38px rgba(70, 32, 39, 0.32);
+    }
+
+    #{{ popup_id }} .md-popup__secondary {
+      margin-top: 14px;
+      border: 0;
+      color: rgba(70, 32, 39, 0.7);
+      background: transparent;
+      font-family: "Trebuchet MS", sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    #{{ popup_id }} .md-popup__shine {
+      position: absolute;
+      inset: -35% auto auto -28%;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: rgba(247, 200, 115, 0.32);
+      filter: blur(8px);
+    }
+
+    #{{ popup_id }} .md-popup__petals span {
+      position: absolute;
+      z-index: 1;
+      width: 44px;
+      height: 28px;
+      border-radius: 60% 40% 60% 40%;
+      background: rgba(255, 139, 167, 0.48);
+      animation: md-petal-float 5s ease-in-out infinite;
+    }
+
+    #{{ popup_id }} .md-popup__petals span:nth-child(1) {
+      top: 52px;
+      left: 32px;
+      transform: rotate(28deg);
+    }
+
+    #{{ popup_id }} .md-popup__petals span:nth-child(2) {
+      top: 112px;
+      right: 24px;
+      width: 34px;
+      height: 22px;
+      animation-delay: 0.7s;
+    }
+
+    #{{ popup_id }} .md-popup__petals span:nth-child(3) {
+      right: 72px;
+      bottom: 46px;
+      background: rgba(247, 200, 115, 0.5);
+      animation-delay: 1.2s;
+    }
+
+    #{{ popup_id }} .md-popup__petals span:nth-child(4) {
+      bottom: 88px;
+      left: 22px;
+      width: 32px;
+      height: 20px;
+      animation-delay: 1.8s;
+    }
+
+    @keyframes md-petal-float {
+      0%,
+      100% {
+        translate: 0 0;
+      }
+
+      50% {
+        translate: 0 -10px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      #{{ popup_id }} .md-popup__content {
+        padding: 38px 22px 28px;
+      }
+
+      #{{ popup_id }} .md-popup__title {
+        font-size: 42px;
+      }
+
+      #{{ popup_id }} .md-popup__discount span {
+        font-size: 44px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #{{ popup_id }},
+      #{{ popup_id }} .md-popup__dialog,
+      #{{ popup_id }} .md-popup__cta,
+      #{{ popup_id }} .md-popup__close {
+        transition: none;
+      }
+
+      #{{ popup_id }} .md-popup__petals span {
+        animation: none;
+      }
+    }
+  </style>
+
+  <script>
+    (function () {
+      var popup = document.getElementById({{ popup_id | json }});
+
+      if (!popup || popup.dataset.enabled !== 'true') return;
+
+      var storageKey = 'md-popup-closed-{{ section.id }}';
+      var closeButtons = popup.querySelectorAll('[data-md-close]');
+      var delay = Number(popup.dataset.delay || 0);
+
+      function openPopup() {
+        if (window.sessionStorage.getItem(storageKey) === 'true') return;
+
+        popup.classList.add('is-visible');
+        popup.setAttribute('aria-hidden', 'false');
+        document.documentElement.style.overflow = 'hidden';
+      }
+
+      function closePopup() {
+        popup.classList.remove('is-visible');
+        popup.setAttribute('aria-hidden', 'true');
+        document.documentElement.style.overflow = '';
+        window.sessionStorage.setItem(storageKey, 'true');
+      }
+
+      closeButtons.forEach(function (button) {
+        button.addEventListener('click', closePopup);
+      });
+
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && popup.classList.contains('is-visible')) {
+          closePopup();
+        }
+      });
+
+      window.setTimeout(openPopup, delay);
+    })();
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Popup Dia de las Madres",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_popup",
+      "label": "Activar popup",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Texto superior",
+      "default": "Solo por el Dia de las Madres"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titulo",
+      "default": "Flores para mama, ahorro para ti"
+    },
+    {
+      "type": "textarea",
+      "id": "copy",
+      "label": "Descripcion",
+      "default": "Celebra a la reina de la casa con un detalle especial. Hoy recibe 20% de descuento en tu compra."
+    },
+    {
+      "type": "text",
+      "id": "discount_number",
+      "label": "Numero del descuento",
+      "default": "20%"
+    },
+    {
+      "type": "text",
+      "id": "discount_label",
+      "label": "Texto del descuento",
+      "default": "OFF"
+    },
+    {
+      "type": "text",
+      "id": "code_label",
+      "label": "Texto antes del codigo",
+      "default": "Codigo:"
+    },
+    {
+      "type": "text",
+      "id": "discount_code",
+      "label": "Codigo de descuento",
+      "default": "MAMA20"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Enlace del boton"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Texto del boton",
+      "default": "Comprar el regalo"
+    },
+    {
+      "type": "text",
+      "id": "dismiss_text",
+      "label": "Texto para cerrar",
+      "default": "Seguir viendo sin descuento"
+    },
+    {
+      "type": "range",
+      "id": "delay_seconds",
+      "label": "Retraso para mostrar",
+      "min": 0,
+      "max": 12,
+      "step": 1,
+      "unit": "s",
+      "default": 2
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo",
+      "default": "#fff4ec"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color de texto",
+      "default": "#462027"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Color principal",
+      "default": "#d94d73"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Popup Dia de las Madres"
+    }
+  ]
+}
+{% endschema %}

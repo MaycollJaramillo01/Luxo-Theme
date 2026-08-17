@@ -1,0 +1,88 @@
+<section id="luxo-features-{{ section.id }}" style="
+  --lb-bg: {{ section.settings.bg_color }};
+  --lb-surface: {{ section.settings.surface_color }};
+  --lb-text: {{ section.settings.text_color }};
+  --lb-muted: {{ section.settings.muted_color }};
+  --lb-accent: {{ section.settings.accent_color }};
+  --lb-border: {{ section.settings.border_color }};
+  --lb-max: {{ section.settings.page_width }}px;
+  --lb-radius: {{ section.settings.card_radius }}px;
+  background: var(--lb-bg); padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+">
+  <style>
+    #luxo-features-{{ section.id }} * { box-sizing: border-box; font-family: sans-serif; }
+    #luxo-features-{{ section.id }} .lb-wrap { max-width: var(--lb-max); margin: 0 auto; padding: 0 24px; }
+    #luxo-features-{{ section.id }} .lb-trust-bar { border-top: 1px solid var(--lb-border); border-bottom: 1px solid var(--lb-border); background: rgba(0,0,0,.02); }
+    #luxo-features-{{ section.id }} .lb-trust-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; padding: 18px 0; }
+    #luxo-features-{{ section.id }} .lb-trust-item { text-align: center; }
+    #luxo-features-{{ section.id }} .lb-trust-title { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--lb-text); }
+    #luxo-features-{{ section.id }} .lb-section { padding: 80px 0; }
+    #luxo-features-{{ section.id }} .lb-center { text-align: center; }
+    #luxo-features-{{ section.id }} .lb-eyebrow { font-size: 10px; letter-spacing: .24em; text-transform: uppercase; color: var(--lb-accent); }
+    #luxo-features-{{ section.id }} .lb-title { font-family: Georgia, serif; font-size: clamp(30px, 4vw, 48px); margin: 10px 0 0; color: var(--lb-text); }
+    #luxo-features-{{ section.id }} .lb-benefit-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 34px; }
+    #luxo-features-{{ section.id }} .lb-benefit { background: var(--lb-surface); border: 1px solid var(--lb-border); padding: 26px 22px; border-radius: calc(var(--lb-radius) + 4px); transition: .25s ease; }
+    #luxo-features-{{ section.id }} .lb-benefit:hover { transform: translateY(-4px); box-shadow: 0 14px 28px rgba(0,0,0,.05); }
+    #luxo-features-{{ section.id }} .lb-card-title { font-family: Georgia, serif; font-size: 22px; margin: 0 0 10px; color: var(--lb-text); }
+    #luxo-features-{{ section.id }} .lb-muted { color: var(--lb-muted); font-size: 13px; line-height: 1.75; }
+    @media (max-width: 989px) { #luxo-features-{{ section.id }} .lb-benefit-grid, #luxo-features-{{ section.id }} .lb-trust-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 749px) { #luxo-features-{{ section.id }} .lb-benefit-grid, #luxo-features-{{ section.id }} .lb-trust-grid { grid-template-columns: 1fr; } }
+  </style>
+
+  {% assign trust_blocks = section.blocks | where: 'type', 'trust_item' %}
+  {% assign benefit_blocks = section.blocks | where: 'type', 'benefit' %}
+
+  {% if trust_blocks.size > 0 %}
+    <div class="lb-trust-bar"><div class="lb-wrap"><div class="lb-trust-grid">
+      {% for block in trust_blocks %}
+        <div class="lb-trust-item" {{ block.shopify_attributes }}><div class="lb-trust-title">✦ {{ block.settings.title }}</div></div>
+      {% endfor %}
+    </div></div></div>
+  {% endif %}
+
+  <div class="lb-section lb-wrap">
+    <div class="lb-center">
+      {% if section.settings.benefits_eyebrow != blank %}<span class="lb-eyebrow">{{ section.settings.benefits_eyebrow }}</span>{% endif %}
+      {% if section.settings.benefits_title != blank %}<h2 class="lb-title">{{ section.settings.benefits_title }}</h2>{% endif %}
+    </div>
+    {% if benefit_blocks.size > 0 %}
+      <div class="lb-benefit-grid">
+        {% for block in benefit_blocks %}
+          <div class="lb-benefit" {{ block.shopify_attributes }}>
+            <h3 class="lb-card-title">{{ block.settings.title }}</h3>
+            <div class="lb-muted">{{ block.settings.text }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxo - Beneficios",
+  "settings": [
+    { "type": "text", "id": "benefits_eyebrow", "label": "Eyebrow beneficios", "default": "Por qué elegirnos" },
+    { "type": "text", "id": "benefits_title", "label": "Título beneficios", "default": "COMPRA FÁCIL, SEGURA Y RÁPIDA" },
+    { "type": "header", "content": "Diseño y Colores" },
+    { "type": "color", "id": "bg_color", "label": "Fondo principal", "default": "#f7f4ef" },
+    { "type": "color", "id": "surface_color", "label": "Fondo tarjetas", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "Texto principal", "default": "#181511" },
+    { "type": "color", "id": "accent_color", "label": "Color acento", "default": "#b89057" },
+    { "type": "color", "id": "border_color", "label": "Bordes", "default": "#ddd5cb" },
+    { "type": "color", "id": "muted_color", "label": "Texto secundario", "default": "#6f675d" },
+    { "type": "range", "id": "page_width", "label": "Ancho máximo", "min": 1000, "max": 1600, "step": 20, "default": 1280 },
+    { "type": "range", "id": "card_radius", "label": "Radio tarjetas", "min": 0, "max": 24, "step": 2, "default": 10 },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "default": 0, "label": "Padding Superior" },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 4, "default": 0, "label": "Padding Inferior" }
+  ],
+  "blocks": [
+    { "type": "trust_item", "name": "Ítem de confianza", "settings": [{ "type": "text", "id": "title", "label": "Título" }] },
+    { "type": "benefit", "name": "Beneficio", "settings": [
+      { "type": "text", "id": "title", "label": "Título", "default": "Envío rápido" },
+      { "type": "textarea", "id": "text", "label": "Texto", "default": "Recibe tu pedido en tiempo récord." }
+    ]}
+  ],
+  "presets": [{"name": "Luxo - Beneficios"}]
+}
+{% endschema %}

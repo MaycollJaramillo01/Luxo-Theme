@@ -1,0 +1,25 @@
+{
+  "name": "Header",
+  "type": "header",
+  "sections": {
+    "luxo_commerce_header": {
+      "type": "luxo-commerce-header",
+      "blocks": {
+        "new": { "type": "nav_item", "settings": { "label": "COLECCIONES", "link": "/collections" } },
+        "shapewear": { "type": "nav_item", "settings": { "label": "FAJAS", "link": "shopify://collections/fajas-de-mediana-compresion" } },
+        "clothing": { "type": "nav_item", "settings": { "label": "ROPA", "link": "shopify://collections/all" } },
+        "wellness": { "type": "nav_item", "settings": { "label": "BIENESTAR", "link": "shopify://collections/productos-para-perder-peso" } },
+        "best": { "type": "nav_item", "settings": { "label": "BESTSELLERS", "link": "shopify://collections/top-picks" } }
+      },
+      "block_order": ["new", "shapewear", "clothing", "wellness", "best"],
+      "settings": {
+        "show_announcement": true,
+        "announcement_text": "ENVÍOS A TODO EE. UU. · CAMBIOS FÁCILES",
+        "announcement_link": "",
+        "wordmark": "LUXO",
+        "menu": "main-menu"
+      }
+    }
+  },
+  "order": ["luxo_commerce_header"]
+}

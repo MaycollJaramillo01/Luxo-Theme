@@ -1,0 +1,1609 @@
+
+    
+
+    
+
+    
+    <gp-row gp-data='{"background":{"desktop":{"attachment":"scroll","color":"#ffffff","image":{"height":0,"src":"","width":0},"position":{"x":50,"y":50},"repeat":"no-repeat","size":"cover","type":"color","video":"","videoHtml5":""}},"uid":"gF0Veex_mH"}' data-id="gF0Veex_mH" id="gF0Veex_mH" data-same-height-subgrid-container class="gF0Veex_mH gp-relative gp-mx-auto gp-mb-0 gp-grid gp-max-w-full gp-transition-colors gp-duration-200 gp-ease-in-out [&_*]:gp-max-w-full gp-grid-rows-[1fr]" style="--bs:none;--bw:1px 1px 1px 1px;--bc:#121212;--shadow:none;--d:grid;--d-mobile:grid;--d-tablet:grid;--op:100%;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--pt:30px;--pr:0px;--pt-mobile:38px;--pr-mobile:0px;--cg:8px;--gtc:minmax(0, 12fr);--w:100%;--w-tablet:var(--g-ct-w, 100%);--w-mobile:var(--g-ct-w, 100%);--bgc:#ffffff;--bgi:url();--bgp:50% 50%;--bgs:cover;--bgr:no-repeat;--bga:scroll;--pc:start">
+      
+
+      <div
+      data-same-height-display-contents
+      style="--jc:start"
+      class="gQ-Eu6OAGW gp-relative gp-flex gp-flex-col"
+    >
+      
+    
+        <script {% if section.settings.section_preload == "false" %}class="gps-link" delay {% else %}src{% endif %}="https://assets.gemcommerce.com/assets-v2/gp-product-v7-5.js?v={{ shop.metafields.GEMPAGES.ASSETS_VERSION }}" defer="defer"></script>
+        <script {% if section.settings.section_preload == "false" %}class="gps-link" delay {% else %}src{% endif %}="https://assets.gemcommerce.com/assets-v2/gp-same-height-v7-5.js?v={{ shop.metafields.GEMPAGES.ASSETS_VERSION }}" defer="defer"></script>
+        
+
+    
+    <div
+      class="gp-relative gp-flex gKtQrsyu6o"
+      style="--d:block;--d-mobile:block;--d-tablet:block;--mr:-56px;--mb-mobile:20px"
+    >
+      <div class='gp-flex gp-w-full' style="--jc:center">
+        <div
+          style="--bs:none;--bw:1px 1px 1px 1px;--bc:#121212;--shadow:none;--op:100%;--op-mobile:100%;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--pl:75px;--pb:0px;--pr:75px;--pl-mobile:0px;--pr-mobile:0px;--w:100%;--w-tablet:100%;--w-mobile:100%"
+        >
+          {%- assign gpBkProduct = product -%}
+          {%- assign gpBkProducts = products -%}
+          
+      {%- liquid
+        assign productHandles = ''| split: ','
+        assign products = null
+        assign target_collection = null
+        assign productSrc = 'DynamicCollection'
+        assign c = 0
+        assign limit = 50
+
+        if request.page_type == 'collection' or preview_page_type == 'collection'
+          assign target_collection = collection
+          if target_collection == empty or target_collection == null
+            if '415172231409' == 'latest'
+              assign target_collection = collections | sort: 'updated_at'  | first
+            else
+              
+          for collection in collections
+            if collection.id == 415172231409
+              assign target_collection = collection
+              break
+            endif
+          endfor
+        
+            endif
+          endif
+          paginate target_collection.products by 50
+            assign products = target_collection.products  
+          endpaginate
+        else
+          if productSrc == 'RelatedProduct'
+            
+    
+  
+          elsif productSrc == 'PickProduct'
+            unless false
+              assign products = null | sort
+              for handle in productHandles
+                assign productH = all_products[handle] | sort
+                assign products = products | concat: productH
+              endfor
+              assign limit = products.length
+            else
+              if 0 == 0
+                paginate collections.all.products by 100000
+                  assign products = collections.all.products  | sort : "created_at"  | reverse
+                endpaginate
+              endif
+            endunless
+          else
+            if '415172231409' == 'latest'
+              assign target_collection = collections | sort: 'updated_at'  | first
+            else
+              
+          for collection in collections
+            if collection.id == 415172231409
+              assign target_collection = collection
+              break
+            endif
+          endfor
+        
+            endif
+            paginate target_collection.products by 50
+              assign products = target_collection.products  
+            endpaginate
+          endif
+        endif
+      -%}
+    
+          
+    {%- if products == null -%}
+    {%- if count == 0 and 0 == 0 -%}
+      {% if 'DynamicCollection' == 'RelatedProduct' -%}
+          <div>{{ 'gempages.ProductList.no_related_products' | t }}</div>
+        {% else %}
+          <div>{{ 'gempages.ProductList.no_products_found' | t }}</div>
+      {%- endif -%}
+    {%- endif -%}
+    {%-else-%}
+      
+    <div
+      items-repeat="true" data-id="gKtQrsyu6o"
+      style="--cg:30px;--cg-mobile:5px;--gtc:repeat(4, minmax(0, 1fr));--gtc-tablet:repeat(3, minmax(0, 1fr));--gtc-mobile:repeat(2, minmax(0, 1fr))"
+      class="!gp-m-auto gp-grid gp-w-full gp-grid-flow-row"
+    >
+      
+      <gp-same-height
+        class="gp-contents"
+        style="visibility: hidden"
+        gp-data='{"targetUid":"gn2p2bj1dn","slidesToShow":{"desktop":4,"mobile":2,"tablet":3},"rowGap":{"desktop":"8px","mobile":"10px"}}'>
+        
+      {%- assign count = 0 -%}
+      {%- for product in products limit: limit -%}
+      {%- if product.id != empty -%}
+      {%- assign count = count | plus: 1 -%}
+      {%- assign variant = product.selected_or_first_available_variant -%}
+      {%- assign product_form_id = 'product-form-' | append: "gKtQrsyu6o" | append: product.id -%}
+        
+      <gp-product
+        gp-context='{"variantSelected": {{ variant | json | escape }}, "inventory_management": {{ variant.inventory_management | json | escape  }}, "inventory_policy": {{ variant.inventory_policy | json | escape }}, "quantity": 1 , "inventoryQuantity": {{ variant.inventory_quantity | default: 0 }},  "formId": "{{ product_form_id }}"}'
+        gp-data='{"variantSelected": {{ variant | json | escape }}, "quantity": 1, "productUrl":{{ product.url | json | escape }}, "productHandle":{{ product.handle | json | escape }}, "collectionUrl": {{ collection.url | json | escape }}, "collectionHandle": {{ collection.handle | json | escape }},"pageContext" : {"pageType":"","sectionName":"","isPreviewing":false,"isOptimizePlan":false,"isTranslateWithLocale":false,"isLazyLoadSection":true,"isLazyLoadImage":false,"hasCollectionHandle":true,"numberOfProductOfProductList":50,"pageBackground":"","fontType":"","primaryLocale":"","showPriceCurrency":false,"enableLazyLoadImage":false}}'
+        class="gp-contents"
+
+      >
+        {%- form 'product', product, id: product_form_id, class: 'form contents gp-contents [&>*>div]:gp-contents [&>*]:gp-grid-rows-[subgrid] [&>*]:gp-gap-y-0 gp-child-item-gKtQrsyu6o',  data-type: 'add-to-cart-form', autocomplete: 'off' -%}
+        <input type="hidden" name="id" value="{{ variant.id }}" />
+        <input type="hidden" min="1" name="quantity"  value="{{ quantity }}" />
+        <button type="submit" onclick="return false;" style="display:none;"></button>
+          
+      
+            
+    
+
+    
+
+    
+    <gp-row gp-data='{"background":{"desktop":{"attachment":"scroll","color":"transparent","image":{"height":0,"src":"","width":0},"position":{"x":50,"y":50},"repeat":"no-repeat","size":"cover","type":"color"}},"uid":"gn2p2bj1dn"}' data-id="gn2p2bj1dn" id="gn2p2bj1dn" data-same-height-subgrid-container class="gn2p2bj1dn gp-relative gp-mx-auto gp-mb-0 gp-grid gp-max-w-full gp-transition-colors gp-duration-200 gp-ease-in-out [&_*]:gp-max-w-full gp-grid-rows-[1fr]" style="--bs:none;--bw:1px 1px 1px 1px;--bc:#121212;--shadow:none;--d:grid;--d-mobile:grid;--d-tablet:grid;--op:100%;--pos:relative;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--mb:20px;--pb:0px;--mb-mobile:0px;--pb-mobile:10px;--cg:var(--g-s-2xl);--gtc:minmax(0, 12fr);--w:var(--g-ct-w, 1200px);--h-mobile:auto;--bgc:transparent;--bgi:url();--bgp:50% 50%;--bgs:cover;--bgr:no-repeat;--bga:scroll;--pc:start">
+      
+
+      <div
+      data-same-height-display-contents
+      style="--ai:normal;--jc:start;--jc-mobile:start;--o:0"
+      class="gwyp9NgGh8 gp-relative gp-flex gp-flex-col"
+    >
+      
+  {% if product.media.size > 1 %}<style>
+    .gem-slider-item-gmf8GxL4EB-{{product.id}}.gp-gallery-image-item::after, .gem-slider-item-gp-gallery-gmf8GxL4EB-{{product.id}}.gp-gallery-image-item::after {
+      content: "";
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      z-index: 999;
+      top: 0;
+      left: 0;
+      border-style: solid;
+  border-width: 1px 1px 1px 1px;
+  border-color: #000000;
+  
+      
+      border-bottom-left-radius: 0px;
+      border-bottom-right-radius: 0px;
+      border-top-left-radius: 0px;
+      border-top-right-radius: 0px;
+      
+    }
+    .gem-slider-item-gmf8GxL4EB-{{product.id}}.gp-gallery-image-item[data-outline=active]:after, .gem-slider-item-gp-gallery-gmf8GxL4EB-{{product.id}}.gp-gallery-image-item[data-outline=active]:after {
+      pointer-events: none;
+    }
+  </style>{% endif %}
+  
+    {% assign featured_image = product.featured_image %}
+    {% if variant != null and variant.featured_image != null %}{% assign featured_image = variant.featured_image %}{% endif %}
+  
+    <gp-product-images
+      gp-data='
+    {
+      "id":"gmf8GxL4EB",
+      "pageContext": {"pageType":"","sectionName":"","isPreviewing":false,"isOptimizePlan":false,"isTranslateWithLocale":false,"isLazyLoadSection":true,"isLazyLoadImage":false,"hasCollectionHandle":true,"numberOfProductOfProductList":50,"pageBackground":"","fontType":"","primaryLocale":"","showPriceCurrency":false,"enableLazyLoadImage":false},
+      "setting":{"arrowIcon":"<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n    <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12 0C18.6274 0 24 5.37258 24 12C24 18.6274 18.6274 24 12 24C5.37258 24 0 18.6274 0 12C0 5.37258 5.37258 0 12 0ZM10.6828 8.13017C10.5266 7.95661 10.2734 7.95661 10.1172 8.13017C9.96095 8.30374 9.96095 8.58515 10.1172 8.75871L13.0343 12L10.1172 15.2413C9.96095 15.4149 9.96095 15.6963 10.1172 15.8698C10.2734 16.0434 10.5266 16.0434 10.6828 15.8698L13.8828 12.3143C14.0391 12.1407 14.0391 11.8593 13.8828 11.6857L10.6828 8.13017Z\" fill=\"currentColor\"/>\n    </svg>","arrowIconColor":"#000000","arrowNavBorder":{"border":"none","borderType":"none","borderWidth":"1px","isCustom":false,"width":"1px 1px 1px 1px"},"arrowNavRadius":{"bblr":"0px","bbrr":"0px","btlr":"0px","btrr":"0px","radiusType":"none"},"borderActive":{"border":"solid","borderType":"none","borderWidth":"1px","color":"#000000","isCustom":false,"width":"1px 1px 1px 1px"},"clickOpenLightBox":{"desktop":false},"dragToScroll":true,"ftArrowIcon":"<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n    <path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12 0C18.6274 0 24 5.37258 24 12C24 18.6274 18.6274 24 12 24C5.37258 24 0 18.6274 0 12C0 5.37258 5.37258 0 12 0ZM10.6828 8.13017C10.5266 7.95661 10.2734 7.95661 10.1172 8.13017C9.96095 8.30374 9.96095 8.58515 10.1172 8.75871L13.0343 12L10.1172 15.2413C9.96095 15.4149 9.96095 15.6963 10.1172 15.8698C10.2734 16.0434 10.5266 16.0434 10.6828 15.8698L13.8828 12.3143C14.0391 12.1407 14.0391 11.8593 13.8828 11.6857L10.6828 8.13017Z\" fill=\"currentColor\"/>\n    </svg>","ftArrowIconColor":"#000000","ftArrowNavBorder":{"border":"none","borderType":"none","borderWidth":"1px","isCustom":false,"width":"1px 1px 1px 1px"},"ftArrowNavRadius":{"bblr":"0px","bbrr":"0px","btlr":"0px","btrr":"0px","radiusType":"none"},"ftClickOpenLightBox":{"desktop":"product-link"},"ftDotActiveColor":{"desktop":"line-3"},"ftDotColor":{"desktop":"bg-1"},"ftDotGapToCarousel":{"desktop":16},"ftDotSize":{"desktop":12},"ftDotStyle":{"desktop":"none"},"ftDragToScroll":false,"ftLoop":{"desktop":false},"ftNavigationPosition":{"desktop":"none"},"ftPauseOnHover":true,"ftSpeed":1,"galleryHoverEffect":"none","galleryZoom":150,"galleryZoomType":"default","hoverEffect":"none","loop":{"desktop":true},"navigationPosition":{"desktop":"inside"},"otherImage":0,"pauseOnHover":true,"preDisplay":"1st-available-variant","preload":false,"qualityPercent":{"desktop":100},"qualityType":{"desktop":"high"},"speed":1,"type":{"desktop":"slider"},"typeDisplay":"all-images","zoom":150,"zoomType":"default"},
+      "styles":{"align":{"desktop":"flex-start"},"corner":{"bblr":"0px","bbrr":"0px","btlr":"0px","btrr":"0px","radiusType":"none"},"ftCorner":{"bblr":"0px","bbrr":"0px","btlr":"0px","btrr":"0px","radiusType":"custom"},"ftLayout":{"desktop":"cover"},"ftShape":{"desktop":{"gap":"","height":"","shape":"square","shapeLinked":true,"shapeValue":"1/1","width":""}},"itemSpacing":{"desktop":"var(--g-s-s)","mobile":"var(--g-s-s)"},"layout":{"desktop":"cover"},"position":{"desktop":"only-feature","mobile":"only-feature"},"ratioLayout":{"desktop":[2,10]},"ratioLayoutRight":{"desktop":[10,2]},"shape":{"desktop":{"shape":"square","shapeLinked":true,"shapeValue":"1/1","width":"100%"}},"shapeFor1Col":{"desktop":{"shape":"square","shapeLinked":true,"shapeValue":"1/1","width":"100%"}},"shapeFor2Col":{"desktop":{"shape":"square","shapeLinked":true,"shapeValue":"1/1","width":"50%"}},"shapeForBottom":{"desktop":{"shape":"square","shapeLinked":true,"shapeValue":"1/1","width":"20%"}},"shapeForFtOnly":{"desktop":{"shape":"square","shapeLinked":true,"shapeValue":"1/1","width":"100%"}},"shapeForInside":{"desktop":{"shape":"square","shapeLinked":true,"shapeValue":"1/1","width":"20%"}},"shapeForInsideBottom":{"desktop":{"shape":"square","shapeLinked":true,"shapeValue":"1/1","width":"20%"}},"spacing":{"desktop":"var(--g-s-s)","mobile":"var(--g-s-s)"}},
+      "productUrl":{{product.url | json | escape}},
+      "product":{{product | json | escape}},
+      "collectionUrl": {{ collection.url | json | escape }},
+      "collection": {{ collection | json | escape}}
+    }
+  '
+      section-id="{{section.id}}" data-id="gmf8GxL4EB"
+      style="--bs:none;--bw:1px 1px 1px 1px;--bc:#121212;--shadow:none;--d:block;--d-mobile:block;--d-tablet:block;--op:100%;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--mb:var(--g-s-l);--mb-mobile:2px"
+      class="gp-relative gp-w-full gmf8GxL4EB "
+    >
+      <div
+        class="{% if product.media.size > 1 %}gp-grid gp-w-full !gp-m-0 gp-relative{% else %}gp-w-full !gp-m-0 gp-relative{% endif %}"
+        style="{% if product.media.size > 1 %}--gtc: minmax(0, 12fr);--gtc-tablet: minmax(0, 12fr);--gtc-mobile: minmax(0, 12fr);--gg: var(--g-s-s);--gg-mobile: var(--g-s-s);{% else %}--gtc: minmax(0, 12fr);--gg: var(--g-s-s);--gg-mobile: var(--g-s-s);{% endif %}"
+      >
+        
+    {% capture featureImageOnlyOne %}
+      
+        {% assign featureMedia = variant.featured_media %}
+        {% unless featureMedia %}
+        {% assign featureMedia = product.featured_media %}
+        {% endunless %}
+        {% if product.media.size > 1 %}
+          {% assign featureMedia = variant.featured_media %}
+          {% unless featureMedia %}
+          {% assign featureMedia = product.featured_media %}
+          {% endunless %}
+        {% endif %}
+        {% assign largestRatio = 0 %}
+        {% assign height = featureMedia.height | times: 1.0 %}
+        {% assign width = featureMedia.width | times: 1.0 %}
+        {% assign ratio = height | divided_by: width %}
+        {% if ratio > largestRatio %}{% assign largestRatio = ratio %}{% endif %}
+        {% assign productImageWidth = 0 %}
+        {% case featureMedia.media_type %}
+          {% when 'image' %}
+            {% assign productImageWidth = featureMedia.width %}
+          {% else %}
+            {% assign productImageWidth = featureMedia.preview_image.width %}
+        {% endcase %}
+        {% if featureMedia == null %}{% assign productImageWidth = 1600 %}{% endif %}
+        <div
+          class='gp-feature-image-carousel gp-feature-image-only'
+          style="--jc: flex-start;--o: 0;--o-tablet: 0;--o-mobile: 0;--d: flex;--d-mobile: flex;--d-tablet: flex;"
+        >
+          <div
+            class="gp-relative"
+            style="--w: 100%;--w-tablet: 100%;--w-mobile: 100%;--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;-undefined-bblr: 0px;-undefined-bbrr: 0px;-undefined-btlr: 0px;-undefined-btrr: 0px;--h: auto;--h-tablet: auto;--h-mobile: auto;"
+          >
+            
+      
+    
+            <div
+              type="gp-feature-image-only"
+              product-id="{{product.id}}"
+              product-media="{{product.media.size}}"
+              class="gp-group gp-z-0 gp-flex !gp-min-w-full !gp-max-w-full gp-w-full gp-relative gp-items-start gp-justify-center gp-overflow-hidden gp-outline-1 -gp-outline-offset-1 gp-image-item gp-ft-image-item data-[outline=active]:gp-outline gp-featured-image-wrapper"
+              style="max-width: 100%;outline-color: var(--g-c-brand, brand);--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;-undefined-bblr: 0px;-undefined-bbrr: 0px;-undefined-btlr: 0px;-undefined-btrr: 0px;--h: auto;--h-tablet: auto;--h-mobile: auto;width: {{productImageWidth}}px;"
+            >
+              <div
+                class="gp-w-full gp-relative {% if featureMedia == null or featureMedia.media_type == 'image' %}{{ 'gp-h-0' }}{% else %}{{ 'gp-h-full !gp-pb-0' }}{% endif %}"
+                style="--pb: calc((1/1)*100%);--pb-tablet: calc((1/1)*100%);--pb-mobile: calc((1/1)*100%); {% if featureMedia.media_type == 'video' or featureMedia.media_type == 'external_video' %}{{ 'display: flex; align-items: center; justify-content: center' }}{% endif %}"
+              >
+                
+    {% case featureMedia.media_type %}
+      {% when 'image' %}
+        
+      
+    {% assign src = featureMedia.src %}
+    
+    
+    <img
+      alt="{{featureMedia.alt | escape}}" width="{{featureMedia.width}}" height="{{featureMedia.height}}" draggable="false" quality-type="{&quot;desktop&quot;:&quot;high&quot;}" quality-percent="{&quot;desktop&quot;:100}" data-sizes="auto" sizes="(max-width: 768px) 50vw, 100vw" src="{{src | image_url}}" isNotLazyload="true" srcset="{{src | image_url: width: 480}} 480w, {{src | image_url: width: 768}} 768w, {{src | image_url: width: 1024}} 1024w, {{src | image_url: width: 1440}} 1440w" base-src="{{src | image_url}}" loading="lazy"
+      id="{% if featureMedia != null %}{{featureMedia.id}}{% endif %}"
+      style="--aspect:1/1;--aspect-tablet:1/1;--aspect-mobile:1/1;--objf:cover"
+      class="gp-w-full gp-h-full gp-absolute gp-top-0 gp-left-0 featured-image-only gp-cursor-pointer !gp-rounded-none gp-w-full gp-transition-opacity {{shouldHidden}}"
+    />
+       
+       
+    
+      {% when 'external_video' %}
+        {% assign mediaSourceVideo = featureMedia | external_video_url %}
+        
+    <iframe
+      src="{{mediaSourceVideo}}" alt="{{featureMedia.alt | escape}}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" frameborder="0" width="100%" height="100%" controls="true" allowfullscreen="true"
+      style="--aspect:1/1;--aspect-tablet:1/1;--aspect-mobile:1/1"
+      class="feature-video gp-w-full gp-h-full gp-relative"
+    >
+    </iframe>
+  
+      {% when 'video' %}
+        {% assign mediaSourceVideo = featureMedia.sources.last.url %}
+        
+  <gp-lite-html5-embed is-check-loaded="true" >
+    
+    <video
+    id="gp-video-undefined" title="{{featureMedia.alt | escape}}" preload="none" data-src="{{mediaSourceVideo}}" poster="{{featureMedia.preview_image.src | product_img_url: '1024x1024'}}" data-poster="{{featureMedia.preview_image.src | product_img_url: '1024x1024'}}"
+      style="width:100%;max-height:100%"
+      class="gp-w-full gp-invisible gp-lazyload-video"
+      controls
+      
+      
+      
+      playsinline
+      
+    ></video>
+    
+     <div
+        role="presentation"
+        style="width:100%;max-height:100%"
+        class="gp-absolute gp-top-0 gp-left-0  gp-w-full gp-thumbnail-video gp-h-full"
+        >
+           
+    <img
+      alt="Alt image" width="2237" height="1678" draggable="false" quality-type quality-percent data-sizes="auto" sizes="100vw" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjIzNyIgaGVpZ2h0PSIxNjc4IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgogICAgPGRlZnM+CiAgICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZy0yMjM3LTE2NzgiPgogICAgICAgIDxzdG9wIHN0b3AtY29sb3I9InJnYmEoNTEsIDUxLCA1MSwgMCkiIG9mZnNldD0iMjAlIiAvPgogICAgICAgIDxzdG9wIHN0b3AtY29sb3I9InJnYmEoNTEsIDUxLCA1MSwgMCkiIG9mZnNldD0iNTAlIiAvPgogICAgICAgIDxzdG9wIHN0b3AtY29sb3I9InJnYmEoNTEsIDUxLCA1MSwgMCkiIG9mZnNldD0iNzAlIiAvPgogICAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPC9kZWZzPgogICAgPHJlY3Qgd2lkdGg9IjIyMzciIGhlaWdodD0iMTY3OCIgZmlsbD0icmdiYSg1MSwgNTEsIDUxLCAwKSIgLz4KICAgIDxyZWN0IGlkPSJyIiB3aWR0aD0iMjIzNyIgaGVpZ2h0PSIxNjc4IiBmaWxsPSJ1cmwoI2ctMjIzNy0xNjc4KSIgLz4KICAgIDxhbmltYXRlIHhsaW5rOmhyZWY9IiNyIiBhdHRyaWJ1dGVOYW1lPSJ4IiBmcm9tPSItMjIzNyIgdG89IjIyMzciIGR1cj0iMXMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiAgLz4KICA8L3N2Zz4=" base-src="{{featureMedia.preview_image.src | product_img_url: '1024x1024'}}" data-src="{{featureMedia.preview_image.src | product_img_url: '1024x1024'}}" data-srcset="{{featureMedia.preview_image.src | product_img_url: '1024x1024'}}"
+      id="video-thumbnail"
+      
+      class="gp-w-full gp-h-full gp-object-cover gp_lazyload"
+    />
+          <button type="button" class="gp-absolute gp-left-1/2 gp-top-1/2 gp-flex gp-aspect-[56/32] gp-w-14 -gp-translate-x-1/2 -gp-translate-y-1/2 gp-items-center gp-justify-center gp-rounded gp-bg-black/80 gp-transition-colors hover:gp-bg-[#ef0800]" aria-label="Play">
+            <svg class="gp-w-5 gp-text-white" viewBox="0 0 24 24">
+              <path
+                fill="currentColor"
+                d="M5 5.274c0-1.707 1.826-2.792 3.325-1.977l12.362 6.726c1.566.853 1.566 3.101 0 3.953L8.325 20.702C6.826 21.518 5 20.432 5 18.726V5.274Z"
+              />
+            </svg>
+          </button>
+        </div>
+  
+  </gp-lite-html5-embed>
+        <script {% if section.settings.section_preload == "false" %}class="gps-link" delay {% else %}src{% endif %}="https://assets.gemcommerce.com/assets-v2/gp-lite-html5-embed-v7-5.js?v={{ shop.metafields.GEMPAGES.ASSETS_VERSION }}" defer="defer"></script>
+  
+      {% when 'model' %}
+        
+    <model-viewer
+      src="{% if featureMedia.sources.first.url contains '.glb' %}{{ featureMedia.sources.first.url }}{% else %}{{featureMedia.sources.last.url}}{% endif %}" alt="{{featureMedia.preview_image.alt}}" data-shopify-feature="1.12" width="100%" poster="{{featureMedia.preview_image.src | product_img_url: '1024x1024'}}" ar-status="not-presenting" camera-controls="true"
+      class="gp-w-full gp-h-full model-viewer gp-z-[90]"
+      style="--aspect:1/1;--aspect-tablet:1/1;--aspect-mobile:1/1">
+    </model-viewer>
+  
+      {% else %}
+        
+    
+    <img
+      alt="No Image" width="2237" height="1678" draggable="false" quality-type="{&quot;desktop&quot;:&quot;high&quot;}" quality-percent="{&quot;desktop&quot;:100}" data-sizes="auto" sizes="(max-width: 768px) 50vw, 100vw" src isNotLazyload="true" srcset loading="lazy"
+      id=""
+      style="--aspect:1/1;--aspect-tablet:1/1;--aspect-mobile:1/1;--objf:cover"
+      class="gp-w-full gp-h-full gp-absolute gp-top-0 gp-left-0 featured-image-only gp-cursor-pointer !gp-rounded-none"
+    />
+    {% endcase %}
+    
+              </div>
+            </div>
+          </div>
+        </div>
+      
+    {% endcapture %}
+    {% if product.media.size > 1 %}
+         
+        {{ featureImageOnlyOne }}
+      {% else %}{{ featureImageOnlyOne }}{% endif %}
+  
+        
+      </div>
+    </gp-product-images>
+    <script {% if section.settings.section_preload == "false" %}class="gps-link" delay {% else %}src{% endif %}="https://assets.gemcommerce.com/assets-v2/gp-product-images-v7-5.js?v={{ shop.metafields.GEMPAGES.ASSETS_VERSION }}" defer="defer"></script>
+  
+  <gp-animation
+    gp-interaction-wrapper
+    display-init="show"
+    gp-data='{"config":{"desktop":{"enabled":true,"trigger":"appear","triggerConfig":{"appear":{"animation":"fade","setting":{"fade":{"delay":"0","easing":"ease-out","speed":"0.9"},"shake":{"delay":"0","easing":"linear","intensity":11,"loop":false,"speed":0.7},"slide":{"delay":"0","direction":"left","easing":"ease-out","isCustomDistance":false,"speed":1.7},"zoom":{"delay":"0","easing":"ease-out","isFade":true,"scale":{"in":[80,100],"out":[120,100]},"speed":1.7,"zoomDirection":"in"}}},"hover":{"animation":"none","setting":{"fade":{"delay":"0","easing":"ease-out","speed":1.7},"shake":{"delay":"0","easing":"linear","intensity":11,"loop":false,"speed":0.7},"slide":{"delay":"0","direction":"left","easing":"ease-out","isCustomDistance":false,"speed":1.7},"zoom":{"delay":"0","easing":"ease-out","isFade":false,"scale":{"in":[100,120],"out":[100,80]},"speed":1.7,"zoomDirection":"in"}}}}},"mobile":{"enabled":true,"trigger":"appear","triggerConfig":{"appear":{"animation":"fade","setting":{"fade":{"delay":"0","easing":"ease-out","speed":"0.5"},"shake":{"delay":"0","easing":"linear","intensity":11,"loop":false,"speed":0.7},"slide":{"delay":"0","direction":"left","easing":"ease-out","isCustomDistance":false,"speed":1.7},"zoom":{"delay":"0","easing":"ease-out","isFade":true,"scale":{"in":[80,100],"out":[120,100]},"speed":1.7,"zoomDirection":"in"}}},"hover":{"animation":"none","setting":{"fade":{"delay":"0","easing":"ease-out","speed":1.7},"shake":{"delay":"0","easing":"linear","intensity":11,"loop":false,"speed":0.7},"slide":{"delay":"0","direction":"left","easing":"ease-out","isCustomDistance":false,"speed":1.7},"zoom":{"delay":"0","easing":"ease-out","isFade":false,"scale":{"in":[100,120],"out":[100,80]},"speed":1.7,"zoomDirection":"in"}}}}}},"tag":"ProductButton","opacity":{"desktop":"100%","mobile":"100%"},"notEnableAnimationWhenInit":false}'
+    style="display:contents"
+  >
+    <div style="--v:hidden;--v-tablet:hidden;--v-mobile:hidden;display:contents">
+    {%- assign total_combinations = 1 -%}
+    {% for option in product.options_with_values %}{%- assign total_combinations = total_combinations | times: option.values.size -%}{% endfor %}
+    {%- liquid
+      assign inventory_quantity = variant.inventory_quantity | default: 0
+      assign is_in_stock = variant.available
+    -%}
+    <gp-product-button
+      style="--pos:relative;--pos-mobile:relative;--top:-60px;--top-mobile:-34px"
+      gp-data-wrapper="true"
+      gp-href="{{ request.origin }}{{ routes.root_url | split: '/' | join: '/' }}/cart"
+      class="gp-product-button"
+      gp-label-out-of-stock="{{ section.settings.ggYIhVRLONw_outOfStockLabel_5716603 }}"
+      gp-label-unavailable="{{ section.settings.ggYIhVRLONw_unavailableLabel_-288996254 }}"
+      gp-data='{"styles":{"errorTypo":{"attrs":{"color":"error"},"type":"paragraph-2"},"successTypo":{"attrs":{"color":"success"},"type":"paragraph-2"}},"setting":{"errorType":"built-in","actionEffect":"open-cart-drawer","enableMessage":true,"label":"Agregar al carrito","errorMessage":"{{ section.settings.ggYIhVRLONw_errorMessage_2053555109 | escape }}","successMessage":"{{ section.settings.ggYIhVRLONw_successMessage_-2000197294 | escape }}","outOfStockLabel":"Agotado","customURL":{"link":"/cart","target":"_self"}},"variantID":"{{variant.id}}","disabled":"{{variant.available}}","totalVariant":"{{total_combinations}}"}'
+      data-variant-selection-required-message="{{ section.settings.ggYIhVRLONw_variantSelectionRequiredMessage_1532913287 }}"
+      gp-enable-third-partycart="{{shop.metafields.GEMPAGES.enableThirdPartyCart}}"
+    >
+      
+    <gp-button
+      gp-data='{}'
+      
+      class="gp-flex gp-flex-col"
+    >
+      <div style="--bs:none;--bw:1px 1px 1px 1px;--bc:#121212;--shadow:none;--d:block;--d-mobile:block;--d-tablet:block;--op:100%;--op-mobile:100%;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--mb:0px;--mb-mobile:0px;--pt-mobile:0px;--pb-mobile:0px;--ta:left" class="{% unless variant.available %} !gp-hidden {% endunless %}">
+        <style>[data-id="gYIhVRLONw"].gp-button-base::before, [data-id="gYIhVRLONw-interaction"].gp-button-base::before {
+      
+    content: "";
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    border-style: none;
+  border-width: 1px 1px 1px 1px;
+  
+  
+    
+      
+      
+      
+      
+      
+  
+    }
+  
+      
+  [data-id="gYIhVRLONw"]:hover::before, [data-id="gYIhVRLONw-interaction"]:hover::before {
+    border-style: none;
+  border-width: 1px 1px 1px 1px;
+  
+  
+    
+  }</style>
+        
+        <button
+          data-id="gYIhVRLONw" dataId="gYIhVRLONw" data-state="idle" aria-label="Agregar al carrito"
+          name="add" gp-data-hidden="{% unless variant.available %}true{% endunless %}"
+          type="submit"
+          style="--w:100%;--w-tablet:100%;--w-mobile:100%;--h:Auto;--h-tablet:Auto;--h-mobile:Auto;--pl:24px;--pr:24px;--pt:8px;--pb:8px;--pl-mobile:24px;--pr-mobile:24px;--pt-mobile:8px;--pb-mobile:8px;--shadow:none;--bgi:;--hvr-bgi:;--hvr-bg:#F5EEDE;--bg:#F6E7B3;--hvr-c:#1F1D20;--c:#1F1D20;--ff:var(--g-font-Fahkwang, 'Fahkwang'), var(--g-font-body, body);--weight:400;--size:16px;--size-tablet:16px;--size-mobile:14px;--lh:180%;--lh-tablet:180%;--lh-mobile:120%"
+          class="gp-button-atc tcustomizer-submit-button gYIhVRLONw gp-button-base gp-group gp-relative gp-inline-flex gp-max-w-full gp-items-center gp-justify-center gp-no-underline gp-transition-colors gp-duration-200 disabled:gp-btn-disabled disabled:gp-opacity-30  undefined"
+        >
+        
+  <svg
+    class="gp-invisible gp-absolute gp-h-5 gp-w-5 group-data-[state=loading]:gp-animate-spin group-data-[state=loading]:gp-visible"
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+  >
+    <circle
+      class="gp-opacity-25"
+      cx="12"
+      cy="12"
+      r="10"
+      stroke="currentColor"
+      stroke-width="4"
+    ></circle>
+    <path
+      class="gp-opacity-75"
+      fill="currentColor"
+      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+    ></path>
+  </svg>
+
+        <div class="gp-inline-flex">
+          
+    <span
+      style="--ff:var(--g-font-Fahkwang, 'Fahkwang'), var(--g-font-body, body);--weight:400;--size:16px;--size-tablet:16px;--size-mobile:14px;--lh:180%;--lh-tablet:180%;--lh-mobile:120%;--ts:none;word-break:break-word;--mr:8px;--mr-mobile:8px;--height-desktop:1em;--height-tablet:1em;--height-mobile:1em"
+      class="gp-button-icon gp-z-1 gp-inline-flex gp-shrink-0 gp-items-center gp-justify-center group-data-[state=loading]:gp-invisible [&>svg]:!gp-h-[var(--height-desktop)] [&>svg]:!gp-w-auto tablet:[&>svg]:!gp-h-[var(--height-tablet)] mobile:[&>svg]:!gp-h-[var(--height-mobile)]"
+    >
+      <svg height="20" width="20" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 256 256" fill="currentColor" data-id="508817577245278568">
+              <path fill="currentColor" strokeLinecap="round" strokeLinejoin="round" fill="currentColor" d="M243.86,197.65l-14.25-120A20.06,20.06,0,0,0,209.67,60H179.83A52,52,0,0,0,76.17,60H46.33A20.06,20.06,0,0,0,26.39,77.65l-14.25,120A20,20,0,0,0,32.08,220H223.92a20,20,0,0,0,19.94-22.35ZM128,36a28,28,0,0,1,27.71,24H100.29A28,28,0,0,1,128,36ZM36.5,196,49.81,84H76v20a12,12,0,0,0,24,0V84h56v20a12,12,0,0,0,24,0V84h26.19L219.5,196Z" /></svg>
+    </span>
+  
+          
+    <span
+      data-gp-text
+      style="--ff:var(--g-font-Fahkwang, 'Fahkwang'), var(--g-font-body, body);--weight:400;--size:16px;--size-tablet:16px;--size-mobile:14px;--lh:180%;--lh-tablet:180%;--lh-mobile:120%;--ts:none;word-break:break-word"
+      class="gp-content-product-button group-active/button:!gp-text-inherit gp-relative gp-flex gp-h-full gp-items-center gp-overflow-hidden gp-break-words group-data-[state=loading]:gp-invisible [&_p]:gp-whitespace-pre-line gp-text button-text"
+    >
+      {{ section.settings.ggYIhVRLONw_label_-1411717354 }}
+    </span>
+        </div>
+        
+    
+    
+  
+        </button>
+      </div>
+      <script {% if section.settings.section_preload == "false" %}class="gps-link" delay {% else %}src{% endif %}="https://assets.gemcommerce.com/assets-v2/gp-button-v7-5.js?v={{ shop.metafields.GEMPAGES.ASSETS_VERSION }}" defer="defer"></script>
+    </gp-button>
+  
+      
+    <gp-button
+      gp-data='{}'
+      
+      class="gp-flex gp-flex-col"
+    >
+      <div style="--bs:none;--bw:1px 1px 1px 1px;--bc:#121212;--shadow:none;--d:block;--d-mobile:block;--d-tablet:block;--op:100%;--op-mobile:100%;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--mb:0px;--mb-mobile:0px;--pt-mobile:0px;--pb-mobile:0px;--ta:left" class="{% if variant.available %} !gp-hidden {% endif %}">
+        <style>[data-id="gYIhVRLONw-sold-out"].gp-button-base::before, [data-id="gYIhVRLONw-sold-out-interaction"].gp-button-base::before {
+      
+    content: "";
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    border-style: none;
+  border-width: 1px 1px 1px 1px;
+  
+  
+    
+      border-bottom-left-radius: 0px;
+      border-bottom-right-radius: 0px;
+      border-top-left-radius: 0px;
+      border-top-right-radius: 0px;
+      
+  
+    }
+  
+      
+  [data-id="gYIhVRLONw-sold-out"]:hover::before, [data-id="gYIhVRLONw-sold-out-interaction"]:hover::before {
+    
+    
+  }</style>
+        
+        <button
+          data-id="gYIhVRLONw-sold-out" dataId="gYIhVRLONw-sold-out" data-state="idle" aria-label="{{ section.settings.ggYIhVRLONw_outOfStockLabel_5716603 }}"
+          gp-data-hidden="{% if variant.available %}true{% endif %}"
+          type="button"
+          style="--w:100%;--w-tablet:100%;--w-mobile:100%;--h:Auto;--h-tablet:Auto;--h-mobile:Auto;--pl:24px;--pr:24px;--pt:8px;--pb:8px;--pl-mobile:24px;--pr-mobile:24px;--pt-mobile:8px;--pb-mobile:8px;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--hvr-bblr:0px;--hvr-bbrr:0px;--hvr-btlr:0px;--hvr-btrr:0px;--shadow:none;--bgi:;--hvr-bgi:;--bg:#F6E7B3;--hvr-bg:#F6E7B3;--c:#1F1D20;--ff:var(--g-font-Fahkwang, 'Fahkwang'), var(--g-font-body, body);--weight:400;--size:16px;--size-tablet:16px;--size-mobile:14px;--lh:180%;--lh-tablet:180%;--lh-mobile:120%"
+          class="gp-cursor-default gp-opacity-30 btn-disabled gp-button-sold-out gYIhVRLONw-sold-out gp-button-base gp-group gp-relative gp-inline-flex gp-max-w-full gp-items-center gp-justify-center gp-no-underline gp-transition-colors gp-duration-200 disabled:gp-btn-disabled disabled:gp-opacity-30 "
+        >
+        
+        <div class="gp-inline-flex">
+          
+    <span
+      style="--ff:var(--g-font-Fahkwang, 'Fahkwang'), var(--g-font-body, body);--weight:400;--size:16px;--size-tablet:16px;--size-mobile:14px;--lh:180%;--lh-tablet:180%;--lh-mobile:120%;--ts:none;word-break:break-word;--mr:8px;--mr-mobile:8px;--height-desktop:1em;--height-tablet:1em;--height-mobile:1em"
+      class="gp-button-icon gp-z-1 gp-inline-flex gp-shrink-0 gp-items-center gp-justify-center group-data-[state=loading]:gp-invisible [&>svg]:!gp-h-[var(--height-desktop)] [&>svg]:!gp-w-auto tablet:[&>svg]:!gp-h-[var(--height-tablet)] mobile:[&>svg]:!gp-h-[var(--height-mobile)]"
+    >
+      <svg height="20" width="20" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 256 256" fill="currentColor" data-id="508817577245278568">
+              <path fill="currentColor" strokeLinecap="round" strokeLinejoin="round" fill="currentColor" d="M243.86,197.65l-14.25-120A20.06,20.06,0,0,0,209.67,60H179.83A52,52,0,0,0,76.17,60H46.33A20.06,20.06,0,0,0,26.39,77.65l-14.25,120A20,20,0,0,0,32.08,220H223.92a20,20,0,0,0,19.94-22.35ZM128,36a28,28,0,0,1,27.71,24H100.29A28,28,0,0,1,128,36ZM36.5,196,49.81,84H76v20a12,12,0,0,0,24,0V84h56v20a12,12,0,0,0,24,0V84h26.19L219.5,196Z" /></svg>
+    </span>
+  
+          
+    <span
+      data-gp-text
+      style="--ff:var(--g-font-Fahkwang, 'Fahkwang'), var(--g-font-body, body);--weight:400;--size:16px;--size-tablet:16px;--size-mobile:14px;--lh:180%;--lh-tablet:180%;--lh-mobile:120%;--ts:none;word-break:break-word"
+      class="gp-content-product-button group-active/button:!gp-text-inherit gp-relative gp-flex gp-h-full gp-items-center gp-overflow-hidden gp-break-words group-data-[state=loading]:gp-invisible [&_p]:gp-whitespace-pre-line gp-text button-text"
+    >
+      {{ section.settings.ggYIhVRLONw_outOfStockLabel_5716603 }}
+    </span>
+        </div>
+        
+    
+    
+  
+        </button>
+      </div>
+      <script {% if section.settings.section_preload == "false" %}class="gps-link" delay {% else %}src{% endif %}="https://assets.gemcommerce.com/assets-v2/gp-button-v7-5.js?v={{ shop.metafields.GEMPAGES.ASSETS_VERSION }}" defer="defer"></script>
+    </gp-button>
+  
+    </gp-product-button>
+    <script {% if section.settings.section_preload == "false" %}class="gps-link" delay {% else %}src{% endif %}="https://assets.gemcommerce.com/assets-v2/gp-product-button-v7-5.js?v={{ shop.metafields.GEMPAGES.ASSETS_VERSION }}" defer="defer"></script>
+  </div>
+  </gp-animation>
+  <script src="https://assets.gemcommerce.com/assets-v2/gp-animation-v7-5.js?v={{ shop.metafields.GEMPAGES.ASSETS_VERSION }}" defer="defer"></script>
+  <div gp-el-wrapper style="--bs:none;--bw:1px 1px 1px 1px;--bc:#121212;--shadow:none;--d:block;--d-mobile:block;--d-tablet:block;--op:100%;--pos:relative;--pos-mobile:relative;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--mb:0px;--pl:5px;--mb-mobile:0px;--pl-mobile:7px;--pr-mobile:5px;--top:-55px;--top-mobile:-32px" class="gHhn3TKFRu ">
+      {% unless product %}<p>{{ 'gempages.ProductTitle.product_not_found' | t }}</p>{% else %}
+      <gp-product-title
+        gp-data='{"setting":{"linkProduct":false},"uid":"gHhn3TKFRu"}'
+      >
+        
+    {% assign locationOrigin = request.origin | append: routes.root_url | split: '/' | join: '/' %}
+    <div data-id="gHhn3TKFRu"
+        class="gHhn3TKFRu"
+        style="--dynamic-source-color:#F4F4F4"
+      >
+      <div  >
+        <h2
+          data-gp-text
+          class="gp-text-g-text-1 gp-text-instant"
+          style="--w:100%;--tdt:auto;--ts:none;--ta:left;--line-clamp:2;--line-clamp-tablet:2;--line-clamp-mobile:0;--c:var(--g-c-text-1, text-1);--ff:var(--g-font-Trirong, 'Trirong'), var(--g-font-heading, heading);--weight:400;--size:16px;--size-tablet:18px;--size-mobile:16px;--lh:130%;--lh-tablet:130%;--lh-mobile:130%;word-break:break-word;overflow:hidden"
+        >
+          {{ product.title }}
+        </h2>
+      </div>
+    </div>
+    
+      </gp-product-title>
+      <script {% if section.settings.section_preload == "false" %}class="gps-link" delay {% else %}src{% endif %}="https://assets.gemcommerce.com/assets-v2/gp-product-title-v7-5.js?v={{ shop.metafields.GEMPAGES.ASSETS_VERSION }}" defer="defer"></script>
+    {% endunless %}
+      </div>
+  
+    <div
+      
+      style="--bs:none;--bw:1px 1px 1px 1px;--bc:#121212;--shadow:none;--d:block;--d-mobile:block;--d-tablet:block;--op:100%;--pos:relative;--pos-mobile:relative;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--mb:0px;--pl:3px;--mb-mobile:0px;--pl-mobile:7px;--top:-65px;--top-mobile:-45px;--ta:left;--bgc:transparent;--bgi:url();--bgp:50% 50%;--bgs:cover;--bgr:no-repeat;--bga:scroll"
+      data-keep-class="true"
+      class="gw3d-bzt2D gp-custom-code">
+      <div>
+    <!-- revie star-rating-widget start -->
+{% if product.metafields.revie.reviewData %}
+{% assign productId = product.metafields.revie.reviewProductList[0].product.productId | plus: 0 %}
+{% if product.id == productId %}
+<div class="shopify-product-revie" data-id="{{ product.id }}">
+<div id="revieStar"><div title="{{ product.metafields.revie.reviewData.reviewAverageValue }} Estrellas"><i data-starlist="{{ product.metafields.revie.reviewData.reviewAverageValue }}"></i><span>({{ product.metafields.revie.reviewData.reviewCount }})</span></div></div>
+</div>
+{% endif %}
+{% endif %}
+<style>
+   #revieStar [data-starlist] {text-align:left;font-style:normal;display:inline-block;position: relative;unicode-bidi: bidi-override;font-size: 20px;}
+#revieStar [data-starlist]::before { display:block;content: '☆☆☆☆☆';color: #FFC83D;}
+#revieStar [data-starlist]::after {white-space:nowrap;position:absolute;top:0;left:0;content: '★★★★★';width: 0;color: #FFC83D;overflow:hidden;height:100%;}
+#revieStar span{padding-left: 10px;line-height: 48px;}#revieStar [data-starlist^="0.1"]::after,[data-starlist^=".1"]::after{width:2%}#revieStar [data-starlist^="0.2"]::after,[data-starlist^=".2"]::after{width:4%}#revieStar [data-starlist^="0.3"]::after,[data-starlist^=".3"]::after{width:6%}#revieStar [data-starlist^="0.4"]::after,[data-starlist^=".4"]::after{width:8%}#revieStar [data-starlist^="0.5"]::after,[data-starlist^=".5"]::after{width:10%}#revieStar [data-starlist^="0.6"]::after,[data-starlist^=".6"]::after{width:12%}#revieStar [data-starlist^="0.7"]::after,[data-starlist^=".7"]::after{width:14%}#revieStar [data-starlist^="0.8"]::after,[data-starlist^=".8"]::after{width:16%}#revieStar [data-starlist^="0.9"]::after,[data-starlist^=".9"]::after{width:18%}#revieStar [data-starlist^="1"]::after{width:20%}#revieStar [data-starlist^="1.1"]::after{width:22%}#revieStar [data-starlist^="1.2"]::after{width:24%}#revieStar [data-starlist^="1.3"]::after{width:26%}#revieStar [data-starlist^="1.4"]::after{width:28%}#revieStar [data-starlist^="1.5"]::after{width:30%}#revieStar [data-starlist^="1.6"]::after{width:32%}#revieStar [data-starlist^="1.7"]::after{width:34%}#revieStar [data-starlist^="1.8"]::after{width:36%}#revieStar [data-starlist^="1.9"]::after{width:38%}#revieStar [data-starlist^="2"]::after{width:40%}#revieStar [data-starlist^="2.1"]::after{width:42%}#revieStar [data-starlist^="2.2"]::after{width:44%}#revieStar [data-starlist^="2.3"]::after{width:46%}#revieStar [data-starlist^="2.4"]::after{width:48%}#revieStar [data-starlist^="2.5"]::after{width:50%}#revieStar [data-starlist^="2.6"]::after{width:52%}#revieStar [data-starlist^="2.7"]::after{width:54%}#revieStar [data-starlist^="2.8"]::after{width:56%}#revieStar [data-starlist^="2.9"]::after{width:58%}#revieStar [data-starlist^="3"]::after{width:60%}#revieStar [data-starlist^="3.1"]::after{width:62%}#revieStar [data-starlist^="3.2"]::after{width:64%}#revieStar [data-starlist^="3.3"]::after{width:66%}#revieStar [data-starlist^="3.4"]::after{width:68%}#revieStar [data-starlist^="3.5"]::after{width:70%}#revieStar [data-starlist^="3.6"]::after{width:72%}#revieStar [data-starlist^="3.7"]::after{width:74%}#revieStar [data-starlist^="3.8"]::after{width:76%}#revieStar [data-starlist^="3.9"]::after{width:78%}#revieStar [data-starlist^="4"]::after{width:80%}#revieStar [data-starlist^="4.1"]::after{width:82%}#revieStar [data-starlist^="4.2"]::after{width:84%}#revieStar [data-starlist^="4.3"]::after{width:86%}#revieStar [data-starlist^="4.4"]::after{width:88%}#revieStar [data-starlist^="4.5"]::after{width:90%}#revieStar [data-starlist^="4.6"]::after{width:92%}#revieStar [data-starlist^="4.7"]::after{width:94%}#revieStar [data-starlist^="4.8"]::after{width:96%}#revieStar [data-starlist^="4.9"]::after{width:98%}#revieStar [data-starlist^="5"]::after{width:100%}
+a.revie-star-content, a.revie-star-content:visited, a.revie-star-content span{color: #292929!important;text-decoration: none!important;font-size:16px;} 
+</style>
+    </div>
+    </div>
+  
+      <gp-product-price
+        id="shopify-text-element-gGLSV664nN" data-id="gGLSV664nN"
+        class="gp-product-price group-data-[state=loading]:gp-invisible data-[hidden=true]:!gp-hidden gGLSV664nN"
+        style="--bs:none;--bw:1px 1px 1px 1px;--bc:#121212;--shadow:none;--d:block;--d-mobile:block;--d-tablet:block;--op:100%;--pos:relative;--pos-mobile:relative;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--mb:11px;--pl:3px;--mb-mobile:2px;--pt-mobile:8px;--pl-mobile:7px;--pb-mobile:0px;--top:-75px;--top-mobile:-60px"
+        gp-data='{"priceType":"regular","uid":"gGLSV664nN","locale":"{{shop.locale}}","currency":"{{shop.currency}}","moneyFormat":"{{ shop.money_format | replace: '"', '\\"' | escape }}"}'
+      >
+        
+    {% assign locationOrigin = request.origin | append: routes.root_url | split: '/' | join: '/' %}
+    <div id="p-price-gGLSV664nN" data-id
+        
+        style="--dynamic-source-color:#F4F4F4"
+      >
+      <div  >
+        <div
+          data-gp-text
+          class="gp-price gp-money gp-decoration-g-text-2 gp-text-g-text-2 gp-text-instant"
+          style="--w:100%;--tdc:var(--g-c-text-2, text-2);--tdt:1px;--ts:none;--ta:left;--c:var(--g-c-text-2, text-2);--ff:var(--g-font-Trirong, 'Trirong'), var(--g-font-heading, heading);--weight:400;--size:18px;--size-tablet:18px;--size-mobile:16px;--lh:130%;--lh-tablet:130%;--lh-mobile:130%;word-break:break-word;overflow:hidden;--tdl:"
+        >
+          
+     {% if variant.price %}
+       {{ variant.price | money}}
+     {% endif %}
+   
+        </div>
+      </div>
+    </div>
+    
+      </gp-product-price>
+      <script {% if section.settings.section_preload == "false" %}class="gps-link" delay {% else %}src{% endif %}="https://assets.gemcommerce.com/assets-v2/gp-product-price-v7-5.js?v={{ shop.metafields.GEMPAGES.ASSETS_VERSION }}" defer="defer"></script>
+  <div gp-el-wrapper style="--bs:none;--bw:1px 1px 1px 1px;--bc:#121212;--shadow:none;--d:block;--d-mobile:block;--d-tablet:block;--op:100%;--pos:relative;--pos-mobile:relative;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--pl-mobile:7px;--top:-50px;--top-mobile:-45px" class="g5u4Y2qD4T ">
+      
+    {%- assign total_combinations = 1 -%}
+    {% for option in product.options_with_values %}{%- assign total_combinations = total_combinations | times: option.values.size -%}{% endfor %}
+    <gp-product-variants
+      data-id="g5u4Y2qD4T" has-pre-selected="true" class
+      gp-data='{
+        "setting":{"blankText":"Please select an option","column":{"desktop":1},"combineFullWidth":{"desktop":true},"combineHeight":"45px","combineWidth":{"desktop":"100%"},"hasOnlyDefaultVariant":false,"hasPreSelected":true,"label":true,"layout":{"desktop":"vertical","mobile":"vertical"},"optionAlign":{"desktop":"left"},"optionType":"singleOption","price":true,"showAsSwatches":true,"soldOutStyle":"disable","variantPresets":[{"isEdited":true,"optionName":"base","optionType":"rectangle_list","presets":{"rectangle_list":{"height":"45px","optionBgColor":{"active":"bg-3","hover":"bg-3","normal":"bg-3"},"optionBorder":{"active":{"border":"solid","borderType":"style-3","borderWidth":"2px","color":"line-3","isCustom":false,"width":"2px 2px 2px 2px"},"hover":{"border":"solid","borderType":"style-3","borderWidth":"1px","color":"line-3","isCustom":false,"width":"1px 1px 1px 1px"},"normal":{"border":"solid","borderType":"style-2","borderWidth":"1px","color":"line-2","isCustom":false,"width":"1px 1px 1px 1px"}},"optionHasShadow":{"active":false,"hover":false,"normal":false},"optionRounded":{"active":{"bblr":"0px","bbrr":"0px","btlr":"0px","btrr":"0px","radiusType":"custom"},"hover":{"bblr":"0px","bbrr":"0px","btlr":"0px","btrr":"0px","radiusType":"custom"},"normal":{"bblr":"0px","bbrr":"0px","btlr":"0px","btrr":"0px","radiusType":"custom"}},"optionShadow":{"active":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"shadow-1"},"hover":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"shadow-1"},"normal":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"shadow-1"}},"optionTextColor":{"active":"text-2","hover":"text-2","normal":"text-2"},"spacing":"16px","width":{"desktop":""}}}},{"isEdited":true,"optionName":"Sabor","optionType":"dropdown","presets":{"dropdown":{"height":"45px","optionBgColor":{"active":"bg-3","hover":"bg-3","normal":"bg-3"},"optionBorder":{"active":{"border":"solid","borderType":"style-3","borderWidth":"2px","color":"line-3","isCustom":false,"width":"2px 2px 2px 2px"},"hover":{"border":"solid","borderType":"style-3","borderWidth":"1px","color":"line-3","isCustom":false,"width":"1px 1px 1px 1px"},"normal":{"border":"solid","borderType":"style-2","borderWidth":"1px","color":"line-2","isCustom":false,"width":"1px 1px 1px 1px"}},"optionHasShadow":{"active":false,"hover":false,"normal":false},"optionRounded":{"active":{"bblr":"999999px","bbrr":"999999px","btlr":"999999px","btrr":"999999px","radiusType":"custom"},"hover":{"bblr":"999999px","bbrr":"999999px","btlr":"999999px","btrr":"999999px","radiusType":"custom"},"normal":{"bblr":"999999px","bbrr":"999999px","btlr":"999999px","btrr":"999999px","radiusType":"custom"}},"optionShadow":{"active":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"shadow-1"},"hover":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"shadow-1"},"normal":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"shadow-1"}},"optionTextColor":{"active":"text-2","hover":"text-2","normal":"text-2"},"width":{"desktop":"100%","mobile":"100%","tablet":"100%"}}}},{"isEdited":true,"optionName":"Color","optionType":"color","presets":{"color":{"height":"30px","optionBgColor":{"active":"bg-3","hover":"bg-3","normal":"bg-3"},"optionBorder":{"active":{"border":"solid","borderType":"style-3","borderWidth":"2px","color":"line-3","isCustom":false,"width":"2px 2px 2px 2px"},"hover":{"border":"solid","borderType":"style-3","borderWidth":"1px","color":"line-3","isCustom":false,"width":"1px 1px 1px 1px"},"normal":{"border":"solid","borderType":"style-2","borderWidth":"1px","color":"line-2","isCustom":false,"width":"1px 1px 1px 1px"}},"optionHasShadow":{"active":false,"hover":false,"normal":false},"optionRounded":{"active":{"bblr":"999999px","bbrr":"999999px","btlr":"999999px","btrr":"999999px","radiusType":"custom"},"hover":{"bblr":"999999px","bbrr":"999999px","btlr":"999999px","btrr":"999999px","radiusType":"custom"},"normal":{"bblr":"999999px","bbrr":"999999px","btlr":"999999px","btrr":"999999px","radiusType":"custom"}},"optionShadow":{"active":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"shadow-1"},"hover":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"shadow-1"},"normal":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"shadow-1"}},"optionTextColor":{"active":"text-2","hover":"text-2","normal":"text-2"},"spacing":"8px","width":{"desktop":"50px","mobile":"45px","tablet":"45px"}}}},{"isEdited":true,"optionName":"Talla","optionType":"rectangle_list","presets":{"rectangle_list":{"height":"20px","optionBgColor":{"active":"#000000","hover":"#FCF7E2","normal":"bg-3"},"optionBorder":{"active":{"border":"solid","borderType":"style-3","borderWidth":"2px","color":"line-3","isCustom":false,"width":"2px 2px 2px 2px"},"hover":{"border":"solid","borderType":"style-3","borderWidth":"1px","color":"line-3","isCustom":false,"width":"1px 1px 1px 1px"},"normal":{"border":"solid","borderType":"style-2","borderWidth":"1px","color":"rgba(125, 125, 125, 0.32)","isCustom":false,"width":"1px 1px 1px 1px"}},"optionHasShadow":{"active":false,"hover":false,"normal":false},"optionRounded":{"active":{"bblr":"999999px","bbrr":"999999px","btlr":"999999px","btrr":"999999px","radiusType":"custom"},"hover":{"bblr":"999999px","bbrr":"999999px","btlr":"999999px","btrr":"999999px","radiusType":"custom"},"normal":{"bblr":"999999px","bbrr":"999999px","btlr":"999999px","btrr":"999999px","radiusType":"custom"}},"optionShadow":{"active":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"shadow-1"},"hover":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"shadow-1"},"normal":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"shadow-1"}},"optionTextColor":{"active":"#ffffff","hover":"text-2","normal":"text-2"},"spacing":"8px","width":{"desktop":""}}}}]},
+        "styles":{"align":{"desktop":"left"},"dropdownItemWidth":{"desktop":"fill","mobile":"fill","tablet":"fill"},"fixedDropdownWidth":{"desktop":"240px"},"fullWidth":{"desktop":true},"labelColor":"text-2","labelGap":"0px","labelTypo":{"attrs":{"bold":true,"color":"text-1"},"custom":{"fontFamily":{"type":"google","value":"Trirong"},"fontSize":{"desktop":"14px","mobile":"12px","tablet":"14px"},"fontWeight":"400","hasShadowText":false,"lineHeight":{"desktop":"180%","mobile":"180%","tablet":"180%"},"textShadow":{"angle":37,"blur":"2px","color":"rgba(0, 0, 0, 0.6)","distance":"4px","type":"custom"}},"type":"paragraph-2"},"marginBottom":{"desktop":"5px","mobile":"5px"},"optionBgColor":{"active":"bg-3","hover":"bg-3","normal":"bg-3"},"optionBorder":{"active":{"border":"solid","borderType":"style-3","borderWidth":"2px","color":"line-3","isCustom":false,"width":"2px 2px 2px 2px"},"hover":{"border":"solid","borderType":"style-3","borderWidth":"1px","color":"line-3","isCustom":false,"width":"1px 1px 1px 1px"},"normal":{"border":"solid","borderType":"style-2","borderWidth":"1px","color":"line-2","isCustom":false,"width":"1px 1px 1px 1px"}},"optionHasShadow":{"active":false,"hover":false,"normal":false},"optionRounded":{"active":{"bblr":"0px","bbrr":"0px","btlr":"0px","btrr":"0px","radiusType":"custom"},"hover":{"bblr":"0px","bbrr":"0px","btlr":"0px","btrr":"0px","radiusType":"custom"},"normal":{"bblr":"0px","bbrr":"0px","btlr":"0px","btrr":"0px","radiusType":"custom"}},"optionShadow":{"active":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"none"},"hover":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"none"},"normal":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"none"}},"optionSpacing":"30px","optionTextColor":{"active":"text-2","hover":"text-2","normal":"text-2"},"optionTypo":{"custom":{"fontFamily":{"type":"google","value":"Quattrocento Sans"},"fontSize":{"desktop":"14px","mobile":"12px","tablet":"14px"},"fontWeight":"400","hasShadowText":false,"lineHeight":{"desktop":"120%","mobile":"100%","tablet":"180%"},"textShadow":{"angle":37,"blur":"2px","color":"rgba(0, 0, 0, 0.6)","distance":"4px","type":"custom"}},"type":"paragraph-2"},"swatchAutoWidth":{"desktop":true},"swatchHeight":{"desktop":"45px"},"swatchItemWidth":{"desktop":"auto"},"swatchSpacing":"var(--g-s-m)","swatchWidth":{"desktop":"80px"},"width":{"desktop":"100%"}},
+        "variants":{{product.variants | json | escape}},
+        "optionsWithValues": {{product.options_with_values | json | escape}},
+        "variantSelected": {{ variant | json | escape }},
+        "variantInventoryQuantity": {{product.variants | map: 'inventory_quantity' | json | escape}},
+        "variantInventoryPolicy": {{product.variants | map: 'inventory_policy' | json | escape}},
+        "moneyFormat": {{shop.money_format | json | escape}},
+        "productId": {{product.id | json | escape}},
+        "productUrl": {{product.url | json | escape}},
+        "productHandle": {{product.handle | json | escape}},
+        "displayState": {"desktop":true,"mobile":true,"tablet":true},
+        "totalVariantCombinations": {{total_combinations}},
+        "firstAvailableVariant": {{product.selected_or_first_available_variant | json | escape}}
+      }
+    '>
+      <div class="gp-hidden" style="--hvr-shadow: none; --hvr-shadow-tablet: none; --hvr-shadow-mobile: none"></div>
+      {%- assign options = product.options_with_values -%}
+      {%- assign variants = product.variants -%}
+      {% if options.size == 0 or options.size == 1 and variants.size == 1 and variants[0].title == 'Default Title' and variants[0].option1 == 'Default Title' %}<div></div>{% else %}<div
+            class="gp-flex gp-flex-col !gp-ml-0"
+            style="--gtc:repeat(1, minmax(0, 1fr));--ta:left;--w:100%;--w-tablet:100%;--w-mobile:100%"
+          >
+          
+      {%- assign presets = "base($2)rectangle_list($1)Sabor($2)dropdown($1)Color($2)color($1)Talla($2)rectangle_list" | split: '($1)' -%}
+      {% assign hiddenPresetOptions = "" | split: ',' %}
+      
+      {% assign all_option_names = options | map: 'name' %}
+      {% assign filtered_options_string = '' %}
+      {% assign delimiter = '||' %}
+      
+      {% for item_name in all_option_names %}
+        {% assign is_excluded = false %}
+        {% for exclude_name in hiddenPresetOptions %}
+          {% if item_name == exclude_name %}
+            {% assign is_excluded = true %}
+          {% endif %}
+        {% endfor %}
+        
+        {% unless is_excluded %}
+          {% if filtered_options_string == '' %}
+            {% assign filtered_options_string = item_name %}
+          {% else %}
+            {% assign filtered_options_string = filtered_options_string | append: delimiter | append: item_name %}
+          {% endif %}
+        {% endunless %}
+      {% endfor %}
+      
+      {% assign filtered_options_array = filtered_options_string | split: delimiter %}
+      
+      {% assign last_option_name = filtered_options_array | last %}
+      
+      {% for option in options %}
+        <div
+        option-name="{{option.name | escape}}"
+        class="gp-flex variant-inside gp-flex-col mobile:gp-flex-col gp-items-start {% if hiddenPresetOptions contains option.name %}gp-hidden{% endif %}"
+        style="--mb: 5px;--mb-mobile: 5px;{% if forloop.last or option.name == last_option_name %}--mb:0;--mb-mobile:0;--mb-tablet:0;{% endif %}"
+        >
+          {%- assign showVariantClass = 'variant-display' -%}
+          {%- assign optionName = option.name  -%}
+          {% for preset in presets %}
+            {%- assign presetDetail = preset | split: '($2)' -%}
+            {% if presetDetail[1] == 'dropdown' and presetDetail[0] == optionName %}{%- assign showVariantClass = '' -%} {%- break -%}{% endif %}
+          {% endfor %}
+          
+    {% assign locationOrigin = request.origin | append: routes.root_url | split: '/' | join: '/' %}
+    <div data-id
+        
+        style="--mb:0px;--mr:0px;--mb-tablet:0px;--mr-tablet:0px;--mb-mobile:0px;--mr-mobile:0px;--dynamic-source-color:#F4F4F4"
+      >
+      <div  style="--w:fit-content;--w-tablet:fit-content;--w-mobile:fit-content">
+        <legend
+          data-gp-text
+          class="{{showVariantClass}}  gp-text-instant"
+          style="--w:100%;--tdt:auto;--ts:none;--ff:var(--g-font-Trirong, 'Trirong'), var(--g-font-body, body);--size:14px;--size-tablet:14px;--size-mobile:12px;--lh:180%;--lh-tablet:180%;--lh-mobile:180%;--weight:bold;--c:var(--g-c-text-1, text-1);word-break:break-word;overflow:hidden;--tdl:"
+        >
+          {{option.name}}
+        </legend>
+      </div>
+    </div>
+    
+          <div
+              variant-option-name="{{option.name | escape}}"
+              class="variant-option-group gp-flex gp-w-full gp-flex-wrap gp-items-center  gp-justify-start"
+              style="--rg: var(--g-s-m);--cg: var(--g-s-m);"
+            >
+              {%- assign values = option.values -%}
+              {%- assign rootForloop = forloop.index0 -%}
+              
+                {%- if option.position == 1 -%}
+                  {%- assign selectedValue = variant.option1 -%}
+                {%- elsif option.position == 2 -%}
+                  {%- assign selectedValue = variant.option2 -%}
+                {%- else -%}
+                  {%- assign selectedValue = variant.option3 -%}
+                {%- endif -%}
+              
+              
+              
+      {% if shop.metafields.GEMPAGES.swatchesJSONFormat and shop.metafields.GEMPAGES.swatchesJSONFormat != blank %}
+    {%- assign optionRendered = false -%}
+    {%- assign swatches = shop.metafields.GEMPAGES.swatchesJSONFormat.value -%}
+
+    {% for swatch in swatches %}
+      {%- assign optionTitle = swatch.optionTitle -%}
+      {%- assign optionType = swatch.optionType -%}
+      {%- assign labelsString = "" -%}
+      {%- assign colorArraysString = "" -%}
+      {%- assign imageUrlsString = "" -%}
+
+      {% for optionValue in swatch.optionValues %}
+        {%- assign labelsString = labelsString | append: optionValue.label | append: '|||' -%}
+        {%- assign colorsJoined = optionValue.colors | join: '|||' -%}
+        {%- assign colorArraysString = colorArraysString | append: colorsJoined | append: '|||' -%}
+        {%- assign imageUrlsString = imageUrlsString | append: optionValue.imageUrl | append: '|||' -%}
+      {% endfor %}
+
+      {%- assign labels = labelsString | split: '|||' | slice: 0, labelsString.size -%}
+      {%- assign colorStrings = colorArraysString | split: '|||' | slice: 0, colorArraysString.size -%}
+      {%- assign imageUrls = imageUrlsString | split: '|||' | slice: 0, imageUrlsString.size -%}
+
+      {% if optionTitle == option.name %}
+        {%- assign variantPresetString = "base($1)rectangle_list($2)Sabor($1)dropdown($2)Color($1)color($2)Talla($1)rectangle_list" -%}
+        {%- assign optionName = option.name | replace: "'", "&apos;" | replace: '"', "&quot;" -%}
+        {%- assign items = variantPresetString | split: '($2)' -%}
+        {%- assign type = 'dropdown' -%}
+
+        {% for item in items %}
+          {%- assign itemPreset = item | split: '($1)' -%}
+          {% if itemPreset[0] == optionName %}{%- assign type = itemPreset[1] -%}{% endif %}
+          {% if itemPreset[0] == 'base' %}{%- assign type = itemPreset[1] -%}{% endif %}
+        {% endfor %}
+        {%- assign optionRendered = true -%}
+
+        
+    {% for value in values %}
+    {%- liquid
+      assign option_disabled = true
+      for variantItem in product.variants
+        case option.position
+          when 1
+            if variantItem.available and variantItem.option1 == value
+              assign option_disabled = false
+            endif
+          when 2
+            if variantItem.available and variantItem.option2 == value
+              assign option_disabled = false
+            endif
+          when 3
+            if variantItem.available and variantItem.option3 == value
+              assign option_disabled = false
+            endif
+        endcase
+      endfor
+    -%}
+    
+    <label
+      id="{{option.name | escape | handleize}}-{{value | escape | handleize}}"
+      for="{{product.id}}-g5u4Y2qD4T-{{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      class="option-item gp-group gp-relative !gp-block gp-child-item-g5u4Y2qD4T"
+      
+    >
+      <div class="gp-hidden !gp-max-w-[150px] gp-left-[50%] gp-translate-x-[-50%] gp-translate-y-0 gp-absolute gp-bottom-[calc(100%+20px)] gp-text-[12px] group-hover:gp-block gp-w-max gp-bg-[#333333] gp-text-[#F9F9F9] gp-px-[8px] gp-py-[4px] gp-rounded-[8px] gp-mb-[-10px] after:gp-content-[''] after:gp-absolute after:gp-p-[7px] after:gp-left-0 after:gp-w-full after:gp-bottom-[-10px]">
+        <p class="gp-text-[#F9F9F9]">{{value | escape}}</p>
+        <svg class="gp-absolute gp-left-[50%] gp-translate-x-[-50%] gp-translate-y-0 gp-z-10 gp-bottom-[-4px]" width="8" height="4" viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 10L0 0L16 1.41326e-06L8 10Z" fill="#333333"/>
+        </svg>
+      </div>
+      <input
+        checked="{%- if option.selected_value == value -%}true{% else %}false{%- endif -%}"
+        name="{{product.id}}-options-{{option.name | escape}}"
+        id="{{product.id}}-g5u4Y2qD4T-{{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+        value="{{value | escape}}"
+        type="radio"
+        class="gp-sr-only gp-absolute gp-bottom-0 gp-right-0"
+      />
+      <span class="gp-sr-only">{{value | escape}}</span>
+      <div
+        option-name="{{option.name | escape}}" option-name-value="{{value | escape}}" data-gp-option-value-id="{{value.id}}"
+        class="option-item-inner gp-w-auto gp-h-auto {% if option_disabled == true %}gp-opacity-20{% endif %}">
+        
+    {% case type %}
+      {% when "rectangle_list" %}
+      
+    <div
+      id="value-wrapper-{{option.name | escape | strip | handleize}}-{{value | escape | strip | handleize}}" option-data="{{option.name | escape}}" option-value="{{value | escape}}" option-position="{{option.position}}" data-gp-option-available="{{value.available}}" option-type="rectangle_list" data-disabled="{%- if option_disabled == true -%} disabled  {%- endif -%}" data-hidden="true"
+      class="gp-relative gp-flex gp-cursor-pointer gp-items-center gp-justify-center gp-text-center option-value-wrapper gp-overflow-hidden gp-w-full gp-h-full data-[disabled='disabled']:gp-pointer-events-none data-[disabled='disabled']:!gp-cursor-not-allowed
+  data-[hidden='false']:gp-flex {{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      style="{% if selectedValue == value %}--ff: var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight: 400;--size: 14px;--size-tablet: 14px;--size-mobile: 12px;--lh: 120%;--lh-tablet: 180%;--lh-mobile: 100%;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;-undefined-bblr: 0px;-undefined-bbrr: 0px;-undefined-btlr: 0px;-undefined-btrr: 0px;{% else %}--ff: var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight: 400;--size: 14px;--size-tablet: 14px;--size-mobile: 12px;--lh: 120%;--lh-tablet: 180%;--lh-mobile: 100%;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;-undefined-bblr: 0px;-undefined-bbrr: 0px;-undefined-btlr: 0px;-undefined-btrr: 0px;{% endif %}">
+      
+      <div
+        class="option-value gp-overflow-hidden gp-relative"
+        style=" --pl: 16px;--pr: 16px;--pl-tablet: 16px;--pr-tablet: 16px;--pl-mobile: 16px;--pr-mobile: 16px;--pt: 0px;--pb: 0px;">
+         
+        <span class="gp-text-center" style="--ff:var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight:400;--size:14px;--size-tablet:14px;--size-mobile:12px;--lh:120%;--lh-tablet:180%;--lh-mobile:100%">{{value}}</span>
+      </div>
+    
+    </div>
+      {% when "color" %}
+      
+    {% assign colorsString = null %}
+    {% assign colors = null %}
+    {% for label in labels %}
+      {% if label == value %}
+        {% assign colorsString = colorStrings[forloop.index0] %}
+      {% endif %}
+    {% endfor %}
+    {% if colorsString != null %}
+      {% assign colors = colorsString | split: '|||' %}
+    {% endif %}
+    
+    <div
+      id="value-wrapper-{{option.name | escape | strip | handleize}}-{{value | escape | strip | handleize}}" option-data="{{option.name | escape}}" option-value="{{value | escape}}" option-position="{{option.position}}" data-gp-option-available="{{value.available}}" option-type="color" data-disabled="{%- if option_disabled == true -%} disabled  {%- endif -%}" data-hidden="true"
+      class="gp-relative gp-flex gp-cursor-pointer gp-items-center gp-justify-center gp-text-center option-value-wrapper gp-overflow-hidden gp-w-full gp-h-full data-[disabled='disabled']:gp-pointer-events-none data-[disabled='disabled']:!gp-cursor-not-allowed
+  data-[hidden='false']:gp-flex {{option.name | escape}}-{{option.position}}-{{ forloop.index }} gp-p-[4px]"
+      style="{% if selectedValue == value %}--ff: var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight: 400;--size: 14px;--size-tablet: 14px;--size-mobile: 12px;--lh: 120%;--lh-tablet: 180%;--lh-mobile: 100%;--minw: 32px;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;-undefined-bblr: 999999px;-undefined-bbrr: 999999px;-undefined-btlr: 999999px;-undefined-btrr: 999999px;{% else %}--ff: var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight: 400;--size: 14px;--size-tablet: 14px;--size-mobile: 12px;--lh: 120%;--lh-tablet: 180%;--lh-mobile: 100%;--minw: 32px;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;-undefined-bblr: 999999px;-undefined-bbrr: 999999px;-undefined-btlr: 999999px;-undefined-btrr: 999999px;{% endif %}">
+      {% if colors != null and colors.size > 0 %}
+      {% for color in colors %}
+          {% assign backgroundType = "background-color" %}
+          {% if color contains "linear-gradient" %}{% assign backgroundType = "background-image" %}{% endif %}
+          <div
+            class="color gp-relative gp-h-full gp-w-full gp-overflow-hidden gp-min-w-fit gp-flex gp-color-circle"
+            data-test="{{ backgroundType }}: {{ color }}"
+            style="{{ backgroundType }}: {{ color }}; {% if selectedValue == value %}--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;-undefined-bblr: 999999px;-undefined-bbrr: 999999px;-undefined-btlr: 999999px;-undefined-btrr: 999999px;{% else %}--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;-undefined-bblr: 999999px;-undefined-bbrr: 999999px;-undefined-btlr: 999999px;-undefined-btrr: 999999px;{% endif %}"></div>
+        {% endfor %}
+      {% else %}
+      <div
+        class="option-value gp-overflow-hidden gp-relative color gp-line-clamp-2 gp-flex gp-h-full gp-w-full gp-items-center gp-justify-center"
+        style="{% if selectedValue == value %}--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;-undefined-bblr: 999999px;-undefined-bbrr: 999999px;-undefined-btlr: 999999px;-undefined-btrr: 999999px;{% else %}--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;-undefined-bblr: 999999px;-undefined-bbrr: 999999px;-undefined-btlr: 999999px;-undefined-btrr: 999999px;{% endif %} ">
+         
+        <span class="gp-text-center  gp-overflow-hidden gp-text-ellipsis gp-px-1" style="--ff:var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight:400;--size:14px;--size-tablet:14px;--size-mobile:12px;--lh:120%;--lh-tablet:180%;--lh-mobile:100%">{{value}}</span>
+      </div>
+    {% endif %}
+    </div>
+  
+      {% when "image_shopify" %}
+      
+      {% assign imageUrl = null %}
+      {% for variant in variants %}
+        {% assign valueIncludesSelectedOption = false %}
+        {% for item in variant.options %}
+          {% if item == value %}
+          {% assign valueIncludesSelectedOption = true %}
+          {% endif %}
+        {% endfor %}
+        {% if valueIncludesSelectedOption and variant.featured_image or variant.featured_media%}
+          {% unless imageUrl %}
+            {% if variant.featured_media %}
+              {% assign imageUrl = variant.featured_media.preview_image.src | product_img_url: '200x'  %}
+            {% else %}
+              {% assign imageUrl = variant.featured_image.src | product_img_url: '200x'  %}
+            {% endif %}
+          {% endunless %}
+        {% endif %}
+      {% endfor %}
+      
+    <div
+      id="value-wrapper-{{option.name | escape | strip | handleize}}-{{value | escape | strip | handleize}}" option-data="{{option.name | escape}}" option-value="{{value | escape}}" option-position="{{option.position}}" data-gp-option-available="{{value.available}}" option-type="image_shopify" data-disabled="{%- if option_disabled == true -%} disabled  {%- endif -%}" data-hidden="true"
+      class="gp-relative gp-flex gp-cursor-pointer gp-items-center gp-justify-center gp-text-center option-value-wrapper gp-overflow-hidden gp-w-full gp-h-full data-[disabled='disabled']:gp-pointer-events-none data-[disabled='disabled']:!gp-cursor-not-allowed
+  data-[hidden='false']:gp-flex {{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      style="{% if selectedValue == value %}--ff: var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight: 400;--size: 14px;--size-tablet: 14px;--size-mobile: 12px;--lh: 120%;--lh-tablet: 180%;--lh-mobile: 100%;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;-undefined-bblr: 0px;-undefined-bbrr: 0px;-undefined-btlr: 0px;-undefined-btrr: 0px;{% else %}--ff: var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight: 400;--size: 14px;--size-tablet: 14px;--size-mobile: 12px;--lh: 120%;--lh-tablet: 180%;--lh-mobile: 100%;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;-undefined-bblr: 0px;-undefined-bbrr: 0px;-undefined-btlr: 0px;-undefined-btrr: 0px;{% endif %}">
+      {% if imageUrl != null and imageUrl != "" %}
+      <img class="gp-object-cover gp-rounded-none" style="width: 64px; height: 64px" src="{{imageUrl}}" alt="" />
+    {% else %}
+      <div
+        class="option-value gp-overflow-hidden gp-relative gp-flex gp-flex-col gp-justify-center gp-items-center gp-gap-[6px"
+        style=" --pl: 16px;--pr: 16px;--pl-tablet: 16px;--pr-tablet: 16px;--pl-mobile: 16px;--pr-mobile: 16px;--pt: 0px;--pb: 0px;">
+        <svg width="15" height="12" viewBox="0 0 15 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="2" fill="#D6D6D6"></circle><path d="M0.196854 10.6453L2.40968 8.05946C2.4846 7.97175 2.57719 7.9008 2.68141 7.85124C2.78562 7.80168 2.89913 7.77461 3.01452 7.77181C3.12991 7.76902 3.2446 7.79055 3.3511 7.835C3.45761 7.87945 3.55353 7.94583 3.63262 8.02981L4.66733 9.12714L8.71205 4.29464C8.79123 4.19995 8.89077 4.1243 9.00325 4.07333C9.11573 4.02236 9.23827 3.99737 9.36176 4.00022C9.48524 4.00307 9.6065 4.03369 9.71651 4.08979C9.82651 4.1459 9.92245 4.22605 9.99717 4.32429L14.8329 10.6772C14.9254 10.7989 14.982 10.9441 14.9964 11.0962C15.0107 11.2484 14.9823 11.4016 14.9144 11.5385C14.8464 11.6754 14.7415 11.7907 14.6115 11.8713C14.4815 11.952 14.3316 11.9948 14.1786 11.995L0.822048 12C0.664945 11.9999 0.511148 11.9549 0.378853 11.8703C0.246557 11.7857 0.141299 11.6649 0.0755311 11.5224C0.00976323 11.3799 -0.013762 11.2216 0.00773837 11.0661C0.0292388 10.9107 0.0948652 10.7646 0.196854 10.6453Z" fill="#D6D6D6"></path></svg>
+        <span class="gp-text-center  gp-overflow-hidden gp-text-ellipsis gp-px-1" style="--ff:var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight:400;--size:14px;--size-tablet:14px;--size-mobile:12px;--lh:120%;--lh-tablet:180%;--lh-mobile:100%">{{value}}</span>
+      </div>
+    {% endif %}
+    </div>
+  
+      {% when "image" %}
+      
+    {% assign imageUrl = null %}
+    {% for label in labels %}
+    {% if label == value %}
+      {% assign imageUrl = imageUrls[forloop.index0] %}
+    {% endif %}
+    {% endfor %}
+    
+    <div
+      id="value-wrapper-{{option.name | escape | strip | handleize}}-{{value | escape | strip | handleize}}" option-data="{{option.name | escape}}" option-value="{{value | escape}}" option-position="{{option.position}}" data-gp-option-available="{{value.available}}" option-type="image" data-disabled="{%- if option_disabled == true -%} disabled  {%- endif -%}" data-hidden="true"
+      class="gp-relative gp-flex gp-cursor-pointer gp-items-center gp-justify-center gp-text-center option-value-wrapper gp-overflow-hidden gp-w-full gp-h-full data-[disabled='disabled']:gp-pointer-events-none data-[disabled='disabled']:!gp-cursor-not-allowed
+  data-[hidden='false']:gp-flex {{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      style="{% if selectedValue == value %}--ff: var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight: 400;--size: 14px;--size-tablet: 14px;--size-mobile: 12px;--lh: 120%;--lh-tablet: 180%;--lh-mobile: 100%;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;-undefined-bblr: 0px;-undefined-bbrr: 0px;-undefined-btlr: 0px;-undefined-btrr: 0px;{% else %}--ff: var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight: 400;--size: 14px;--size-tablet: 14px;--size-mobile: 12px;--lh: 120%;--lh-tablet: 180%;--lh-mobile: 100%;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;-undefined-bblr: 0px;-undefined-bbrr: 0px;-undefined-btlr: 0px;-undefined-btrr: 0px;{% endif %}">
+      {% if imageUrl != null and imageUrl != "" %}
+      <img class="gp-object-cover gp-rounded-none" style="width: 64px; height: 64px" src="{{imageUrl}}" alt="" />
+    {% else %}
+      <div
+        class="option-value gp-overflow-hidden gp-relative gp-flex gp-flex-col gp-justify-center gp-items-center gp-gap-[6px"
+        style=" --pl: 16px;--pr: 16px;--pl-tablet: 16px;--pr-tablet: 16px;--pl-mobile: 16px;--pr-mobile: 16px;--pt: 0px;--pb: 0px;">
+        <svg width="15" height="12" viewBox="0 0 15 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="2" fill="#D6D6D6"></circle><path d="M0.196854 10.6453L2.40968 8.05946C2.4846 7.97175 2.57719 7.9008 2.68141 7.85124C2.78562 7.80168 2.89913 7.77461 3.01452 7.77181C3.12991 7.76902 3.2446 7.79055 3.3511 7.835C3.45761 7.87945 3.55353 7.94583 3.63262 8.02981L4.66733 9.12714L8.71205 4.29464C8.79123 4.19995 8.89077 4.1243 9.00325 4.07333C9.11573 4.02236 9.23827 3.99737 9.36176 4.00022C9.48524 4.00307 9.6065 4.03369 9.71651 4.08979C9.82651 4.1459 9.92245 4.22605 9.99717 4.32429L14.8329 10.6772C14.9254 10.7989 14.982 10.9441 14.9964 11.0962C15.0107 11.2484 14.9823 11.4016 14.9144 11.5385C14.8464 11.6754 14.7415 11.7907 14.6115 11.8713C14.4815 11.952 14.3316 11.9948 14.1786 11.995L0.822048 12C0.664945 11.9999 0.511148 11.9549 0.378853 11.8703C0.246557 11.7857 0.141299 11.6649 0.0755311 11.5224C0.00976323 11.3799 -0.013762 11.2216 0.00773837 11.0661C0.0292388 10.9107 0.0948652 10.7646 0.196854 10.6453Z" fill="#D6D6D6"></path></svg>
+        <span class="gp-text-center  gp-overflow-hidden gp-text-ellipsis gp-px-1" style="--ff:var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight:400;--size:14px;--size-tablet:14px;--size-mobile:12px;--lh:120%;--lh-tablet:180%;--lh-mobile:100%">{{value}}</span>
+      </div>
+    {% endif %}
+    </div>
+  
+      {% else %}
+    {% endcase %}
+    
+      </div>
+    </label>{% endfor %}
+      {% if type == "dropdown" %}
+    <select
+      aria-label="{{option.name | escape}}" autocomplete="off" id="p-variant-dropdown-{{option.position}}" name="{%- if option -%}{{option.name | escape}}{% else %}Select Option{%- endif -%}" option-data="{{option.name}}" option-type="{{optionType}}" option-renderer="{{optionRendered}}"
+      class="dropdown-option-item gp-truncate gp-bg-auto gp-pl-4 gp-pr-6 gp-outline-none gp-shadow-none gp-border-g-line-2 hover:gp-border-g-line-3 active:gp-text-g-text-2 hover:gp-text-g-text-2 gp-text-g-text-2 active:gp-bg-g-bg-3 hover:gp-bg-g-bg-3 gp-bg-g-bg-3"
+      style="--w:true;--w-tablet:true;--w-mobile:true;--h:[object Object];--shadow:none;--hvr-shadow:none;--bg:var(--g-c-bg-3, bg-3);--bs:solid;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-2, line-2);--ff:var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight:400;--size:14px;--size-tablet:14px;--size-mobile:12px;--lh:120%;--lh-tablet:180%;--lh-mobile:100%;--hvr-c:var(--g-c-text-2, text-2);--c:var(--g-c-text-2, text-2);--hvr-bg:var(--g-c-bg-3, bg-3);--hvr-bs:solid;--hvr-bw:1px 1px 1px 1px;--hvr-bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--hvr-bblr:0px;--hvr-bbrr:0px;--hvr-btlr:0px;--hvr-btrr:0px;--focus-bblr:0px;--focus-bbrr:0px;--focus-btlr:0px;--focus-btrr:0px;-undefined-bblr:0px;-undefined-bbrr:0px;-undefined-btlr:0px;-undefined-btrr:0px;--ts:none;appearance:none;background-image:url(https://cdn.shopify.com/s/files/1/1827/4239/t/1/assets/ico-select.svg?v=155563818344741998551488860031);background-repeat:no-repeat;background-position:right 16px center"
+    >
+      
+      {% for value in values %}{%- liquid
+      assign option_disabled = true
+      for variantItem in product.variants
+        case option.position
+          when 1
+            if variantItem.available and variantItem.option1 == value
+              assign option_disabled = false
+            endif
+          when 2
+            if variantItem.available and variantItem.option2 == value
+              assign option_disabled = false
+            endif
+          when 3
+            if variantItem.available and variantItem.option3 == value
+              assign option_disabled = false
+            endif
+        endcase
+      endfor
+    -%}
+    {% if option_disabled == true %}{% if value == selectedValue %}<option disabled selected option-position="{{option.position}}"
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% else %}<option disabled 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% endif %}{% else %}{% if value == selectedValue %}<option selected option-position="{{option.position}}" 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% else %}<option 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+ option-position="{{option.position}}">{{value}}</option>{% endif %}{% endif %}{% endfor %}
+    </select>{% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if optionRendered == false %}
+    {% for value in values %}
+    {%- liquid
+      assign option_disabled = true
+      for variantItem in product.variants
+        case option.position
+          when 1
+            if variantItem.available and variantItem.option1 == value
+              assign option_disabled = false
+            endif
+          when 2
+            if variantItem.available and variantItem.option2 == value
+              assign option_disabled = false
+            endif
+          when 3
+            if variantItem.available and variantItem.option3 == value
+              assign option_disabled = false
+            endif
+        endcase
+      endfor
+    -%}
+    
+    <label
+      id="{{option.name | escape | handleize}}-{{value | escape | handleize}}"
+      for="{{product.id}}-g5u4Y2qD4T-{{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      class="option-item gp-group gp-relative !gp-block gp-child-item-g5u4Y2qD4T"
+      
+    >
+      <div class="gp-hidden !gp-max-w-[150px] gp-left-[50%] gp-translate-x-[-50%] gp-translate-y-0 gp-absolute gp-bottom-[calc(100%+20px)] gp-text-[12px] group-hover:gp-block gp-w-max gp-bg-[#333333] gp-text-[#F9F9F9] gp-px-[8px] gp-py-[4px] gp-rounded-[8px] gp-mb-[-10px] after:gp-content-[''] after:gp-absolute after:gp-p-[7px] after:gp-left-0 after:gp-w-full after:gp-bottom-[-10px]">
+        <p class="gp-text-[#F9F9F9]">{{value | escape}}</p>
+        <svg class="gp-absolute gp-left-[50%] gp-translate-x-[-50%] gp-translate-y-0 gp-z-10 gp-bottom-[-4px]" width="8" height="4" viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 10L0 0L16 1.41326e-06L8 10Z" fill="#333333"/>
+        </svg>
+      </div>
+      <input
+        checked="{%- if option.selected_value == value -%}true{% else %}false{%- endif -%}"
+        name="{{product.id}}-options-{{option.name | escape}}"
+        id="{{product.id}}-g5u4Y2qD4T-{{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+        value="{{value | escape}}"
+        type="radio"
+        class="gp-sr-only gp-absolute gp-bottom-0 gp-right-0"
+      />
+      <span class="gp-sr-only">{{value | escape}}</span>
+      <div
+        option-name="{{option.name | escape}}" option-name-value="{{value | escape}}" data-gp-option-value-id="{{value.id}}"
+        class="option-item-inner gp-w-auto gp-h-auto {% if option_disabled == true %}gp-opacity-20{% endif %}">
+        
+    
+    <div
+      id="value-wrapper-{{option.name | escape | strip | handleize}}-{{value | escape | strip | handleize}}" option-data="{{option.name | escape}}" option-value="{{value | escape}}" option-position="{{option.position}}" data-gp-option-available="{{value.available}}" option-type="optionType" data-disabled="{%- if option_disabled == true -%} disabled  {%- endif -%}" data-hidden="true"
+      class="gp-relative gp-flex gp-cursor-pointer gp-items-center gp-justify-center gp-text-center option-value-wrapper gp-overflow-hidden gp-w-full gp-h-full data-[disabled='disabled']:gp-pointer-events-none data-[disabled='disabled']:!gp-cursor-not-allowed
+  data-[hidden='false']:gp-flex {{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      style="{% if selectedValue == value %}--ff: var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight: 400;--size: 14px;--size-tablet: 14px;--size-mobile: 12px;--lh: 120%;--lh-tablet: 180%;--lh-mobile: 100%;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;-undefined-bblr: 0px;-undefined-bbrr: 0px;-undefined-btlr: 0px;-undefined-btrr: 0px;{% else %}--ff: var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight: 400;--size: 14px;--size-tablet: 14px;--size-mobile: 12px;--lh: 120%;--lh-tablet: 180%;--lh-mobile: 100%;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;-undefined-bblr: 0px;-undefined-bbrr: 0px;-undefined-btlr: 0px;-undefined-btrr: 0px;{% endif %}">
+      
+      <div
+        class="option-value gp-overflow-hidden gp-relative"
+        style=" --pl: 16px;--pr: 16px;--pl-tablet: 16px;--pr-tablet: 16px;--pl-mobile: 16px;--pr-mobile: 16px;--pt: 0px;--pb: 0px;">
+         
+        <span class="gp-text-center" style="--ff:var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight:400;--size:14px;--size-tablet:14px;--size-mobile:12px;--lh:120%;--lh-tablet:180%;--lh-mobile:100%">{{value}}</span>
+      </div>
+    
+    </div>
+    
+      </div>
+    </label>{% endfor %}
+      {% if false %}
+    <select
+      aria-label="{{option.name | escape}}" autocomplete="off" id="p-variant-dropdown-{{option.position}}" name="{%- if option -%}{{option.name | escape}}{% else %}Select Option{%- endif -%}" option-data="{{option.name}}" option-type="{{optionType}}" option-renderer="{{optionRendered}}"
+      class="dropdown-option-item gp-truncate gp-bg-auto gp-pl-4 gp-pr-6 gp-outline-none gp-shadow-none gp-border-g-line-2 hover:gp-border-g-line-3 active:gp-text-g-text-2 hover:gp-text-g-text-2 gp-text-g-text-2 active:gp-bg-g-bg-3 hover:gp-bg-g-bg-3 gp-bg-g-bg-3"
+      style="--w:true;--w-tablet:true;--w-mobile:true;--h:[object Object];--shadow:none;--hvr-shadow:none;--bg:var(--g-c-bg-3, bg-3);--bs:solid;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-2, line-2);--ff:var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight:400;--size:14px;--size-tablet:14px;--size-mobile:12px;--lh:120%;--lh-tablet:180%;--lh-mobile:100%;--hvr-c:var(--g-c-text-2, text-2);--c:var(--g-c-text-2, text-2);--hvr-bg:var(--g-c-bg-3, bg-3);--hvr-bs:solid;--hvr-bw:1px 1px 1px 1px;--hvr-bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--hvr-bblr:0px;--hvr-bbrr:0px;--hvr-btlr:0px;--hvr-btrr:0px;--focus-bblr:0px;--focus-bbrr:0px;--focus-btlr:0px;--focus-btrr:0px;-undefined-bblr:0px;-undefined-bbrr:0px;-undefined-btlr:0px;-undefined-btrr:0px;--ts:none;appearance:none;background-image:url(https://cdn.shopify.com/s/files/1/1827/4239/t/1/assets/ico-select.svg?v=155563818344741998551488860031);background-repeat:no-repeat;background-position:right 16px center"
+    >
+      
+      {% for value in values %}{%- liquid
+      assign option_disabled = true
+      for variantItem in product.variants
+        case option.position
+          when 1
+            if variantItem.available and variantItem.option1 == value
+              assign option_disabled = false
+            endif
+          when 2
+            if variantItem.available and variantItem.option2 == value
+              assign option_disabled = false
+            endif
+          when 3
+            if variantItem.available and variantItem.option3 == value
+              assign option_disabled = false
+            endif
+        endcase
+      endfor
+    -%}
+    {% if option_disabled == true %}{% if value == selectedValue %}<option disabled selected option-position="{{option.position}}"
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% else %}<option disabled 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% endif %}{% else %}{% if value == selectedValue %}<option selected option-position="{{option.position}}" 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% else %}<option 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+ option-position="{{option.position}}">{{value}}</option>{% endif %}{% endif %}{% endfor %}
+    </select>{% endif %}{% endif %}
+  {% else %}
+    {%- assign optionRendered = false -%}
+    {%- assign swatches = shop.metafields.GEMPAGES.swatches -%}
+    {%- assign swatchesItems = swatches | split: '($1)' -%}
+
+    {% for swatchesItem in swatchesItems %}
+      {%- assign colorArraysString = "" -%}
+      {%- assign labelsString = "" -%}
+      {%- assign imageUrlsString = "" -%}
+      {%- assign attrItems = swatchesItem | split: '($3)' -%}
+
+      {% for attrItem in attrItems %}
+          {%- assign attrs = attrItem | split: '($2)' -%}
+          {%- assign optionKey = attrs[0] -%}
+          {%- assign optionValue = attrs[1] -%}
+          
+            {% if optionKey == 'optionTitle' %}
+              {% assign optionTitle = optionValue %}
+            {% elsif optionKey == 'optionType' %}
+              {% assign optionType = optionValue %}
+            {% endif %}
+          
+
+          {% if optionKey == "optionValues" %}
+            {%- assign opValueItems = optionValue | split: '($4)' -%}
+            {% for opValueItem in opValueItems %}
+                {%- assign opValueItemAttrs = opValueItem | split: '($6)' -%}
+                {% for opValueItemAttr in opValueItemAttrs %}
+                    {%- assign attrs = opValueItemAttr | split: '($5)' -%}
+                    {%- assign opValueItemKey = attrs[0] -%}
+                    {%- assign opValueItemValue = attrs[1] -%}
+
+                    {% if opValueItemKey == "label" %}{%- assign labelsString = labelsString | append: opValueItemValue -%}
+                       {%- assign labelsString = labelsString | append: "($8)" -%}{% endif %}
+
+                    {% if opValueItemKey == "colors" %}{%- assign colorArraysString = colorArraysString | append: opValueItemValue -%}
+                       {%- assign colorArraysString = colorArraysString | append: "($8)" -%}{% endif %}
+
+                    {% if opValueItemKey == "imageUrl" %}{%- assign imageUrlsString = imageUrlsString | append: opValueItemValue -%}
+                       {%- assign imageUrlsString = imageUrlsString | append: "($8)" -%}{% endif %}
+                  {% endfor %}
+              {% endfor %}
+            {% endif %}
+        {% endfor %}
+
+      {%- assign labels = labelsString | split: '($8)' -%}
+      {%- assign colorStrings = colorArraysString | split: '($8)' -%}
+      {%- assign imageUrls = imageUrlsString | split: '($8)' -%}
+
+      {% if optionTitle == option.name %}
+        {%- assign variantPresetString = "base($1)rectangle_list($2)Sabor($1)dropdown($2)Color($1)color($2)Talla($1)rectangle_list" -%}
+        {%- assign optionName = option.name | replace: "'", "&apos;" | replace: '"', "&quot;" -%}
+        {%- assign items = variantPresetString | split:'($2)' -%}
+        {%- assign type = 'dropdown' -%}
+        {% for item in items %}
+            {%- assign itemPreset = item | split:'($1)' -%}
+            {% if itemPreset[0] == optionName %}{%- assign type = itemPreset[1] -%}{% endif %}
+            {% if itemPreset[0] == "base" %}{%- assign type = itemPreset[1] -%}{% endif %}
+          {% endfor %}
+        {%- assign optionRendered = true -%}
+        
+    {% for value in values %}
+    {%- liquid
+      assign option_disabled = true
+      for variantItem in product.variants
+        case option.position
+          when 1
+            if variantItem.available and variantItem.option1 == value
+              assign option_disabled = false
+            endif
+          when 2
+            if variantItem.available and variantItem.option2 == value
+              assign option_disabled = false
+            endif
+          when 3
+            if variantItem.available and variantItem.option3 == value
+              assign option_disabled = false
+            endif
+        endcase
+      endfor
+    -%}
+    
+    <label
+      id="{{option.name | escape | handleize}}-{{value | escape | handleize}}"
+      for="{{product.id}}-g5u4Y2qD4T-{{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      class="option-item gp-group gp-relative !gp-block gp-child-item-g5u4Y2qD4T"
+      
+    >
+      <div class="gp-hidden !gp-max-w-[150px] gp-left-[50%] gp-translate-x-[-50%] gp-translate-y-0 gp-absolute gp-bottom-[calc(100%+20px)] gp-text-[12px] group-hover:gp-block gp-w-max gp-bg-[#333333] gp-text-[#F9F9F9] gp-px-[8px] gp-py-[4px] gp-rounded-[8px] gp-mb-[-10px] after:gp-content-[''] after:gp-absolute after:gp-p-[7px] after:gp-left-0 after:gp-w-full after:gp-bottom-[-10px]">
+        <p class="gp-text-[#F9F9F9]">{{value | escape}}</p>
+        <svg class="gp-absolute gp-left-[50%] gp-translate-x-[-50%] gp-translate-y-0 gp-z-10 gp-bottom-[-4px]" width="8" height="4" viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 10L0 0L16 1.41326e-06L8 10Z" fill="#333333"/>
+        </svg>
+      </div>
+      <input
+        checked="{%- if option.selected_value == value -%}true{% else %}false{%- endif -%}"
+        name="{{product.id}}-options-{{option.name | escape}}"
+        id="{{product.id}}-g5u4Y2qD4T-{{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+        value="{{value | escape}}"
+        type="radio"
+        class="gp-sr-only gp-absolute gp-bottom-0 gp-right-0"
+      />
+      <span class="gp-sr-only">{{value | escape}}</span>
+      <div
+        option-name="{{option.name | escape}}" option-name-value="{{value | escape}}" data-gp-option-value-id="{{value.id}}"
+        class="option-item-inner gp-w-auto gp-h-auto {% if option_disabled == true %}gp-opacity-20{% endif %}">
+        
+    {% case type %}
+      {% when "rectangle_list" %}
+      
+    <div
+      id="value-wrapper-{{option.name | escape | strip | handleize}}-{{value | escape | strip | handleize}}" option-data="{{option.name | escape}}" option-value="{{value | escape}}" option-position="{{option.position}}" data-gp-option-available="{{value.available}}" option-type="rectangle_list" data-disabled="{%- if option_disabled == true -%} disabled  {%- endif -%}" data-hidden="true"
+      class="gp-relative gp-flex gp-cursor-pointer gp-items-center gp-justify-center gp-text-center option-value-wrapper gp-overflow-hidden gp-w-full gp-h-full data-[disabled='disabled']:gp-pointer-events-none data-[disabled='disabled']:!gp-cursor-not-allowed
+  data-[hidden='false']:gp-flex {{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      style="{% if selectedValue == value %}--ff: var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight: 400;--size: 14px;--size-tablet: 14px;--size-mobile: 12px;--lh: 120%;--lh-tablet: 180%;--lh-mobile: 100%;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;-undefined-bblr: 0px;-undefined-bbrr: 0px;-undefined-btlr: 0px;-undefined-btrr: 0px;{% else %}--ff: var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight: 400;--size: 14px;--size-tablet: 14px;--size-mobile: 12px;--lh: 120%;--lh-tablet: 180%;--lh-mobile: 100%;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;-undefined-bblr: 0px;-undefined-bbrr: 0px;-undefined-btlr: 0px;-undefined-btrr: 0px;{% endif %}">
+      
+      <div
+        class="option-value gp-overflow-hidden gp-relative"
+        style=" --pl: 16px;--pr: 16px;--pl-tablet: 16px;--pr-tablet: 16px;--pl-mobile: 16px;--pr-mobile: 16px;--pt: 0px;--pb: 0px;">
+         
+        <span class="gp-text-center" style="--ff:var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight:400;--size:14px;--size-tablet:14px;--size-mobile:12px;--lh:120%;--lh-tablet:180%;--lh-mobile:100%">{{value}}</span>
+      </div>
+    
+    </div>
+      {% when "color" %}
+      
+    {% assign colorsString = null %}
+    {% assign colors = null %}
+    {% for label in labels %}
+      {% if label == value %}
+        {% assign colorsString = colorStrings[forloop.index0] %}
+      {% endif %}
+    {% endfor %}
+    {% if colorsString != null %}
+      {% assign colors = colorsString | split: '|||' %}
+    {% endif %}
+    
+    <div
+      id="value-wrapper-{{option.name | escape | strip | handleize}}-{{value | escape | strip | handleize}}" option-data="{{option.name | escape}}" option-value="{{value | escape}}" option-position="{{option.position}}" data-gp-option-available="{{value.available}}" option-type="color" data-disabled="{%- if option_disabled == true -%} disabled  {%- endif -%}" data-hidden="true"
+      class="gp-relative gp-flex gp-cursor-pointer gp-items-center gp-justify-center gp-text-center option-value-wrapper gp-overflow-hidden gp-w-full gp-h-full data-[disabled='disabled']:gp-pointer-events-none data-[disabled='disabled']:!gp-cursor-not-allowed
+  data-[hidden='false']:gp-flex {{option.name | escape}}-{{option.position}}-{{ forloop.index }} gp-p-[4px]"
+      style="{% if selectedValue == value %}--ff: var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight: 400;--size: 14px;--size-tablet: 14px;--size-mobile: 12px;--lh: 120%;--lh-tablet: 180%;--lh-mobile: 100%;--minw: 32px;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;-undefined-bblr: 999999px;-undefined-bbrr: 999999px;-undefined-btlr: 999999px;-undefined-btrr: 999999px;{% else %}--ff: var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight: 400;--size: 14px;--size-tablet: 14px;--size-mobile: 12px;--lh: 120%;--lh-tablet: 180%;--lh-mobile: 100%;--minw: 32px;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;-undefined-bblr: 999999px;-undefined-bbrr: 999999px;-undefined-btlr: 999999px;-undefined-btrr: 999999px;{% endif %}">
+      {% if colors != null and colors.size > 0 %}
+      {% for color in colors %}
+          {% assign backgroundType = "background-color" %}
+          {% if color contains "linear-gradient" %}{% assign backgroundType = "background-image" %}{% endif %}
+          <div
+            class="color gp-relative gp-h-full gp-w-full gp-overflow-hidden gp-min-w-fit gp-flex gp-color-circle"
+            data-test="{{ backgroundType }}: {{ color }}"
+            style="{{ backgroundType }}: {{ color }}; {% if selectedValue == value %}--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;-undefined-bblr: 999999px;-undefined-bbrr: 999999px;-undefined-btlr: 999999px;-undefined-btrr: 999999px;{% else %}--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;-undefined-bblr: 999999px;-undefined-bbrr: 999999px;-undefined-btlr: 999999px;-undefined-btrr: 999999px;{% endif %}"></div>
+        {% endfor %}
+      {% else %}
+      <div
+        class="option-value gp-overflow-hidden gp-relative color gp-line-clamp-2 gp-flex gp-h-full gp-w-full gp-items-center gp-justify-center"
+        style="{% if selectedValue == value %}--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;-undefined-bblr: 999999px;-undefined-bbrr: 999999px;-undefined-btlr: 999999px;-undefined-btrr: 999999px;{% else %}--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;-undefined-bblr: 999999px;-undefined-bbrr: 999999px;-undefined-btlr: 999999px;-undefined-btrr: 999999px;{% endif %} ">
+         
+        <span class="gp-text-center  gp-overflow-hidden gp-text-ellipsis gp-px-1" style="--ff:var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight:400;--size:14px;--size-tablet:14px;--size-mobile:12px;--lh:120%;--lh-tablet:180%;--lh-mobile:100%">{{value}}</span>
+      </div>
+    {% endif %}
+    </div>
+  
+      {% when "image_shopify" %}
+      
+      {% assign imageUrl = null %}
+      {% for variant in variants %}
+        {% assign valueIncludesSelectedOption = false %}
+        {% for item in variant.options %}
+          {% if item == value %}
+          {% assign valueIncludesSelectedOption = true %}
+          {% endif %}
+        {% endfor %}
+        {% if valueIncludesSelectedOption and variant.featured_image or variant.featured_media%}
+          {% unless imageUrl %}
+            {% if variant.featured_media %}
+              {% assign imageUrl = variant.featured_media.preview_image.src | product_img_url: '200x'  %}
+            {% else %}
+              {% assign imageUrl = variant.featured_image.src | product_img_url: '200x'  %}
+            {% endif %}
+          {% endunless %}
+        {% endif %}
+      {% endfor %}
+      
+    <div
+      id="value-wrapper-{{option.name | escape | strip | handleize}}-{{value | escape | strip | handleize}}" option-data="{{option.name | escape}}" option-value="{{value | escape}}" option-position="{{option.position}}" data-gp-option-available="{{value.available}}" option-type="image_shopify" data-disabled="{%- if option_disabled == true -%} disabled  {%- endif -%}" data-hidden="true"
+      class="gp-relative gp-flex gp-cursor-pointer gp-items-center gp-justify-center gp-text-center option-value-wrapper gp-overflow-hidden gp-w-full gp-h-full data-[disabled='disabled']:gp-pointer-events-none data-[disabled='disabled']:!gp-cursor-not-allowed
+  data-[hidden='false']:gp-flex {{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      style="{% if selectedValue == value %}--ff: var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight: 400;--size: 14px;--size-tablet: 14px;--size-mobile: 12px;--lh: 120%;--lh-tablet: 180%;--lh-mobile: 100%;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;-undefined-bblr: 0px;-undefined-bbrr: 0px;-undefined-btlr: 0px;-undefined-btrr: 0px;{% else %}--ff: var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight: 400;--size: 14px;--size-tablet: 14px;--size-mobile: 12px;--lh: 120%;--lh-tablet: 180%;--lh-mobile: 100%;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;-undefined-bblr: 0px;-undefined-bbrr: 0px;-undefined-btlr: 0px;-undefined-btrr: 0px;{% endif %}">
+      {% if imageUrl != null and imageUrl != "" %}
+      <img class="gp-object-cover gp-rounded-none" style="width: 64px; height: 64px" src="{{imageUrl}}" alt="" />
+    {% else %}
+      <div
+        class="option-value gp-overflow-hidden gp-relative gp-flex gp-flex-col gp-justify-center gp-items-center gp-gap-[6px"
+        style=" --pl: 16px;--pr: 16px;--pl-tablet: 16px;--pr-tablet: 16px;--pl-mobile: 16px;--pr-mobile: 16px;--pt: 0px;--pb: 0px;">
+        <svg width="15" height="12" viewBox="0 0 15 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="2" fill="#D6D6D6"></circle><path d="M0.196854 10.6453L2.40968 8.05946C2.4846 7.97175 2.57719 7.9008 2.68141 7.85124C2.78562 7.80168 2.89913 7.77461 3.01452 7.77181C3.12991 7.76902 3.2446 7.79055 3.3511 7.835C3.45761 7.87945 3.55353 7.94583 3.63262 8.02981L4.66733 9.12714L8.71205 4.29464C8.79123 4.19995 8.89077 4.1243 9.00325 4.07333C9.11573 4.02236 9.23827 3.99737 9.36176 4.00022C9.48524 4.00307 9.6065 4.03369 9.71651 4.08979C9.82651 4.1459 9.92245 4.22605 9.99717 4.32429L14.8329 10.6772C14.9254 10.7989 14.982 10.9441 14.9964 11.0962C15.0107 11.2484 14.9823 11.4016 14.9144 11.5385C14.8464 11.6754 14.7415 11.7907 14.6115 11.8713C14.4815 11.952 14.3316 11.9948 14.1786 11.995L0.822048 12C0.664945 11.9999 0.511148 11.9549 0.378853 11.8703C0.246557 11.7857 0.141299 11.6649 0.0755311 11.5224C0.00976323 11.3799 -0.013762 11.2216 0.00773837 11.0661C0.0292388 10.9107 0.0948652 10.7646 0.196854 10.6453Z" fill="#D6D6D6"></path></svg>
+        <span class="gp-text-center  gp-overflow-hidden gp-text-ellipsis gp-px-1" style="--ff:var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight:400;--size:14px;--size-tablet:14px;--size-mobile:12px;--lh:120%;--lh-tablet:180%;--lh-mobile:100%">{{value}}</span>
+      </div>
+    {% endif %}
+    </div>
+  
+      {% when "image" %}
+      
+    {% assign imageUrl = null %}
+    {% for label in labels %}
+    {% if label == value %}
+      {% assign imageUrl = imageUrls[forloop.index0] %}
+    {% endif %}
+    {% endfor %}
+    
+    <div
+      id="value-wrapper-{{option.name | escape | strip | handleize}}-{{value | escape | strip | handleize}}" option-data="{{option.name | escape}}" option-value="{{value | escape}}" option-position="{{option.position}}" data-gp-option-available="{{value.available}}" option-type="image" data-disabled="{%- if option_disabled == true -%} disabled  {%- endif -%}" data-hidden="true"
+      class="gp-relative gp-flex gp-cursor-pointer gp-items-center gp-justify-center gp-text-center option-value-wrapper gp-overflow-hidden gp-w-full gp-h-full data-[disabled='disabled']:gp-pointer-events-none data-[disabled='disabled']:!gp-cursor-not-allowed
+  data-[hidden='false']:gp-flex {{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      style="{% if selectedValue == value %}--ff: var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight: 400;--size: 14px;--size-tablet: 14px;--size-mobile: 12px;--lh: 120%;--lh-tablet: 180%;--lh-mobile: 100%;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;-undefined-bblr: 0px;-undefined-bbrr: 0px;-undefined-btlr: 0px;-undefined-btrr: 0px;{% else %}--ff: var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight: 400;--size: 14px;--size-tablet: 14px;--size-mobile: 12px;--lh: 120%;--lh-tablet: 180%;--lh-mobile: 100%;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;-undefined-bblr: 0px;-undefined-bbrr: 0px;-undefined-btlr: 0px;-undefined-btrr: 0px;{% endif %}">
+      {% if imageUrl != null and imageUrl != "" %}
+      <img class="gp-object-cover gp-rounded-none" style="width: 64px; height: 64px" src="{{imageUrl}}" alt="" />
+    {% else %}
+      <div
+        class="option-value gp-overflow-hidden gp-relative gp-flex gp-flex-col gp-justify-center gp-items-center gp-gap-[6px"
+        style=" --pl: 16px;--pr: 16px;--pl-tablet: 16px;--pr-tablet: 16px;--pl-mobile: 16px;--pr-mobile: 16px;--pt: 0px;--pb: 0px;">
+        <svg width="15" height="12" viewBox="0 0 15 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="2" fill="#D6D6D6"></circle><path d="M0.196854 10.6453L2.40968 8.05946C2.4846 7.97175 2.57719 7.9008 2.68141 7.85124C2.78562 7.80168 2.89913 7.77461 3.01452 7.77181C3.12991 7.76902 3.2446 7.79055 3.3511 7.835C3.45761 7.87945 3.55353 7.94583 3.63262 8.02981L4.66733 9.12714L8.71205 4.29464C8.79123 4.19995 8.89077 4.1243 9.00325 4.07333C9.11573 4.02236 9.23827 3.99737 9.36176 4.00022C9.48524 4.00307 9.6065 4.03369 9.71651 4.08979C9.82651 4.1459 9.92245 4.22605 9.99717 4.32429L14.8329 10.6772C14.9254 10.7989 14.982 10.9441 14.9964 11.0962C15.0107 11.2484 14.9823 11.4016 14.9144 11.5385C14.8464 11.6754 14.7415 11.7907 14.6115 11.8713C14.4815 11.952 14.3316 11.9948 14.1786 11.995L0.822048 12C0.664945 11.9999 0.511148 11.9549 0.378853 11.8703C0.246557 11.7857 0.141299 11.6649 0.0755311 11.5224C0.00976323 11.3799 -0.013762 11.2216 0.00773837 11.0661C0.0292388 10.9107 0.0948652 10.7646 0.196854 10.6453Z" fill="#D6D6D6"></path></svg>
+        <span class="gp-text-center  gp-overflow-hidden gp-text-ellipsis gp-px-1" style="--ff:var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight:400;--size:14px;--size-tablet:14px;--size-mobile:12px;--lh:120%;--lh-tablet:180%;--lh-mobile:100%">{{value}}</span>
+      </div>
+    {% endif %}
+    </div>
+  
+      {% else %}
+    {% endcase %}
+    
+      </div>
+    </label>{% endfor %}
+      {% if type == "dropdown" %}
+    <select
+      aria-label="{{option.name | escape}}" autocomplete="off" id="p-variant-dropdown-{{option.position}}" name="{%- if option -%}{{option.name | escape}}{% else %}Select Option{%- endif -%}" option-data="{{option.name}}" option-type="{{optionType}}" option-renderer="{{optionRendered}}"
+      class="dropdown-option-item gp-truncate gp-bg-auto gp-pl-4 gp-pr-6 gp-outline-none gp-shadow-none gp-border-g-line-2 hover:gp-border-g-line-3 active:gp-text-g-text-2 hover:gp-text-g-text-2 gp-text-g-text-2 active:gp-bg-g-bg-3 hover:gp-bg-g-bg-3 gp-bg-g-bg-3"
+      style="--w:true;--w-tablet:true;--w-mobile:true;--h:[object Object];--shadow:none;--hvr-shadow:none;--bg:var(--g-c-bg-3, bg-3);--bs:solid;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-2, line-2);--ff:var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight:400;--size:14px;--size-tablet:14px;--size-mobile:12px;--lh:120%;--lh-tablet:180%;--lh-mobile:100%;--hvr-c:var(--g-c-text-2, text-2);--c:var(--g-c-text-2, text-2);--hvr-bg:var(--g-c-bg-3, bg-3);--hvr-bs:solid;--hvr-bw:1px 1px 1px 1px;--hvr-bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--hvr-bblr:0px;--hvr-bbrr:0px;--hvr-btlr:0px;--hvr-btrr:0px;--focus-bblr:0px;--focus-bbrr:0px;--focus-btlr:0px;--focus-btrr:0px;-undefined-bblr:0px;-undefined-bbrr:0px;-undefined-btlr:0px;-undefined-btrr:0px;--ts:none;appearance:none;background-image:url(https://cdn.shopify.com/s/files/1/1827/4239/t/1/assets/ico-select.svg?v=155563818344741998551488860031);background-repeat:no-repeat;background-position:right 16px center"
+    >
+      
+      {% for value in values %}{%- liquid
+      assign option_disabled = true
+      for variantItem in product.variants
+        case option.position
+          when 1
+            if variantItem.available and variantItem.option1 == value
+              assign option_disabled = false
+            endif
+          when 2
+            if variantItem.available and variantItem.option2 == value
+              assign option_disabled = false
+            endif
+          when 3
+            if variantItem.available and variantItem.option3 == value
+              assign option_disabled = false
+            endif
+        endcase
+      endfor
+    -%}
+    {% if option_disabled == true %}{% if value == selectedValue %}<option disabled selected option-position="{{option.position}}"
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% else %}<option disabled 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% endif %}{% else %}{% if value == selectedValue %}<option selected option-position="{{option.position}}" 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% else %}<option 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+ option-position="{{option.position}}">{{value}}</option>{% endif %}{% endif %}{% endfor %}
+    </select>{% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if optionRendered == false %}
+    {% for value in values %}
+    {%- liquid
+      assign option_disabled = true
+      for variantItem in product.variants
+        case option.position
+          when 1
+            if variantItem.available and variantItem.option1 == value
+              assign option_disabled = false
+            endif
+          when 2
+            if variantItem.available and variantItem.option2 == value
+              assign option_disabled = false
+            endif
+          when 3
+            if variantItem.available and variantItem.option3 == value
+              assign option_disabled = false
+            endif
+        endcase
+      endfor
+    -%}
+    
+    <label
+      id="{{option.name | escape | handleize}}-{{value | escape | handleize}}"
+      for="{{product.id}}-g5u4Y2qD4T-{{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      class="option-item gp-group gp-relative !gp-block gp-child-item-g5u4Y2qD4T"
+      
+    >
+      <div class="gp-hidden !gp-max-w-[150px] gp-left-[50%] gp-translate-x-[-50%] gp-translate-y-0 gp-absolute gp-bottom-[calc(100%+20px)] gp-text-[12px] group-hover:gp-block gp-w-max gp-bg-[#333333] gp-text-[#F9F9F9] gp-px-[8px] gp-py-[4px] gp-rounded-[8px] gp-mb-[-10px] after:gp-content-[''] after:gp-absolute after:gp-p-[7px] after:gp-left-0 after:gp-w-full after:gp-bottom-[-10px]">
+        <p class="gp-text-[#F9F9F9]">{{value | escape}}</p>
+        <svg class="gp-absolute gp-left-[50%] gp-translate-x-[-50%] gp-translate-y-0 gp-z-10 gp-bottom-[-4px]" width="8" height="4" viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 10L0 0L16 1.41326e-06L8 10Z" fill="#333333"/>
+        </svg>
+      </div>
+      <input
+        checked="{%- if option.selected_value == value -%}true{% else %}false{%- endif -%}"
+        name="{{product.id}}-options-{{option.name | escape}}"
+        id="{{product.id}}-g5u4Y2qD4T-{{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+        value="{{value | escape}}"
+        type="radio"
+        class="gp-sr-only gp-absolute gp-bottom-0 gp-right-0"
+      />
+      <span class="gp-sr-only">{{value | escape}}</span>
+      <div
+        option-name="{{option.name | escape}}" option-name-value="{{value | escape}}" data-gp-option-value-id="{{value.id}}"
+        class="option-item-inner gp-w-auto gp-h-auto {% if option_disabled == true %}gp-opacity-20{% endif %}">
+        
+    
+    <div
+      id="value-wrapper-{{option.name | escape | strip | handleize}}-{{value | escape | strip | handleize}}" option-data="{{option.name | escape}}" option-value="{{value | escape}}" option-position="{{option.position}}" data-gp-option-available="{{value.available}}" option-type="optionType" data-disabled="{%- if option_disabled == true -%} disabled  {%- endif -%}" data-hidden="true"
+      class="gp-relative gp-flex gp-cursor-pointer gp-items-center gp-justify-center gp-text-center option-value-wrapper gp-overflow-hidden gp-w-full gp-h-full data-[disabled='disabled']:gp-pointer-events-none data-[disabled='disabled']:!gp-cursor-not-allowed
+  data-[hidden='false']:gp-flex {{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      style="{% if selectedValue == value %}--ff: var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight: 400;--size: 14px;--size-tablet: 14px;--size-mobile: 12px;--lh: 120%;--lh-tablet: 180%;--lh-mobile: 100%;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;-undefined-bblr: 0px;-undefined-bbrr: 0px;-undefined-btlr: 0px;-undefined-btrr: 0px;{% else %}--ff: var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight: 400;--size: 14px;--size-tablet: 14px;--size-mobile: 12px;--lh: 120%;--lh-tablet: 180%;--lh-mobile: 100%;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;-undefined-bblr: 0px;-undefined-bbrr: 0px;-undefined-btlr: 0px;-undefined-btrr: 0px;{% endif %}">
+      
+      <div
+        class="option-value gp-overflow-hidden gp-relative"
+        style=" --pl: 16px;--pr: 16px;--pl-tablet: 16px;--pr-tablet: 16px;--pl-mobile: 16px;--pr-mobile: 16px;--pt: 0px;--pb: 0px;">
+         
+        <span class="gp-text-center" style="--ff:var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight:400;--size:14px;--size-tablet:14px;--size-mobile:12px;--lh:120%;--lh-tablet:180%;--lh-mobile:100%">{{value}}</span>
+      </div>
+    
+    </div>
+    
+      </div>
+    </label>{% endfor %}
+      {% if false %}
+    <select
+      aria-label="{{option.name | escape}}" autocomplete="off" id="p-variant-dropdown-{{option.position}}" name="{%- if option -%}{{option.name | escape}}{% else %}Select Option{%- endif -%}" option-data="{{option.name}}" option-type="{{optionType}}" option-renderer="{{optionRendered}}"
+      class="dropdown-option-item gp-truncate gp-bg-auto gp-pl-4 gp-pr-6 gp-outline-none gp-shadow-none gp-border-g-line-2 hover:gp-border-g-line-3 active:gp-text-g-text-2 hover:gp-text-g-text-2 gp-text-g-text-2 active:gp-bg-g-bg-3 hover:gp-bg-g-bg-3 gp-bg-g-bg-3"
+      style="--w:true;--w-tablet:true;--w-mobile:true;--h:[object Object];--shadow:none;--hvr-shadow:none;--bg:var(--g-c-bg-3, bg-3);--bs:solid;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-2, line-2);--ff:var(--g-font-Quattrocento-Sans, 'Quattrocento Sans'), var(--g-font-body, body);--weight:400;--size:14px;--size-tablet:14px;--size-mobile:12px;--lh:120%;--lh-tablet:180%;--lh-mobile:100%;--hvr-c:var(--g-c-text-2, text-2);--c:var(--g-c-text-2, text-2);--hvr-bg:var(--g-c-bg-3, bg-3);--hvr-bs:solid;--hvr-bw:1px 1px 1px 1px;--hvr-bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--hvr-bblr:0px;--hvr-bbrr:0px;--hvr-btlr:0px;--hvr-btrr:0px;--focus-bblr:0px;--focus-bbrr:0px;--focus-btlr:0px;--focus-btrr:0px;-undefined-bblr:0px;-undefined-bbrr:0px;-undefined-btlr:0px;-undefined-btrr:0px;--ts:none;appearance:none;background-image:url(https://cdn.shopify.com/s/files/1/1827/4239/t/1/assets/ico-select.svg?v=155563818344741998551488860031);background-repeat:no-repeat;background-position:right 16px center"
+    >
+      
+      {% for value in values %}{%- liquid
+      assign option_disabled = true
+      for variantItem in product.variants
+        case option.position
+          when 1
+            if variantItem.available and variantItem.option1 == value
+              assign option_disabled = false
+            endif
+          when 2
+            if variantItem.available and variantItem.option2 == value
+              assign option_disabled = false
+            endif
+          when 3
+            if variantItem.available and variantItem.option3 == value
+              assign option_disabled = false
+            endif
+        endcase
+      endfor
+    -%}
+    {% if option_disabled == true %}{% if value == selectedValue %}<option disabled selected option-position="{{option.position}}"
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% else %}<option disabled 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% endif %}{% else %}{% if value == selectedValue %}<option selected option-position="{{option.position}}" 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% else %}<option 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+ option-position="{{option.position}}">{{value}}</option>{% endif %}{% endif %}{% endfor %}
+    </select>{% endif %}{% endif %}
+  {% endif %}
+      
+          </div>
+      </div>{% endfor %}
+    
+        </div>{% endif %}
+    </gp-product-variants>
+
+    <script {% if section.settings.section_preload == "false" %}class="gps-link" delay {% else %}src{% endif %}="https://assets.gemcommerce.com/assets-v2/gp-product-variant-v7-5.js?v={{ shop.metafields.GEMPAGES.ASSETS_VERSION }}" defer="defer"></script>
+  
+      </div>
+    </div>
+
+      
+    </gp-row>
+  
+  
+          
+    
+        {%- endform -%}
+      </gp-product>
+  
+      {%- endif -%}
+      {% endfor %}
+      {%- if count == 0 and 0 == 0 -%}
+        {% if 'DynamicCollection' == 'RelatedProduct' -%}
+          <div>{{ 'gempages.ProductList.no_related_products' | t }}</div>
+        {% else %}
+          <div>{{ 'gempages.ProductList.no_products_found' | t }}</div>
+        {%- endif -%}
+      {%- endif -%}
+    
+      </gp-same-height>
+    
+      
+    </div>
+  
+    {%- endif -%}
+    
+          {%- assign product = gpBkProduct -%}
+          {%- assign products = gpBkProducts -%}
+        </div>
+      </div>
+    </div>
+  
+      <style id="custom-css-gKtQrsyu6o">
+        .gKtQrsyu6o {
+
+}
+.sealsubs-target-element, #_rsi-buy-now-button-overwrite {
+display: none !important;
+}
+      </style>
+    
+    </div>
+
+      
+    </gp-row>
+  
+  

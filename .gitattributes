@@ -1,0 +1,11 @@
+# El tema se sube a Shopify con finales de linea LF: se normalizan en el repo
+# para que los diffs no cambien archivos enteros entre Windows y macOS.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.gif binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.zip binary

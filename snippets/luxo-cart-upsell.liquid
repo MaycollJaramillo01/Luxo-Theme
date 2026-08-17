@@ -1,0 +1,53 @@
+{%- liquid
+  assign upsell_collection = settings.cart_drawer_collection
+  assign cart_product_ids = cart.items | map: 'product_id'
+  assign products_rendered = 0
+-%}
+
+{%- if upsell_collection != blank and cart != empty -%}
+  <aside class="luxo-cart-upsell" aria-labelledby="LuxoCartUpsellTitle">
+    <div class="luxo-cart-upsell__head">
+      <h3 id="LuxoCartUpsellTitle">Completa tu compra</h3>
+      <span>Elegidos para combinar</span>
+    </div>
+    <div class="luxo-cart-upsell__products">
+      {%- for product in upsell_collection.products -%}
+        {%- unless cart_product_ids contains product.id -%}
+          {%- if product.available and products_rendered < 3 -%}
+            {%- assign products_rendered = products_rendered | plus: 1 -%}
+            <div class="luxo-cart-upsell__product">
+              <a href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+                {%- if product.featured_image != blank -%}
+                  {{ product.featured_image | image_url: width: 180 | image_tag:
+                    width: 90,
+                    height: 105,
+                    loading: 'lazy',
+                    alt: ''
+                  }}
+                {%- endif -%}
+              </a>
+              <div>
+                <a href="{{ product.url }}">{{ product.title | escape }}</a>
+                <span class="luxo-cart-upsell__price">{{ product.price | money }}</span>
+              </div>
+              {%- if product.has_only_default_variant -%}
+                {%- assign upsell_form_id = 'LuxoCartUpsell-' | append: product.id -%}
+                <product-form data-hide-errors="true">
+                  {%- form 'product', product, id: upsell_form_id, novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+                    <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                    <button class="luxo-cart-upsell__add" type="submit" name="add" aria-label="Agregar {{ product.title | escape }} al carrito">
+                      <span aria-hidden="true">+</span>
+                      {%- render 'loading-spinner' -%}
+                    </button>
+                  {%- endform -%}
+                </product-form>
+              {%- else -%}
+                <a class="luxo-cart-upsell__add" href="{{ product.url }}" aria-label="Elegir opciones para {{ product.title | escape }}">→</a>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- endunless -%}
+      {%- endfor -%}
+    </div>
+  </aside>
+{%- endif -%}

@@ -1,0 +1,926 @@
+{% comment %}
+  Luxo — Landing 4 de Julio PRO · Hero responsive + grid editorial de productos
+  ------------------------------------------------------------------------
+  Una sola colección. Zona central = productos de esa colección.
+
+  VARIANTES PROFESIONALES (arreglo del desorden de tallas):
+    - Color y Talla se muestran en filas separadas y limpias.
+    - "Color": swatches de colores ÚNICOS (con imagen).
+    - "Talla": pills de tallas ÚNICAS; las agotadas salen tachadas.
+    - Selección tipo matriz: color + talla -> variante real (precio,
+      stock, imagen y botón se actualizan solos).
+    - Detecta el nombre real de cada opción para las etiquetas.
+
+  Robustez:
+    - .j4-reveal es FAIL-SAFE (visible por defecto; el JS solo anima).
+    - Resolución de colección simple y mensajes claros en el editor.
+
+  Nota: el descuento visual global solo cambia cómo se ven los precios aquí.
+        El descuento real se configura en Shopify (código/precio comparativo).
+{% endcomment %}
+
+{%- assign sid = 'Luxo4Jul-' | append: section.id -%}
+{%- assign benefit_blocks = section.blocks | where: 'type', 'benefit' -%}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+
+<div
+  id="{{ sid }}"
+  class="j4"
+  style="
+    --j4-bg: {{ section.settings.bg_color }};
+    --j4-surface: {{ section.settings.surface_color }};
+    --j4-text: {{ section.settings.text_color }};
+    --j4-muted: {{ section.settings.muted_color }};
+    --j4-red: {{ section.settings.red_color }};
+    --j4-navy: {{ section.settings.navy_color }};
+    --j4-gold: {{ section.settings.gold_color }};
+    --j4-cream: {{ section.settings.cream_color }};
+    --j4-radius: {{ section.settings.card_radius }}px;
+    --j4-gap: {{ section.settings.gap }}px;
+    --j4-pt: {{ section.settings.padding_top }}px;
+    --j4-pb: {{ section.settings.padding_bottom }}px;
+    --j4-maxw: {{ section.settings.container_width }}px;
+    --j4-ratio: {{ section.settings.card_ratio }};
+    --j4-fit: {{ section.settings.image_fit }};
+    --hero-minh-d: {{ section.settings.hero_min_height_desktop }}px;
+    --hero-minh-m: {{ section.settings.hero_min_height_mobile }}px;
+    --hero-overlay: {{ section.settings.hero_overlay | divided_by: 100.0 }};
+    --hero-desktop-position: {{ section.settings.hero_desktop_position }};
+    --hero-mobile-position: {{ section.settings.hero_mobile_position }};
+  "
+>
+
+  {%- comment -%} ── ZONA 1 · HERO RESPONSIVE SIN TEXTO ── {%- endcomment -%}
+  {%- if section.settings.show_hero -%}
+    {%- liquid
+      assign hero_desktop = section.settings.hero_image
+      assign hero_mobile = section.settings.hero_image_mobile
+      if hero_mobile == blank
+        assign hero_mobile = hero_desktop
+      endif
+      if hero_desktop == blank
+        assign hero_desktop = hero_mobile
+      endif
+    -%}
+
+    <section class="j4__hero" style="--hero-bg: {{ section.settings.hero_bg_color }};">
+      {%- if section.settings.hero_link != blank -%}
+        <a class="j4__hero__link" href="{{ section.settings.hero_link }}" aria-label="{{ section.settings.hero_link_label | escape }}">
+      {%- endif -%}
+
+      {%- if hero_desktop != blank -%}
+        <picture class="j4__hero__picture">
+          {%- if hero_mobile != blank -%}
+            <source
+              media="(max-width: 749px)"
+              srcset="
+                {{ hero_mobile | image_url: width: 480 }} 480w,
+                {{ hero_mobile | image_url: width: 640 }} 640w,
+                {{ hero_mobile | image_url: width: 750 }} 750w,
+                {{ hero_mobile | image_url: width: 960 }} 960w,
+                {{ hero_mobile | image_url: width: 1200 }} 1200w
+              "
+              sizes="100vw"
+            >
+          {%- endif -%}
+          {{
+            hero_desktop
+            | image_url: width: 2600
+            | image_tag:
+              loading: 'eager',
+              fetchpriority: 'high',
+              class: 'j4__hero__img',
+              sizes: '100vw',
+              widths: '900,1200,1600,2000,2400,2600',
+              alt: section.settings.hero_alt
+          }}
+        </picture>
+      {%- else -%}
+        <div class="j4__hero__placeholder">
+          {%- if request.design_mode -%}
+            <span>Selecciona la imagen del hero para desktop y mobile.</span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.hero_overlay > 0 -%}
+        <span class="j4__hero__overlay" aria-hidden="true"></span>
+      {%- endif -%}
+
+      {%- if section.settings.hero_link != blank -%}
+        </a>
+      {%- endif -%}
+    </section>
+  {%- endif -%}
+
+  {%- comment -%} ── ZONA 2 · BARRA PROMOCIONAL ── {%- endcomment -%}
+  {%- if section.settings.show_promo_bar and section.settings.promo_text != blank -%}
+    <div class="j4__promobar" style="--promo-bg: {{ section.settings.promo_bg }}; --promo-color: {{ section.settings.promo_color }};">
+      <div class="j4__promobar__track">
+        <div class="j4__promobar__item">
+          <span class="j4__dot" aria-hidden="true"></span>
+          <span>{{ section.settings.promo_text }}</span>
+          <span class="j4__dot" aria-hidden="true"></span>
+        </div>
+        <div class="j4__promobar__item" aria-hidden="true">
+          <span class="j4__dot"></span>
+          <span>{{ section.settings.promo_text }}</span>
+          <span class="j4__dot"></span>
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} ── ZONA 3 · PRODUCTOS DE LA COLECCIÓN ── {%- endcomment -%}
+  <section class="j4__shop" id="j4-coleccion">
+    <div class="j4__container">
+      {%- liquid
+        assign col = section.settings.collection
+        if col == blank and collection != blank
+          assign col = collection
+        endif
+      -%}
+
+      {%- if section.settings.collections_heading != blank or section.settings.collections_subheading != blank -%}
+        <header class="j4__head j4-reveal">
+          {%- if section.settings.collections_eyebrow != blank -%}
+            <p class="j4__head__eyebrow">
+              <span></span>{{ section.settings.collections_eyebrow }}<span></span>
+            </p>
+          {%- endif -%}
+          {%- if section.settings.collections_heading != blank -%}
+            <h2 class="j4__head__title">{{ section.settings.collections_heading }}</h2>
+          {%- endif -%}
+          {%- if section.settings.collections_subheading != blank -%}
+            <p class="j4__head__sub">{{ section.settings.collections_subheading }}</p>
+          {%- endif -%}
+        </header>
+      {%- endif -%}
+
+      {%- if col != blank and col.products_count > 0 -%}
+        {%- assign global_discount = section.settings.global_discount -%}
+
+        <ul class="j4__grid j4__grid--{{ section.settings.grid_style }}" role="list">
+          {%- for product in col.products limit: section.settings.max_products -%}
+            {%- liquid
+              assign cv = product.selected_or_first_available_variant
+              if cv == blank
+                assign cv = product.first_available_variant
+              endif
+              if cv == blank
+                assign cv = product.variants.first
+              endif
+
+              assign has_variants = false
+              unless product.has_only_default_variant
+                assign has_variants = true
+              endunless
+
+              assign cv_available = false
+              if cv != blank
+                assign cv_available = cv.available
+              elsif product.available
+                assign cv_available = true
+              endif
+
+              assign price_raw = cv.price | default: product.price_min
+              assign compare_raw = blank
+              if cv.compare_at_price != blank and cv.compare_at_price > price_raw
+                assign compare_raw = cv.compare_at_price
+              elsif product.compare_at_price_max != blank and product.compare_at_price_max > price_raw
+                assign compare_raw = product.compare_at_price_max
+              endif
+
+              assign price_text = price_raw | money
+              assign compare_text = ''
+              if compare_raw != blank
+                assign compare_text = compare_raw | money
+              endif
+
+              if global_discount > 0 and price_raw != blank
+                assign disc_mult = 100 | minus: global_discount | divided_by: 100.0
+                assign sale_price = price_raw | times: disc_mult
+                assign price_text = sale_price | money
+                assign compare_text = price_raw | money
+              endif
+
+              assign cv_img = blank
+              if cv.featured_media != blank
+                assign cv_img = cv.featured_media.preview_image
+              elsif cv.image != blank
+                assign cv_img = cv.image
+              elsif product.featured_media != blank
+                assign cv_img = product.featured_media.preview_image
+              endif
+
+              comment
+                Detección de opciones de color y talla por su nombre real.
+              endcomment
+              assign color_pos = 0
+              assign size_pos = 0
+              for option in product.options_with_values
+                assign on = option.name | downcase
+                if on contains 'color' or on contains 'colour' or on contains 'tono'
+                  assign color_pos = forloop.index
+                elsif on contains 'talla' or on contains 'size' or on contains 'tamaño' or on contains 'tamano' or on contains 'medida'
+                  assign size_pos = forloop.index
+                endif
+              endfor
+              if color_pos == 0 and size_pos == 0 and has_variants
+                assign size_pos = 1
+              endif
+
+              assign opt_color = blank
+              assign opt_size = blank
+              if color_pos > 0
+                assign cidx = color_pos | minus: 1
+                assign opt_color = product.options_with_values[cidx]
+              endif
+              if size_pos > 0
+                assign sidx = size_pos | minus: 1
+                assign opt_size = product.options_with_values[sidx]
+              endif
+
+              assign init_color = ''
+              case color_pos
+                when 1
+                  assign init_color = cv.option1
+                when 2
+                  assign init_color = cv.option2
+                when 3
+                  assign init_color = cv.option3
+              endcase
+              assign init_size = ''
+              case size_pos
+                when 1
+                  assign init_size = cv.option1
+                when 2
+                  assign init_size = cv.option2
+                when 3
+                  assign init_size = cv.option3
+              endcase
+
+              assign tile_class = 'j4__pitem'
+              assign tile_mod = forloop.index0 | modulo: 10
+              if section.settings.grid_style == 'editorial'
+                if forloop.index == 1 or tile_mod == 6
+                  assign tile_class = tile_class | append: ' j4__pitem--feature'
+                elsif tile_mod == 3 or tile_mod == 8
+                  assign tile_class = tile_class | append: ' j4__pitem--wide'
+                endif
+              endif
+            -%}
+
+            <li class="{{ tile_class }} j4-reveal" role="listitem">
+              <article class="j4__pcard" data-product-card data-product-url="{{ product.url }}" data-color-pos="{{ color_pos }}" data-size-pos="{{ size_pos }}">
+
+                <a class="j4__pcard__media-link" href="{{ product.url }}?variant={{ cv.id }}" aria-label="{{ product.title | escape }}" data-product-link tabindex="-1">
+                  <div class="j4__pcard__media">
+                    {%- if cv_img != blank -%}
+                      <img
+                        class="j4__pcard__img"
+                        src="{{ cv_img | image_url: width: 900 }}"
+                        srcset="{{ cv_img | image_url: width: 450 }} 450w, {{ cv_img | image_url: width: 700 }} 700w, {{ cv_img | image_url: width: 900 }} 900w, {{ cv_img | image_url: width: 1200 }} 1200w"
+                        sizes="(max-width: 749px) 50vw, 25vw"
+                        width="{{ cv_img.width }}"
+                        height="{{ cv_img.height }}"
+                        alt="{{ cv_img.alt | default: product.title | escape }}"
+                        loading="lazy"
+                        data-main-image
+                      >
+                    {%- else -%}
+                      {{ 'product-1' | placeholder_svg_tag: 'j4__pcard__img j4__pcard__img--placeholder' }}
+                    {%- endif -%}
+
+                    {%- if section.settings.show_badges -%}
+                      <div class="j4__pbadges">
+                        {%- if product.available == false -%}
+                          <span class="j4__pbadge j4__pbadge--out">{{ section.settings.badge_soldout }}</span>
+                        {%- elsif compare_text != blank -%}
+                          <span class="j4__pbadge j4__pbadge--sale">{{ section.settings.badge_sale }}</span>
+                        {%- elsif section.settings.new_tag != blank and product.tags contains section.settings.new_tag -%}
+                          <span class="j4__pbadge j4__pbadge--new">{{ section.settings.badge_new }}</span>
+                        {%- endif -%}
+                      </div>
+                    {%- endif -%}
+
+                    {%- if global_discount > 0 and product.available -%}
+                      <span class="j4__corner-badge">-{{ global_discount }}%</span>
+                    {%- endif -%}
+                  </div>
+                </a>
+
+                <div class="j4__pcard__body">
+                  <div class="j4__pcard__top">
+                    <a class="j4__pcard__title" href="{{ product.url }}?variant={{ cv.id }}" data-product-link>{{ product.title }}</a>
+
+                    <div class="j4__pcard__price{% if compare_text != blank %} is-sale{% endif %}" data-price-wrap>
+                      <span class="j4__price j4__price--now" data-price-current>{{ price_text }}</span>
+                      <s class="j4__price j4__price--was{% if compare_text == blank %} is-hidden{% endif %}" data-price-compare>{{ compare_text }}</s>
+                    </div>
+                  </div>
+
+                  {%- comment -%} COLOR (swatches únicos) {%- endcomment -%}
+                  {%- if section.settings.show_swatches and opt_color != blank and opt_color.values.size > 1 -%}
+                    <div class="j4__opt">
+                      <span class="j4__opt-label">{{ opt_color.name }}</span>
+                      <div class="j4__swatch-row" role="group" aria-label="{{ opt_color.name | escape }}">
+                        {%- for cval in opt_color.values -%}
+                          {%- liquid
+                            assign rep_img = blank
+                            for v in product.variants
+                              assign vc = v.option1
+                              case color_pos
+                                when 2
+                                  assign vc = v.option2
+                                when 3
+                                  assign vc = v.option3
+                              endcase
+                              if vc == cval and rep_img == blank
+                                assign vm = v.featured_media | default: v.image
+                                if vm != blank
+                                  assign rep_img = vm.preview_image | default: vm
+                                endif
+                              endif
+                            endfor
+                          -%}
+                          <button
+                            type="button"
+                            class="j4__swatch{% if cval == init_color %} active{% endif %}"
+                            data-color="{{ cval | escape }}"
+                            {% if rep_img != blank %}data-img="{{ rep_img | image_url: width: 900 }}"{% endif %}
+                            title="{{ cval | escape }}"
+                            aria-label="{{ cval | escape }}"
+                          >
+                            {%- if rep_img != blank -%}
+                              <img src="{{ rep_img | image_url: width: 96 }}" alt="{{ cval | escape }}" width="96" height="96" loading="lazy">
+                            {%- else -%}
+                              <span class="j4__swatch-fallback"></span>
+                            {%- endif -%}
+                          </button>
+                        {%- endfor -%}
+                      </div>
+                    </div>
+                  {%- endif -%}
+
+                  {%- comment -%} TALLA (pills únicos) {%- endcomment -%}
+                  {%- if section.settings.show_chips and opt_size != blank and opt_size.values.size > 1 -%}
+                    <div class="j4__opt">
+                      <span class="j4__opt-label">{{ opt_size.name }}</span>
+                      <div class="j4__size-row" role="group" aria-label="{{ opt_size.name | escape }}">
+                        {%- for sval in opt_size.values -%}
+                          <button
+                            type="button"
+                            class="j4__size{% if sval == init_size %} active{% endif %}"
+                            data-size="{{ sval | escape }}"
+                            aria-label="{{ opt_size.name | escape }} {{ sval | escape }}"
+                          >{{ sval }}</button>
+                        {%- endfor -%}
+                      </div>
+                    </div>
+                  {%- endif -%}
+
+                  {%- if section.settings.show_atc -%}
+                    <form class="j4__pform" method="post" action="/cart/add" data-product-form>
+                      <input type="hidden" name="id" value="{{ cv.id }}" data-variant-input>
+                      <button
+                        type="submit"
+                        class="j4__btn j4__btn--navy j4__atc{% unless cv_available %} j4__atc--disabled{% endunless %}"
+                        {% unless cv_available %}disabled{% endunless %}
+                        data-atc-button
+                      >
+                        {%- if cv_available -%}{{ section.settings.atc_label | default: 'Agregar al carrito' }}{%- else -%}{{ section.settings.badge_soldout }}{%- endif -%}
+                      </button>
+                    </form>
+                  {%- endif -%}
+                </div>
+
+                {%- if has_variants -%}
+                  <script type="application/json" data-variant-data>[
+                    {%- for v in product.variants -%}
+                      {%- liquid
+                        assign vnow = v.price | money
+                        assign vcmp = ''
+                        if global_discount > 0
+                          assign vd = 100 | minus: global_discount | divided_by: 100.0
+                          assign vcalc = v.price | times: vd
+                          assign vnow = vcalc | money
+                          assign vcmp = v.price | money
+                        elsif v.compare_at_price != blank and v.compare_at_price > v.price
+                          assign vcmp = v.compare_at_price | money
+                        endif
+                        assign vm = v.featured_media | default: v.image
+                        assign vimg = ''
+                        if vm != blank
+                          assign vpre = vm.preview_image | default: vm
+                          assign vimg = vpre | image_url: width: 900
+                        endif
+                      -%}
+                      {"id":{{ v.id }},"available":{{ v.available }},"o1":{{ v.option1 | json }},"o2":{{ v.option2 | json }},"o3":{{ v.option3 | json }},"price":{{ vnow | json }},"compare":{{ vcmp | json }},"img":{{ vimg | json }}}{% unless forloop.last %},{% endunless %}
+                    {%- endfor -%}
+                  ]</script>
+                {%- endif -%}
+
+              </article>
+            </li>
+          {%- endfor -%}
+        </ul>
+
+        {%- if section.settings.show_view_all -%}
+          <div class="j4__viewall-wrap j4-reveal">
+            <a class="j4__btn j4__btn--outline" href="{{ col.url }}">
+              {{ section.settings.view_all_label | default: 'Ver toda la colección' }}
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        {%- endif -%}
+
+      {%- elsif request.design_mode -%}
+        <div class="j4__empty">
+          {%- if col != blank -%}
+            <p>La colección <strong>{{ col.title }}</strong> está seleccionada, pero no tiene productos para mostrar.</p>
+            <p class="j4__empty__hint">Revisa que los productos estén <strong>activos</strong>, publicados en el canal <strong>Tienda online</strong> y que realmente pertenezcan a esa colección.</p>
+          {%- else -%}
+            <p>Selecciona la <strong>colección del 4 de Julio</strong> en los ajustes de la sección (campo “Colección a mostrar”).</p>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </section>
+
+  {%- comment -%} ── ZONA 4 · BENEFICIOS ── {%- endcomment -%}
+  {%- if section.settings.show_benefits and benefit_blocks.size > 0 -%}
+    <section class="j4__benefits">
+      <div class="j4__container">
+        <ul class="j4__benefits__grid" role="list">
+          {%- for block in benefit_blocks -%}
+            <li class="j4__benefit j4-reveal" {{ block.shopify_attributes }}>
+              <span class="j4__benefit__icon" aria-hidden="true">
+                {%- case block.settings.icon -%}
+                  {%- when 'truck' -%}<svg width="26" height="26" viewBox="0 0 32 32" fill="none"><rect x="2" y="8" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M22 12h5l3 6v4h-8V12Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="8" cy="25" r="2.5" stroke="currentColor" stroke-width="1.8"/><circle cx="24" cy="25" r="2.5" stroke="currentColor" stroke-width="1.8"/></svg>
+                  {%- when 'shield' -%}<svg width="26" height="26" viewBox="0 0 32 32" fill="none"><path d="M16 3 5 7.5V16c0 5.5 4.8 10.7 11 12 6.2-1.3 11-6.5 11-12V7.5L16 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+                  {%- when 'tag' -%}<svg width="26" height="26" viewBox="0 0 32 32" fill="none"><path d="M4 4h11l13 13-11 11L4 15V4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="10" cy="10" r="2" fill="currentColor"/></svg>
+                  {%- when 'gift' -%}<svg width="26" height="26" viewBox="0 0 32 32" fill="none"><rect x="4" y="13" width="24" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="2" y="8" width="28" height="5" rx="1.5" stroke="currentColor" stroke-width="1.8"/><path d="M16 8V29" stroke="currentColor" stroke-width="1.8"/></svg>
+                  {%- when 'heart' -%}<svg width="26" height="26" viewBox="0 0 32 32" fill="none"><path d="M16 27S4 20 4 11.5A7.5 7.5 0 0 1 16 7a7.5 7.5 0 0 1 12 4.5C28 20 16 27 16 27Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+                  {%- when 'star' -%}<svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7L12 2z"/></svg>
+                  {%- else -%}<svg width="26" height="26" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="12" stroke="currentColor" stroke-width="1.8"/><path d="M10 16l4.5 4.5 8-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                {%- endcase -%}
+              </span>
+              <div class="j4__benefit__copy">
+                <h4 class="j4__benefit__title">{{ block.settings.title }}</h4>
+                {%- if block.settings.text != blank -%}<p class="j4__benefit__text">{{ block.settings.text }}</p>{%- endif -%}
+              </div>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    </section>
+  {%- endif -%}
+
+  {%- comment -%} ── ZONA 5 · CTA FINAL ── {%- endcomment -%}
+  {%- if section.settings.show_final_cta -%}
+    <section class="j4__final" style="--final-bg: {{ section.settings.final_bg }}; --final-text: {{ section.settings.final_text }};">
+      <div class="j4__container j4__final__inner j4-reveal">
+        {%- if section.settings.final_eyebrow != blank -%}<p class="j4__final__eyebrow">{{ section.settings.final_eyebrow }}</p>{%- endif -%}
+        {%- if section.settings.final_heading != blank -%}<h2 class="j4__final__heading">{{ section.settings.final_heading }}</h2>{%- endif -%}
+        {%- if section.settings.final_sub != blank -%}<p class="j4__final__sub">{{ section.settings.final_sub }}</p>{%- endif -%}
+        {%- if section.settings.final_cta_label != blank -%}
+          <div class="j4__final__btns">
+            <a href="{{ section.settings.final_cta_url | default: '#j4-coleccion' }}" class="j4__btn j4__btn--white">{{ section.settings.final_cta_label }}</a>
+          </div>
+        {%- endif -%}
+      </div>
+    </section>
+  {%- endif -%}
+
+</div>
+
+<style>
+  #{{ sid }} {
+    --j4-font-head: "Bodoni Moda", Georgia, "Times New Roman", serif;
+    --j4-font-body: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--j4-bg);
+    color: var(--j4-text);
+    font-family: var(--j4-font-body);
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+  #{{ sid }} *, #{{ sid }} *::before, #{{ sid }} *::after { box-sizing: border-box; }
+  #{{ sid }} .j4__container { max-width: var(--j4-maxw); margin: 0 auto; padding: 0 2.4rem; }
+  @media (max-width: 749px) { #{{ sid }} .j4__container { padding: 0 1.4rem; } }
+
+  #{{ sid }} .j4__btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem; padding: 1.18rem 2.35rem; border-radius: 999px; font-family: var(--j4-font-body); font-size: 1.45rem; font-weight: 600; letter-spacing: 0.01em; text-decoration: none; cursor: pointer; border: 0.15rem solid transparent; transition: transform 0.18s ease, opacity 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease; white-space: nowrap; }
+  #{{ sid }} .j4__btn:hover { transform: translateY(-0.16rem); }
+  #{{ sid }} .j4__btn--navy { background: var(--j4-navy); color: #fff; }
+  #{{ sid }} .j4__btn--navy:hover { opacity: 0.92; }
+  #{{ sid }} .j4__btn--white { background: #fff; color: var(--j4-navy); }
+  #{{ sid }} .j4__btn--outline { background: transparent; color: var(--j4-navy); border-color: rgba(27,38,59,0.45); }
+  #{{ sid }} .j4__btn--outline:hover { background: var(--j4-navy); color: #fff; border-color: var(--j4-navy); }
+  #{{ sid }} .j4__btn svg { transition: transform 0.2s ease; }
+  #{{ sid }} .j4__btn:hover svg { transform: translateX(3px); }
+
+  /* HERO */
+  #{{ sid }} .j4__hero { position: relative; min-height: var(--hero-minh-d); background: var(--hero-bg); overflow: hidden; }
+  #{{ sid }} .j4__hero__link { display: block; min-height: inherit; color: inherit; text-decoration: none; }
+  #{{ sid }} .j4__hero__picture { display: block; width: 100%; min-height: inherit; }
+  #{{ sid }} .j4__hero__img { width: 100%; min-height: var(--hero-minh-d); height: var(--hero-minh-d); object-fit: cover; object-position: var(--hero-desktop-position); display: block; }
+  #{{ sid }} .j4__hero__overlay { position: absolute; inset: 0; background: rgba(0,0,0,var(--hero-overlay)); pointer-events: none; }
+  #{{ sid }} .j4__hero__placeholder { min-height: inherit; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--j4-navy), var(--j4-red)); color: #fff; font-size: 1.5rem; text-align: center; padding: 2rem; }
+  @media (max-width: 749px) {
+    #{{ sid }} .j4__hero { min-height: var(--hero-minh-m); }
+    #{{ sid }} .j4__hero__img { min-height: var(--hero-minh-m); height: var(--hero-minh-m); object-position: var(--hero-mobile-position); }
+  }
+
+  /* PROMO BAR */
+  #{{ sid }} .j4__promobar { background: var(--promo-bg, var(--j4-red)); color: var(--promo-color, #fff); overflow: hidden; }
+  #{{ sid }} .j4__promobar__track { display: flex; width: max-content; min-width: 100%; animation: j4Marquee 23s linear infinite; }
+  #{{ sid }} .j4__promobar:hover .j4__promobar__track { animation-play-state: paused; }
+  #{{ sid }} .j4__promobar__item { display: flex; align-items: center; justify-content: center; gap: 1.1rem; min-width: 100vw; padding: 1.15rem 2.4rem; font-size: 1.34rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; text-align: center; white-space: nowrap; }
+  #{{ sid }} .j4__dot { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: currentColor; display: inline-block; opacity: 0.8; }
+  @keyframes j4Marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @media (max-width: 749px) { #{{ sid }} .j4__promobar__item { font-size: 1.1rem; padding: 1rem 1.4rem; min-width: 160vw; } }
+
+  /* SHOP */
+  #{{ sid }} .j4__shop { padding: var(--j4-pt) 0 var(--j4-pb); position: relative; }
+  #{{ sid }} .j4__shop::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at 12% 4%, rgba(142,36,36,0.06), transparent 26rem), radial-gradient(circle at 90% 14%, rgba(27,38,59,0.05), transparent 30rem); }
+  #{{ sid }} .j4__shop > .j4__container { position: relative; }
+
+  #{{ sid }} .j4__head { text-align: center; max-width: 74rem; margin: 0 auto 5.2rem; }
+  #{{ sid }} .j4__head__eyebrow { display: inline-flex; align-items: center; gap: 1rem; font-size: 1.18rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--j4-red); margin: 0 0 1.2rem; }
+  #{{ sid }} .j4__head__eyebrow span { width: 3.2rem; height: 0.1rem; background: currentColor; opacity: 0.45; }
+  #{{ sid }} .j4__head__title { font-family: var(--j4-font-head); font-size: clamp(3.2rem, 4.7vw, 5.6rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.04; color: var(--j4-navy); margin: 0 0 1.4rem; }
+  #{{ sid }} .j4__head__sub { font-size: clamp(1.5rem, 1.9vw, 1.85rem); line-height: 1.62; color: var(--j4-muted); margin: 0 auto; max-width: 60rem; }
+
+  /* GRID */
+  #{{ sid }} .j4__grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--j4-gap); }
+  #{{ sid }} .j4__grid--editorial { grid-template-columns: repeat(12, minmax(0, 1fr)); grid-auto-flow: dense; align-items: stretch; }
+  #{{ sid }} .j4__grid--uniform { grid-template-columns: repeat({{ section.settings.columns_desktop }}, minmax(0, 1fr)); }
+  #{{ sid }} .j4__pitem { min-width: 0; grid-column: span 3; }
+  #{{ sid }} .j4__pitem--feature { grid-column: span 6; grid-row: span 2; }
+  #{{ sid }} .j4__pitem--wide { grid-column: span 6; }
+
+  /* CARD (superficie sólida, nítida) */
+  #{{ sid }} .j4__pcard { position: relative; display: flex; flex-direction: column; height: 100%; background: var(--j4-surface); border: 1px solid rgba(27,38,59,0.08); border-radius: var(--j4-radius); overflow: hidden; box-shadow: 0 0.3rem 1.5rem rgba(27,38,59,0.06); transition: transform 0.32s cubic-bezier(.2,.7,.2,1), box-shadow 0.32s ease, border-color 0.25s ease; }
+  #{{ sid }} .j4__pcard:hover { transform: translateY(-0.4rem); box-shadow: 0 1.4rem 3.6rem rgba(27,38,59,0.14); border-color: rgba(27,38,59,0.14); }
+  #{{ sid }} .j4__pcard__media-link { display: block; text-decoration: none; }
+  #{{ sid }} .j4__pcard__media { position: relative; aspect-ratio: var(--j4-ratio, 4/5); background: #f3efe9; overflow: hidden; }
+  #{{ sid }} .j4__pitem--feature .j4__pcard__media { aspect-ratio: 1/1; }
+  #{{ sid }} .j4__pcard__img { width: 100%; height: 100%; object-fit: var(--j4-fit, cover); object-position: center; display: block; transition: transform 0.7s cubic-bezier(.2,.7,.2,1); }
+  #{{ sid }} .j4__pcard:hover .j4__pcard__img { transform: scale(1.05); }
+  #{{ sid }} .j4__pcard__img--placeholder { object-fit: contain; padding: 16%; opacity: 0.42; }
+  #{{ sid }} .j4__pitem--wide .j4__pcard { display: grid; grid-template-columns: 46% 1fr; }
+  #{{ sid }} .j4__pitem--wide .j4__pcard__media-link, #{{ sid }} .j4__pitem--wide .j4__pcard__media { height: 100%; }
+  #{{ sid }} .j4__pitem--wide .j4__pcard__media { aspect-ratio: auto; min-height: 26rem; }
+
+  #{{ sid }} .j4__pbadges { position: absolute; top: 1.1rem; left: 1.1rem; display: flex; gap: 0.5rem; flex-wrap: wrap; z-index: 2; }
+  #{{ sid }} .j4__pbadge { font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; padding: 0.5rem 0.9rem; border-radius: 999px; line-height: 1; color: #fff; background: var(--j4-navy); }
+  #{{ sid }} .j4__pbadge--sale { background: var(--j4-red); }
+  #{{ sid }} .j4__pbadge--new { background: var(--j4-navy); }
+  #{{ sid }} .j4__pbadge--out { background: rgba(37,37,37,0.7); }
+  #{{ sid }} .j4__corner-badge { position: absolute; right: 1rem; bottom: 1rem; z-index: 2; min-width: 4.6rem; height: 4.6rem; padding: 0 0.6rem; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; background: var(--j4-red); color: #fff; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; box-shadow: 0 0.5rem 1.5rem rgba(142,36,36,0.3); }
+
+  #{{ sid }} .j4__pcard__body { flex: 1; display: flex; flex-direction: column; gap: 1.1rem; padding: 1.5rem 1.5rem 1.6rem; }
+  #{{ sid }} .j4__pitem--feature .j4__pcard__body { padding: 1.9rem 2rem 2rem; }
+  #{{ sid }} .j4__pitem--wide .j4__pcard__body { justify-content: center; }
+  #{{ sid }} .j4__pcard__top { display: flex; flex-direction: column; gap: 0.55rem; }
+  #{{ sid }} .j4__pcard__title { font-size: 1.45rem; font-weight: 600; line-height: 1.34; color: var(--j4-text); text-decoration: none; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  #{{ sid }} .j4__pitem--feature .j4__pcard__title { font-size: clamp(1.8rem, 2vw, 2.3rem); font-family: var(--j4-font-head); font-weight: 600; line-height: 1.16; color: var(--j4-navy); }
+  #{{ sid }} .j4__pcard__title:hover { color: var(--j4-red); }
+  #{{ sid }} .j4__pcard__price { display: flex; align-items: baseline; gap: 0.7rem; flex-wrap: wrap; }
+  #{{ sid }} .j4__price { white-space: nowrap; }
+  #{{ sid }} .j4__price--now { font-size: 1.65rem; font-weight: 700; color: var(--j4-text); letter-spacing: -0.02em; }
+  #{{ sid }} .j4__pitem--feature .j4__price--now { font-size: 2.1rem; }
+  #{{ sid }} .j4__pcard__price.is-sale .j4__price--now { color: var(--j4-red); }
+  #{{ sid }} .j4__price--was { font-size: 1.28rem; font-weight: 400; color: var(--j4-muted); text-decoration: line-through; }
+  #{{ sid }} .is-hidden { display: none !important; }
+
+  /* OPCIONES (color / talla) */
+  #{{ sid }} .j4__opt { display: flex; flex-direction: column; gap: 0.6rem; }
+  #{{ sid }} .j4__opt-label { font-size: 1.02rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--j4-muted); }
+  #{{ sid }} .j4__swatch-row, #{{ sid }} .j4__size-row { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+
+  #{{ sid }} .j4__swatch { width: 2.9rem; height: 2.9rem; padding: 0.2rem; border: 0.15rem solid rgba(27,38,59,0.16); background: #fff; border-radius: 50%; overflow: hidden; cursor: pointer; transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease; }
+  #{{ sid }} .j4__swatch img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
+  #{{ sid }} .j4__swatch-fallback { display: block; width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(135deg, #d9cdbd, #b9c0cc); }
+  #{{ sid }} .j4__swatch:hover { transform: scale(1.07); border-color: rgba(27,38,59,0.4); }
+  #{{ sid }} .j4__swatch.active { border-color: transparent; box-shadow: 0 0 0 0.2rem var(--j4-navy); transform: scale(1.07); }
+
+  #{{ sid }} .j4__size { min-width: 3.6rem; height: 3.6rem; padding: 0 1.1rem; display: inline-flex; align-items: center; justify-content: center; border: 0.13rem solid rgba(27,38,59,0.22); border-radius: 0.9rem; background: #fff; color: var(--j4-text); font-size: 1.22rem; font-weight: 600; line-height: 1; cursor: pointer; transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease; }
+  #{{ sid }} .j4__size:hover { border-color: var(--j4-navy); }
+  #{{ sid }} .j4__size.active { background: var(--j4-navy); border-color: var(--j4-navy); color: #fff; }
+  #{{ sid }} .j4__size.is-soldout { color: rgba(37,37,37,0.32); border-color: rgba(27,38,59,0.1); text-decoration: line-through; cursor: not-allowed; }
+  #{{ sid }} .j4__size.is-soldout.active { background: transparent; color: rgba(37,37,37,0.32); }
+
+  #{{ sid }} .j4__pform { margin-top: auto; padding-top: 0.4rem; }
+  #{{ sid }} .j4__atc { width: 100%; min-height: 4.4rem; font-size: 1.32rem; font-weight: 600; padding: 1rem 1.4rem; }
+  #{{ sid }} .j4__atc--disabled { background: rgba(37,37,37,0.1) !important; color: rgba(37,37,37,0.4) !important; cursor: not-allowed; transform: none !important; }
+  #{{ sid }} .j4__viewall-wrap { text-align: center; margin-top: 5.2rem; }
+  #{{ sid }} .j4__empty { text-align: center; padding: 5rem 2rem; border: 0.15rem dashed rgba(27,38,59,0.18); border-radius: 1.6rem; color: var(--j4-muted); font-size: 1.5rem; line-height: 1.6; background: rgba(255,255,255,0.6); }
+  #{{ sid }} .j4__empty__hint { margin-top: 0.8rem; font-size: 1.35rem; opacity: 0.85; }
+
+  @media (max-width: 1199px) {
+    #{{ sid }} .j4__pitem { grid-column: span 4; }
+    #{{ sid }} .j4__pitem--feature, #{{ sid }} .j4__pitem--wide { grid-column: span 6; }
+  }
+  @media (max-width: 899px) {
+    #{{ sid }} .j4__grid--editorial, #{{ sid }} .j4__grid--uniform { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(var(--j4-gap) * 0.72); }
+    #{{ sid }} .j4__pitem, #{{ sid }} .j4__pitem--feature, #{{ sid }} .j4__pitem--wide { grid-column: span 1; grid-row: auto; }
+    #{{ sid }} .j4__pitem--wide .j4__pcard { display: flex; }
+    #{{ sid }} .j4__pitem--wide .j4__pcard__media { aspect-ratio: var(--j4-ratio, 4/5); min-height: auto; }
+    #{{ sid }} .j4__pitem--feature .j4__pcard__media { aspect-ratio: var(--j4-ratio, 4/5); }
+    #{{ sid }} .j4__head { margin-bottom: 3.5rem; }
+    #{{ sid }} .j4__pcard__body, #{{ sid }} .j4__pitem--feature .j4__pcard__body { padding: 1.2rem 1.15rem 1.3rem; gap: 0.9rem; }
+    #{{ sid }} .j4__pcard__title, #{{ sid }} .j4__pitem--feature .j4__pcard__title { font-family: var(--j4-font-body); font-weight: 600; font-size: 1.3rem; line-height: 1.3; }
+    #{{ sid }} .j4__price--now, #{{ sid }} .j4__pitem--feature .j4__price--now { font-size: 1.42rem; }
+    #{{ sid }} .j4__corner-badge { min-width: 4rem; height: 4rem; font-size: 1.1rem; right: 0.8rem; bottom: 0.8rem; }
+    #{{ sid }} .j4__pbadges { top: 0.8rem; left: 0.8rem; }
+    #{{ sid }} .j4__pbadge { font-size: 0.9rem; padding: 0.45rem 0.7rem; }
+    #{{ sid }} .j4__swatch { width: 2.5rem; height: 2.5rem; }
+    #{{ sid }} .j4__size { min-width: 3.2rem; height: 3.2rem; font-size: 1.1rem; padding: 0 0.85rem; }
+    #{{ sid }} .j4__atc { min-height: 4rem; font-size: 1.18rem; }
+  }
+  @media (max-width: 380px) {
+    #{{ sid }} .j4__grid--editorial, #{{ sid }} .j4__grid--uniform { grid-template-columns: 1fr; }
+  }
+
+  /* BENEFITS */
+  #{{ sid }} .j4__benefits { padding: 0 0 var(--j4-pb); }
+  #{{ sid }} .j4__benefits__grid { list-style: none; margin: 0; padding: 3rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr)); gap: 2rem; background: var(--j4-surface); border: 1px solid rgba(27,38,59,0.08); border-radius: 2rem; box-shadow: 0 0.8rem 3rem rgba(27,38,59,0.06); }
+  #{{ sid }} .j4__benefit { display: flex; align-items: flex-start; gap: 1.25rem; }
+  #{{ sid }} .j4__benefit__icon { flex-shrink: 0; width: 4.6rem; height: 4.6rem; display: flex; align-items: center; justify-content: center; border-radius: 1.3rem; background: var(--j4-cream); color: var(--j4-red); }
+  #{{ sid }} .j4__benefit__title { font-family: var(--j4-font-body); font-size: 1.48rem; font-weight: 600; color: var(--j4-navy); margin: 0 0 0.35rem; }
+  #{{ sid }} .j4__benefit__text { font-size: 1.28rem; line-height: 1.5; color: var(--j4-muted); margin: 0; }
+  @media (max-width: 749px) { #{{ sid }} .j4__benefits__grid { padding: 2rem; border-radius: 1.6rem; } }
+
+  /* FINAL CTA */
+  #{{ sid }} .j4__final { background: var(--final-bg, var(--j4-navy)); color: var(--final-text, #fff); padding: 8.4rem 0; position: relative; overflow: hidden; }
+  #{{ sid }} .j4__final::before { content: ""; position: absolute; inset: 0; opacity: 0.4; background: radial-gradient(circle at 15% 20%, rgba(255,255,255,0.2), transparent 21rem), radial-gradient(circle at 85% 10%, rgba(231,190,149,0.22), transparent 25rem), radial-gradient(circle, rgba(255,255,255,0.45) 1px, transparent 1.4px); background-size: auto, auto, 54px 54px; pointer-events: none; }
+  #{{ sid }} .j4__final__inner { position: relative; text-align: center; display: flex; flex-direction: column; align-items: center; }
+  #{{ sid }} .j4__final__eyebrow { font-size: 1.18rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--j4-gold); margin: 0 0 1.5rem; }
+  #{{ sid }} .j4__final__heading { font-family: var(--j4-font-head); font-size: clamp(3.2rem, 5vw, 5.6rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.04; margin: 0 0 1.7rem; max-width: 21ch; }
+  #{{ sid }} .j4__final__sub { font-size: clamp(1.5rem, 2vw, 1.9rem); line-height: 1.58; opacity: 0.86; max-width: 50ch; margin: 0 0 3.2rem; }
+  #{{ sid }} .j4__final__btns { display: flex; flex-wrap: wrap; gap: 1.2rem; justify-content: center; }
+
+  /* REVEAL — FAIL-SAFE */
+  #{{ sid }} .j4-reveal { opacity: 1; transform: none; }
+  #{{ sid }}.j4--anim .j4-reveal { opacity: 0; transform: translateY(2.4rem); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(.2,.7,.2,1); }
+  #{{ sid }}.j4--anim .j4-reveal.is-visible { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    #{{ sid }} *, #{{ sid }} *::before, #{{ sid }} *::after { transition: none !important; animation: none !important; }
+    #{{ sid }} .j4-reveal { opacity: 1 !important; transform: none !important; }
+    #{{ sid }} .j4__promobar__track { animation: none; }
+  }
+</style>
+
+<script>
+  (function () {
+    var ATC_LABEL = {{ section.settings.atc_label | default: 'Agregar al carrito' | json }};
+    var SOLD_LABEL = {{ section.settings.badge_soldout | default: 'Agotado' | json }};
+
+    function initCard(card) {
+      if (card._j4Init) return;
+      card._j4Init = true;
+
+      var variants = [];
+      var dataEl = card.querySelector('[data-variant-data]');
+      if (dataEl) { try { variants = JSON.parse(dataEl.textContent); } catch (e) { variants = []; } }
+
+      var colorPos = parseInt(card.getAttribute('data-color-pos') || '0', 10);
+      var sizePos = parseInt(card.getAttribute('data-size-pos') || '0', 10);
+      var baseUrl = card.getAttribute('data-product-url') || '#';
+
+      var mainImg = card.querySelector('[data-main-image]');
+      var varInput = card.querySelector('[data-variant-input]');
+      var priceWrap = card.querySelector('[data-price-wrap]');
+      var priceNow = card.querySelector('[data-price-current]');
+      var priceWas = card.querySelector('[data-price-compare]');
+      var atcBtn = card.querySelector('[data-atc-button]');
+      var links = card.querySelectorAll('[data-product-link]');
+      var swatches = card.querySelectorAll('[data-color]');
+      var sizes = card.querySelectorAll('[data-size]');
+
+      if (!variants.length) return;
+
+      function optVal(v, pos) { return pos === 1 ? v.o1 : pos === 2 ? v.o2 : pos === 3 ? v.o3 : null; }
+
+      var state = { color: null, size: null };
+      var aSw = card.querySelector('[data-color].active');
+      if (aSw) state.color = aSw.getAttribute('data-color');
+      var aSz = card.querySelector('[data-size].active');
+      if (aSz) state.size = aSz.getAttribute('data-size');
+
+      function matchVariant() {
+        for (var i = 0; i < variants.length; i++) {
+          var v = variants[i];
+          var okC = !colorPos || optVal(v, colorPos) === state.color;
+          var okS = !sizePos || optVal(v, sizePos) === state.size;
+          if (okC && okS) return v;
+        }
+        return null;
+      }
+      function sizeAvailable(sz) {
+        for (var i = 0; i < variants.length; i++) {
+          var v = variants[i];
+          if (optVal(v, sizePos) === sz && (!colorPos || optVal(v, colorPos) === state.color) && v.available) return true;
+        }
+        return false;
+      }
+      function firstAvailableSize() {
+        for (var i = 0; i < variants.length; i++) {
+          var v = variants[i];
+          if ((!colorPos || optVal(v, colorPos) === state.color) && v.available) return optVal(v, sizePos);
+        }
+        return state.size;
+      }
+
+      function render() {
+        swatches.forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-color') === state.color); });
+        if (sizePos) {
+          sizes.forEach(function (b) {
+            var sz = b.getAttribute('data-size');
+            b.classList.toggle('is-soldout', !sizeAvailable(sz));
+            b.classList.toggle('active', sz === state.size);
+          });
+        }
+        var v = matchVariant();
+        if (!v) return;
+        if (varInput) varInput.value = v.id;
+        if (priceNow && v.price) priceNow.textContent = v.price;
+        if (priceWas && priceWrap) {
+          if (v.compare) {
+            priceWas.textContent = v.compare;
+            priceWas.classList.remove('is-hidden');
+            priceWrap.classList.add('is-sale');
+          } else {
+            priceWas.textContent = '';
+            priceWas.classList.add('is-hidden');
+            priceWrap.classList.remove('is-sale');
+          }
+        }
+        if (mainImg && v.img) { mainImg.src = v.img; mainImg.removeAttribute('srcset'); }
+        links.forEach(function (l) { l.href = baseUrl + '?variant=' + v.id; });
+        if (atcBtn) {
+          atcBtn.disabled = !v.available;
+          atcBtn.classList.toggle('j4__atc--disabled', !v.available);
+          atcBtn.textContent = v.available ? ATC_LABEL : SOLD_LABEL;
+        }
+      }
+
+      swatches.forEach(function (b) {
+        b.addEventListener('click', function () {
+          state.color = b.getAttribute('data-color');
+          var im = b.getAttribute('data-img');
+          if (mainImg && im) { mainImg.src = im; mainImg.removeAttribute('srcset'); }
+          if (sizePos && !sizeAvailable(state.size)) { state.size = firstAvailableSize(); }
+          render();
+        });
+      });
+      sizes.forEach(function (b) {
+        b.addEventListener('click', function () {
+          state.size = b.getAttribute('data-size');
+          render();
+        });
+      });
+
+      render();
+    }
+
+    function init(sectionId) {
+      var root = document.getElementById('Luxo4Jul-' + sectionId);
+      if (!root) return;
+
+      root.querySelectorAll('[data-product-card]').forEach(initCard);
+
+      var reveals = root.querySelectorAll('.j4-reveal');
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduce && 'IntersectionObserver' in window && reveals.length) {
+        root.classList.add('j4--anim');
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              io.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.08, rootMargin: '0px 0px -6% 0px' });
+        reveals.forEach(function (el) { io.observe(el); });
+        setTimeout(function () { reveals.forEach(function (el) { el.classList.add('is-visible'); }); }, 1600);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () { init('{{ section.id }}'); });
+    if (document.readyState !== 'loading') { init('{{ section.id }}'); }
+    document.addEventListener('shopify:section:load', function (e) {
+      if (e.detail && e.detail.sectionId === '{{ section.id }}') init('{{ section.id }}');
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Luxo | 4 de Julio Pro",
+  "tag": "section",
+  "class": "section-luxo-4julio-pro",
+  "settings": [
+    { "type": "header", "content": "Hero sin texto" },
+    { "type": "checkbox", "id": "show_hero", "label": "Mostrar hero", "default": true },
+    { "type": "image_picker", "id": "hero_image", "label": "Imagen hero desktop" },
+    { "type": "image_picker", "id": "hero_image_mobile", "label": "Imagen hero mobile" },
+    { "type": "text", "id": "hero_alt", "label": "Texto alternativo de imagen", "default": "Promoción Luxo Boutique 4 de Julio" },
+    { "type": "url", "id": "hero_link", "label": "Enlace del hero" },
+    { "type": "text", "id": "hero_link_label", "label": "Etiqueta accesible del enlace", "default": "Comprar promoción de 4 de Julio" },
+    { "type": "color", "id": "hero_bg_color", "label": "Color de fondo si no hay imagen", "default": "#f1f1f1" },
+    { "type": "range", "id": "hero_overlay", "label": "Oscurecer imagen", "min": 0, "max": 55, "step": 5, "unit": "%", "default": 0 },
+    { "type": "range", "id": "hero_min_height_desktop", "label": "Alto desktop", "min": 360, "max": 900, "step": 20, "unit": "px", "default": 620 },
+    { "type": "range", "id": "hero_min_height_mobile", "label": "Alto mobile", "min": 420, "max": 980, "step": 20, "unit": "px", "default": 760 },
+    { "type": "select", "id": "hero_desktop_position", "label": "Posición imagen desktop", "options": [ { "value": "center center", "label": "Centro" }, { "value": "left center", "label": "Izquierda" }, { "value": "right center", "label": "Derecha" }, { "value": "center top", "label": "Arriba" }, { "value": "center bottom", "label": "Abajo" } ], "default": "center center" },
+    { "type": "select", "id": "hero_mobile_position", "label": "Posición imagen mobile", "options": [ { "value": "center center", "label": "Centro" }, { "value": "left center", "label": "Izquierda" }, { "value": "right center", "label": "Derecha" }, { "value": "center top", "label": "Arriba" }, { "value": "center bottom", "label": "Abajo" } ], "default": "center center" },
+
+    { "type": "header", "content": "Barra promocional" },
+    { "type": "checkbox", "id": "show_promo_bar", "label": "Mostrar barra", "default": true },
+    { "type": "text", "id": "promo_text", "label": "Texto", "default": "4 de Julio en Luxo · 25% OFF en tus favoritos · Celebra todo el mes con estilo" },
+    { "type": "color", "id": "promo_bg", "label": "Fondo barra", "default": "#8E2424" },
+    { "type": "color", "id": "promo_color", "label": "Texto barra", "default": "#ffffff" },
+
+    { "type": "header", "content": "Colección 4 de Julio" },
+    { "type": "collection", "id": "collection", "label": "Colección a mostrar", "info": "Se mostrarán los productos de una sola colección." },
+    { "type": "text", "id": "collections_eyebrow", "label": "Eyebrow", "default": "Especial 4 de Julio" },
+    { "type": "text", "id": "collections_heading", "label": "Título", "default": "Celebra con 25% OFF en tus favoritos" },
+    { "type": "textarea", "id": "collections_subheading", "label": "Subtítulo", "default": "Un mes para consentirte, renovar tus esenciales y comprar esas piezas que tenías guardadas. Selección especial Luxo por tiempo limitado." },
+    { "type": "range", "id": "global_discount", "label": "Descuento visual global (%)", "info": "Solo visual. El descuento real debe configurarse en Shopify.", "min": 0, "max": 90, "step": 5, "default": 25 },
+    { "type": "range", "id": "max_products", "label": "Máximo de productos", "min": 3, "max": 36, "step": 1, "default": 12 },
+    { "type": "checkbox", "id": "show_view_all", "label": "Mostrar botón Ver toda la colección", "default": true },
+    { "type": "text", "id": "view_all_label", "label": "Texto del botón", "default": "Ver toda la promoción" },
+
+    { "type": "header", "content": "Grid y tarjetas" },
+    { "type": "select", "id": "grid_style", "label": "Diseño de grid", "options": [ { "value": "editorial", "label": "Editorial moderno" }, { "value": "uniform", "label": "Uniforme clásico" } ], "default": "editorial" },
+    { "type": "range", "id": "columns_desktop", "label": "Columnas escritorio si grid uniforme", "min": 2, "max": 5, "step": 1, "default": 4 },
+    { "type": "range", "id": "gap", "label": "Espacio entre tarjetas", "min": 8, "max": 40, "step": 2, "unit": "px", "default": 20 },
+    { "type": "range", "id": "card_radius", "label": "Radio de tarjetas", "min": 0, "max": 36, "step": 2, "unit": "px", "default": 18 },
+    { "type": "select", "id": "card_ratio", "label": "Proporción de imagen", "options": [ { "value": "4/5", "label": "Vertical 4:5" }, { "value": "3/4", "label": "Retrato 3:4" }, { "value": "1/1", "label": "Cuadrada 1:1" } ], "default": "4/5" },
+    { "type": "select", "id": "image_fit", "label": "Ajuste de imagen", "options": [ { "value": "cover", "label": "Rellenar" }, { "value": "contain", "label": "Contener" } ], "default": "cover" },
+    { "type": "checkbox", "id": "show_swatches", "label": "Mostrar colores", "default": true },
+    { "type": "checkbox", "id": "show_chips", "label": "Mostrar tallas", "default": true },
+    { "type": "checkbox", "id": "show_atc", "label": "Mostrar botón agregar al carrito", "default": true },
+    { "type": "text", "id": "atc_label", "label": "Texto botón carrito", "default": "Agregar al carrito" },
+    { "type": "checkbox", "id": "show_badges", "label": "Mostrar badges", "default": true },
+    { "type": "text", "id": "new_tag", "label": "Tag para badge NUEVO", "default": "New" },
+    { "type": "text", "id": "badge_new", "label": "Texto badge nuevo", "default": "Nuevo" },
+    { "type": "text", "id": "badge_sale", "label": "Texto badge oferta", "default": "Oferta" },
+    { "type": "text", "id": "badge_soldout", "label": "Texto agotado", "default": "Agotado" },
+
+    { "type": "header", "content": "Beneficios" },
+    { "type": "checkbox", "id": "show_benefits", "label": "Mostrar beneficios", "default": true },
+
+    { "type": "header", "content": "CTA final" },
+    { "type": "checkbox", "id": "show_final_cta", "label": "Mostrar CTA final", "default": true },
+    { "type": "color", "id": "final_bg", "label": "Fondo", "default": "#1B263B" },
+    { "type": "color", "id": "final_text", "label": "Texto", "default": "#ffffff" },
+    { "type": "text", "id": "final_eyebrow", "label": "Eyebrow", "default": "Independence Sale" },
+    { "type": "text", "id": "final_heading", "label": "Título", "default": "Tu momento Luxo empieza hoy" },
+    { "type": "textarea", "id": "final_sub", "label": "Subtítulo", "default": "Compra tus favoritos antes de que se agoten las tallas y colores más buscados de la temporada." },
+    { "type": "text", "id": "final_cta_label", "label": "Botón · texto", "default": "Comprar la promoción" },
+    { "type": "url", "id": "final_cta_url", "label": "Botón · enlace" },
+
+    { "type": "header", "content": "Colores" },
+    { "type": "color", "id": "bg_color", "label": "Fondo sección", "default": "#FAF8F4" },
+    { "type": "color", "id": "surface_color", "label": "Fondo tarjetas", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "Texto principal", "default": "#252525" },
+    { "type": "color", "id": "muted_color", "label": "Texto secundario", "default": "#6e6e73" },
+    { "type": "color", "id": "red_color", "label": "Rojo (acento / ofertas)", "default": "#8E2424" },
+    { "type": "color", "id": "navy_color", "label": "Azul marino", "default": "#1B263B" },
+    { "type": "color", "id": "gold_color", "label": "Arena", "default": "#E7BE95" },
+    { "type": "color", "id": "cream_color", "label": "Crema", "default": "#FAF8F4" },
+
+    { "type": "header", "content": "Espaciado" },
+    { "type": "range", "id": "container_width", "label": "Ancho máximo", "min": 1000, "max": 1800, "step": 20, "unit": "px", "default": 1380 },
+    { "type": "range", "id": "padding_top", "label": "Padding superior", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 88 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding inferior", "min": 0, "max": 160, "step": 8, "unit": "px", "default": 88 }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Beneficio",
+      "settings": [
+        { "type": "select", "id": "icon", "label": "Icono", "options": [ { "value": "truck", "label": "Envío" }, { "value": "tag", "label": "Descuento" }, { "value": "shield", "label": "Compra segura" }, { "value": "gift", "label": "Regalo" }, { "value": "heart", "label": "Cuidado" }, { "value": "star", "label": "Estrella" }, { "value": "check", "label": "Check" } ], "default": "truck" },
+        { "type": "text", "id": "title", "label": "Título", "default": "Envío disponible" },
+        { "type": "text", "id": "text", "label": "Descripción", "default": "Recibe tus favoritos Luxo directo en casa." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo | 4 de Julio Pro",
+      "blocks": [
+        { "type": "benefit", "settings": { "icon": "tag", "title": "25% OFF", "text": "Promoción especial de temporada en tus favoritos." } },
+        { "type": "benefit", "settings": { "icon": "truck", "title": "Envío disponible", "text": "Compra online y recibe tus productos en casa." } },
+        { "type": "benefit", "settings": { "icon": "heart", "title": "Calidad Luxo", "text": "Fajas y prendas seleccionadas para realzar tu estilo." } },
+        { "type": "benefit", "settings": { "icon": "shield", "title": "Compra segura", "text": "Proceso de pago protegido y experiencia confiable." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,504 @@
+{% liquid
+  assign popup_id = 'popup-discount-' | append: section.id
+  assign popup_image_url = ''
+  if section.settings.popup_image != blank
+    assign popup_image_url = section.settings.popup_image | image_url: width: 2200
+  endif
+%}
+
+<div
+  id="{{ popup_id }}"
+  class="md-popup"
+  data-popup-root
+  data-delay="{{ section.settings.delay_seconds | times: 1000 }}"
+  data-hide-days="{{ section.settings.hide_days }}"
+  data-storage-key="{{ popup_id }}"
+  aria-hidden="true"
+>
+  <div class="md-popup__overlay" data-popup-close></div>
+
+  <div
+    class="md-popup__dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="{{ popup_id }}-title"
+  >
+    <button type="button" class="md-popup__close" aria-label="Cerrar" data-popup-close>
+      <span>&times;</span>
+    </button>
+
+    <div class="md-popup__content">
+      {% if section.settings.eyebrow != blank %}
+        <p class="md-popup__eyebrow">{{ section.settings.eyebrow }}</p>
+      {% endif %}
+
+      {% assign title_parts = section.settings.title | split: '%' %}
+      <h2 id="{{ popup_id }}-title" class="md-popup__title">
+        {% if title_parts.size > 1 %}
+          <span class="md-popup__title-main">{{ title_parts[0] | strip }}</span><span class="md-popup__title-percent">%</span><span class="md-popup__title-main">{{ title_parts[1] | strip }}</span>
+        {% else %}
+          <span class="md-popup__title-main">{{ section.settings.title }}</span>
+        {% endif %}
+      </h2>
+
+      {% if section.settings.text != blank %}
+        <div class="md-popup__text">{{ section.settings.text }}</div>
+      {% endif %}
+
+      {% if popup_image_url != blank %}
+        <div class="md-popup__image-wrap">
+          <img
+            src="{{ popup_image_url }}"
+            alt="{{ section.settings.image_alt | escape }}"
+            class="md-popup__image"
+            width="1100"
+            height="1400"
+            loading="eager"
+          >
+        </div>
+      {% else %}
+        <div class="md-popup__media-placeholder"></div>
+      {% endif %}
+
+      {% if section.settings.helper_text != blank %}
+        <p class="md-popup__helper">{{ section.settings.helper_text }}</p>
+      {% endif %}
+
+      {% comment %} Nuevo enlace añadido aquí {% endcomment %}
+      {% if section.settings.link_text != blank %}
+        <a 
+          href="{{ section.settings.gift_link | default: 'https://take.cards/GG6MK' }}" 
+          class="md-popup__link" 
+          target="_blank" 
+          rel="noopener noreferrer"
+        >
+          {{ section.settings.link_text }}
+        </a>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+<style>
+  #{{ popup_id }} {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  #{{ popup_id }}.is-open {
+    display: flex;
+  }
+
+  #{{ popup_id }} .md-popup__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.42);
+    backdrop-filter: blur(4px);
+  }
+
+  #{{ popup_id }} .md-popup__dialog {
+    position: relative;
+    z-index: 2;
+    width: min(560px, 100%);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    background: #f4f2ee;
+    border-radius: 28px;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.22);
+  }
+
+  #{{ popup_id }} .md-popup__content {
+    padding: 40px 34px 32px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #{{ popup_id }} .md-popup__eyebrow {
+    margin: 0 0 10px;
+    font-size: 13px;
+    line-height: 1.2;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #1d1d1d;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 500;
+  }
+
+  #{{ popup_id }} .md-popup__title {
+    margin: 0 0 14px;
+    color: #111111;
+    font-size: clamp(42px, 6vw, 68px);
+    line-height: 0.92;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  #{{ popup_id }} .md-popup__title-main {
+    font-family: var(--font-heading-family), Georgia, "Times New Roman", serif !important;
+    font-weight: 600 !important;
+    font-style: normal !important;
+  }
+
+  #{{ popup_id }} .md-popup__title-percent {
+    font-family: Georgia, "Times New Roman", serif !important;
+    font-weight: 700 !important;
+    font-style: normal !important;
+    display: inline-block;
+    margin: 0 0.02em;
+    transform: translateY(-0.02em);
+  }
+
+  #{{ popup_id }} .md-popup__text {
+    margin: 0 0 22px;
+    max-width: 400px;
+    color: #2a2a2a;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    text-align: center;
+  }
+
+  #{{ popup_id }} .md-popup__image-wrap {
+    width: min(100%, 300px);
+    margin: 0 auto;
+    padding: 10px;
+    border-radius: 24px;
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #{{ popup_id }} .md-popup__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 18px;
+  }
+
+  #{{ popup_id }} .md-popup__media-placeholder {
+    width: min(100%, 300px);
+    height: 300px;
+    margin: 0 auto;
+    border-radius: 24px;
+    background: linear-gradient(180deg, #ebe9e4 0%, #ddd8d1 100%);
+  }
+
+  #{{ popup_id }} .md-popup__helper {
+    margin: 16px 0 0;
+    max-width: 340px;
+    color: #666666;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  /* Estilos del nuevo enlace */
+  #{{ popup_id }} .md-popup__link {
+    display: inline-block;
+    margin-top: 12px;
+    color: #111111;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: underline;
+    transition: opacity 0.2s ease;
+  }
+
+  #{{ popup_id }} .md-popup__link:hover {
+    opacity: 0.7;
+  }
+
+  #{{ popup_id }} .md-popup__close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 5;
+    width: 38px;
+    height: 38px;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #222222;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+
+  #{{ popup_id }} .md-popup__close:hover {
+    transform: scale(1.04);
+    background: #ffffff;
+  }
+
+  #{{ popup_id }} .md-popup__close span {
+    display: block;
+    font-size: 28px;
+    line-height: 1;
+    transform: translateY(-1px);
+  }
+
+  body.md-popup-open {
+    overflow: hidden !important;
+  }
+
+  @media screen and (max-width: 989px) {
+    #{{ popup_id }} {
+      padding: 18px;
+    }
+
+    #{{ popup_id }} .md-popup__dialog {
+      width: min(520px, 100%);
+      border-radius: 24px;
+    }
+
+    #{{ popup_id }} .md-popup__content {
+      padding: 34px 24px 26px;
+    }
+
+    #{{ popup_id }} .md-popup__title {
+      font-size: clamp(38px, 9vw, 58px);
+    }
+
+    #{{ popup_id }} .md-popup__text {
+      font-size: 15px;
+      max-width: 360px;
+    }
+
+    #{{ popup_id }} .md-popup__image-wrap,
+    #{{ popup_id }} .md-popup__media-placeholder {
+      width: min(100%, 280px);
+    }
+
+    #{{ popup_id }} .md-popup__media-placeholder {
+      height: 280px;
+    }
+  }
+
+  @media screen and (max-width: 640px) {
+    #{{ popup_id }} {
+      padding: 12px;
+    }
+
+    #{{ popup_id }} .md-popup__dialog {
+      width: 100%;
+      max-height: calc(100vh - 24px);
+      border-radius: 22px;
+    }
+
+    #{{ popup_id }} .md-popup__content {
+      padding: 28px 18px 22px;
+    }
+
+    #{{ popup_id }} .md-popup__eyebrow {
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    #{{ popup_id }} .md-popup__title {
+      font-size: clamp(32px, 11vw, 48px);
+      margin-bottom: 12px;
+    }
+
+    #{{ popup_id }} .md-popup__text {
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 18px;
+      max-width: 100%;
+    }
+
+    #{{ popup_id }} .md-popup__image-wrap,
+    #{{ popup_id }} .md-popup__media-placeholder {
+      width: min(100%, 240px);
+      border-radius: 18px;
+    }
+
+    #{{ popup_id }} .md-popup__media-placeholder {
+      height: 240px;
+    }
+
+    #{{ popup_id }} .md-popup__image {
+      border-radius: 14px;
+    }
+
+    #{{ popup_id }} .md-popup__helper {
+      font-size: 12px;
+      margin-top: 14px;
+      max-width: 100%;
+    }
+
+    /* Adaptación móvil del enlace */
+    #{{ popup_id }} .md-popup__link {
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    #{{ popup_id }} .md-popup__close {
+      top: 10px;
+      right: 10px;
+      width: 34px;
+      height: 34px;
+    }
+
+    #{{ popup_id }} .md-popup__close span {
+      font-size: 24px;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    var root = document.getElementById('{{ popup_id }}');
+    if (!root) return;
+
+    var delay = parseInt(root.getAttribute('data-delay') || '2000', 10);
+    var hideDays = parseInt(root.getAttribute('data-hide-days') || '7', 10);
+    var storageKey = root.getAttribute('data-storage-key') || '{{ popup_id }}';
+    var dismissKey = storageKey + '-dismiss-until';
+
+    var closeButtons = root.querySelectorAll('[data-popup-close]');
+
+    function setDismissWindow() {
+      try {
+        var expiresAt = Date.now() + hideDays * 24 * 60 * 60 * 1000;
+        localStorage.setItem(dismissKey, String(expiresAt));
+      } catch (error) {}
+    }
+
+    function isDismissed() {
+      try {
+        var raw = localStorage.getItem(dismissKey);
+        if (!raw) return false;
+        return Date.now() < parseInt(raw, 10);
+      } catch (error) {
+        return false;
+      }
+    }
+
+    function openPopup(forceOpen) {
+      if (!forceOpen && isDismissed()) return;
+      root.classList.add('is-open');
+      root.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('md-popup-open');
+    }
+
+    function closePopup(remember) {
+      root.classList.remove('is-open');
+      root.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('md-popup-open');
+      if (remember) setDismissWindow();
+    }
+
+    closeButtons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        closePopup(true);
+      });
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && root.classList.contains('is-open')) {
+        closePopup(true);
+      }
+    });
+
+    if (!isDismissed()) {
+      window.setTimeout(function () {
+        openPopup(false);
+      }, delay);
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Popup imagen regalo",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "popup_image",
+      "label": "Imagen del popup"
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Alt de la imagen",
+      "default": "Imagen promocional del popup"
+    },
+    {
+      "type": "range",
+      "id": "delay_seconds",
+      "label": "Retraso antes de abrir (segundos)",
+      "min": 0,
+      "max": 15,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "hide_days",
+      "label": "Ocultar por días al cerrar",
+      "min": 1,
+      "max": 30,
+      "step": 1,
+      "default": 7
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "SCAN TO CLAIM"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "GIFT CARD"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Texto",
+      "default": "Scan the image below to receive your gift card."
+    },
+    {
+      "type": "textarea",
+      "id": "helper_text",
+      "label": "Texto pequeño inferior",
+      "default": "Use your phone camera or preferred QR scanner."
+    },
+    {
+      "type": "text",
+      "id": "link_text",
+      "label": "Texto del enlace",
+      "default": "Haz clic aquí para reclamar tu Gift Card"
+    },
+    {
+      "type": "url",
+      "id": "gift_link",
+      "label": "Enlace de la Gift Card",
+      "info": "Si se deja en blanco usará https://take.cards/GG6MK por defecto."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Popup imagen regalo"
+    }
+  ]
+}
+{% endschema %}

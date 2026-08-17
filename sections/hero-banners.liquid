@@ -1,0 +1,892 @@
+{% liquid
+  assign hero_id = 'mj-hero-banners-' | append: section.id
+  assign marquee_text = section.settings.marquee_text | default: ''
+  assign slide_count = section.blocks.size
+%}
+
+<section
+  id="{{ hero_id }}"
+  class="mj-hero"
+  style="
+    --mj-hero-overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    --mj-hero-max-width: {{ section.settings.desktop_max_width }}px;
+    --mj-hero-desktop-max-height: {{ section.settings.desktop_max_height }}px;
+    --mj-hero-mobile-max-height: {{ section.settings.mobile_max_height }}px;
+    --mj-marquee-bg: {{ section.settings.marquee_bg }};
+    --mj-marquee-text: {{ section.settings.marquee_text_color }};
+    --mj-marquee-speed: {{ section.settings.marquee_speed }}s;
+    --mj-autoplay-speed: {{ section.settings.autoplay_speed }}s;
+    --mj-slide-count: {{ slide_count }};
+  "
+  data-autoplay="{{ section.settings.autoplay }}"
+  data-slide-count="{{ slide_count }}"
+>
+
+  {%- comment -%} TOP MARQUEE {%- endcomment -%}
+  {% if marquee_text != blank %}
+    <div class="mj-hero__marquee mj-hero__marquee--top" aria-label="{{ marquee_text | escape }}">
+      <div class="mj-hero__marquee-track" aria-hidden="true">
+        <div class="mj-hero__marquee-group">
+          {% for i in (1..8) %}<span>{{ marquee_text }}</span>{% endfor %}
+        </div>
+        <div class="mj-hero__marquee-group" aria-hidden="true">
+          {% for i in (1..8) %}<span>{{ marquee_text }}</span>{% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  {%- comment -%} SLIDER WRAPPER {%- endcomment -%}
+  <div class="mj-hero__slider" role="region" aria-label="Hero banner" aria-live="polite">
+
+    {%- comment -%} SLIDES {%- endcomment -%}
+    {% for block in section.blocks %}
+      {% liquid
+        assign desktop_src = block.settings.desktop_fallback_url | default: 'https://cdn.shopify.com/s/files/1/0483/6697/7184/files/Desktop.png?v=1777658922'
+        assign mobile_src  = block.settings.mobile_fallback_url  | default: desktop_src
+
+        if block.settings.desktop_image != blank
+          assign desktop_src = block.settings.desktop_image | image_url: width: 1800
+        endif
+
+        if block.settings.mobile_image != blank
+          assign mobile_src = block.settings.mobile_image | image_url: width: 900
+        elsif block.settings.desktop_image != blank
+          assign mobile_src = block.settings.desktop_image | image_url: width: 900
+        endif
+
+        assign has_content = false
+        if block.settings.eyebrow != blank or block.settings.heading != blank or block.settings.subheading != blank or block.settings.button_text != blank
+          assign has_content = true
+        endif
+      %}
+
+      <div
+        class="mj-hero__slide{% if forloop.first %} is-active{% endif %}"
+        data-index="{{ forloop.index0 }}"
+        aria-hidden="{% if forloop.first %}false{% else %}true{% endif %}"
+        style="
+          --mj-hero-text: {{ block.settings.text_color }};
+          --mj-hero-button-bg: {{ block.settings.button_bg }};
+          --mj-hero-button-text: {{ block.settings.button_text_color }};
+          --mj-frame-bg: {{ block.settings.frame_bg | default: '#1a1a1a' }};
+          --mj-img-fit: {{ block.settings.image_fit | default: 'cover' }};
+          --mj-img-position: {{ block.settings.image_position | default: 'center center' }};
+        "
+        {{ block.shopify_attributes }}
+      >
+        {%- comment -%} IMAGE {%- endcomment -%}
+        <div class="mj-hero__frame">
+          <picture class="mj-hero__picture">
+            <source media="(max-width: 749px)" srcset="{{ mobile_src }}">
+            <img
+              class="mj-hero__image"
+              src="{{ desktop_src }}"
+              alt="{{ block.settings.image_alt | escape }}"
+              width="{{ block.settings.desktop_image.width | default: 1920 }}"
+              height="{{ block.settings.desktop_image.height | default: 950 }}"
+              loading="{% if forloop.first and section.index == 1 %}eager{% else %}lazy{% endif %}"
+              fetchpriority="{% if forloop.first and section.index == 1 %}high{% else %}auto{% endif %}"
+            >
+          </picture>
+        </div>
+
+        {%- comment -%} OVERLAY {%- endcomment -%}
+        <div class="mj-hero__overlay" aria-hidden="true"></div>
+
+        {%- comment -%} FULL LINK (solo si no hay contenido texto) {%- endcomment -%}
+        {% if block.settings.link != blank and has_content == false %}
+          <a
+            class="mj-hero__full-link"
+            href="{{ block.settings.link }}"
+            aria-label="{{ block.settings.accessibility_label | escape }}"
+            tabindex="{% if forloop.first %}0{% else %}-1{% endif %}"
+          ></a>
+        {% endif %}
+
+        {%- comment -%} CONTENT (eyebrow / heading / subheading / button) {%- endcomment -%}
+        {% if has_content %}
+          <div class="mj-hero__content mj-hero__content--{{ block.settings.content_position }}">
+            {% if block.settings.eyebrow != blank %}
+              <p class="mj-hero__eyebrow">{{ block.settings.eyebrow }}</p>
+            {% endif %}
+
+            {% if block.settings.heading != blank %}
+              <h2 class="mj-hero__heading">{{ block.settings.heading }}</h2>
+            {% endif %}
+
+            {% if block.settings.subheading != blank %}
+              <p class="mj-hero__subheading">{{ block.settings.subheading }}</p>
+            {% endif %}
+
+            {% if block.settings.button_text != blank and block.settings.link != blank %}
+              <a
+                class="mj-hero__button"
+                href="{{ block.settings.link }}"
+                tabindex="{% if forloop.first %}0{% else %}-1{% endif %}"
+              >
+                {{ block.settings.button_text }}
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    {%- comment -%} CONTROLS (solo si hay más de 1 slide) {%- endcomment -%}
+    {% if slide_count > 1 %}
+      <button class="mj-hero__arrow mj-hero__arrow--prev" aria-label="Slide anterior">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="mj-hero__arrow mj-hero__arrow--next" aria-label="Slide siguiente">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="mj-hero__dots" role="tablist" aria-label="Slides">
+        {% for block in section.blocks %}
+          <button
+            class="mj-hero__dot{% if forloop.first %} is-active{% endif %}"
+            role="tab"
+            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+            aria-label="Ir al slide {{ forloop.index }}"
+            data-index="{{ forloop.index0 }}"
+          ></button>
+        {% endfor %}
+      </div>
+
+      {% if section.settings.autoplay %}
+        <div class="mj-hero__progress" aria-hidden="true">
+          <div class="mj-hero__progress-bar"></div>
+        </div>
+      {% endif %}
+    {% endif %}
+
+  </div>
+
+  {%- comment -%} BOTTOM MARQUEE {%- endcomment -%}
+  {% if marquee_text != blank %}
+    <div class="mj-hero__marquee mj-hero__marquee--bottom" aria-label="{{ marquee_text | escape }}">
+      <div class="mj-hero__marquee-track mj-hero__marquee-track--reverse" aria-hidden="true">
+        <div class="mj-hero__marquee-group">
+          {% for i in (1..8) %}<span>{{ marquee_text }}</span>{% endfor %}
+        </div>
+        <div class="mj-hero__marquee-group" aria-hidden="true">
+          {% for i in (1..8) %}<span>{{ marquee_text }}</span>{% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  <style>
+    /* ─── RESET & BASE ─────────────────────────────────────────────── */
+    #{{ hero_id }}.mj-hero {
+      position: relative;
+      display: block;
+      overflow: hidden;
+      width: 100%;
+      box-sizing: border-box;
+      background: transparent;
+      isolation: isolate;
+    }
+    /* Neutralize any parent container max-width / padding */
+    .mj-hero-full-bleed {
+      max-width: 100% !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      width: 100% !important;
+    }
+
+    /* ─── MARQUEE ──────────────────────────────────────────────────── */
+    #{{ hero_id }} .mj-hero__marquee {
+      position: relative;
+      z-index: 4;
+      width: 100%;
+      overflow: hidden;
+      pointer-events: none;
+      background: var(--mj-marquee-bg);
+      color: var(--mj-marquee-text);
+    }
+
+    #{{ hero_id }} .mj-hero__marquee-track {
+      display: flex;
+      width: max-content;
+      animation: mjMarquee-{{ section.id }} var(--mj-marquee-speed) linear infinite;
+      will-change: transform;
+    }
+
+    #{{ hero_id }} .mj-hero__marquee-track--reverse {
+      animation-direction: reverse;
+    }
+
+    #{{ hero_id }} .mj-hero__marquee-group {
+      display: flex;
+      align-items: center;
+      flex: 0 0 auto;
+    }
+
+    #{{ hero_id }} .mj-hero__marquee span {
+      display: inline-flex;
+      min-height: 36px;
+      align-items: center;
+      padding: 0 24px;
+      white-space: nowrap;
+      color: inherit;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    #{{ hero_id }} .mj-hero__marquee span::after {
+      content: "";
+      width: 6px;
+      height: 6px;
+      margin-left: 24px;
+      border-radius: 999px;
+      background: currentColor;
+      opacity: 0.72;
+    }
+
+    /* ─── SLIDER ───────────────────────────────────────────────────── */
+    #{{ hero_id }} .mj-hero__slider {
+      position: relative;
+      display: block;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /* ─── SLIDE ────────────────────────────────────────────────────── */
+    #{{ hero_id }} .mj-hero__slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 700ms ease;
+      pointer-events: none;
+    }
+
+    #{{ hero_id }} .mj-hero__slide.is-active {
+      opacity: 1;
+      position: relative;
+      pointer-events: auto;
+      width: 100%;
+    }
+
+    /* ─── FRAME & PICTURE ──────────────────────────────────────────── */
+    #{{ hero_id }} .mj-hero__frame {
+      position: relative;
+      z-index: 0;
+      width: 100%;
+      line-height: 0;
+      background: var(--mj-frame-bg, #000);
+    }
+
+    #{{ hero_id }} .mj-hero__picture {
+      display: block;
+      width: 100%;
+      line-height: 0;
+    }
+
+    #{{ hero_id }} .mj-hero__image {
+      display: block;
+      width: 100%;
+      height: auto;
+      /* max-height only when cover mode is used */
+      max-height: var(--mj-hero-desktop-max-height);
+      object-fit: var(--mj-img-fit, cover);
+      object-position: var(--mj-img-position, center center);
+    }
+
+    /* contain mode: let image breathe at full natural ratio */
+    #{{ hero_id }} .mj-hero__slide[style*="contain"] .mj-hero__image {
+      max-height: none;
+    }
+
+    /* ─── OVERLAY ──────────────────────────────────────────────────── */
+    #{{ hero_id }} .mj-hero__overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,var(--mj-hero-overlay-opacity)), rgba(0,0,0,0)),
+        radial-gradient(circle at 18% 50%, rgba(255,255,255,0.18), transparent 34%);
+      pointer-events: none;
+    }
+
+    /* ─── FULL LINK ────────────────────────────────────────────────── */
+    #{{ hero_id }} .mj-hero__full-link {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: block;
+    }
+
+    /* ─── CONTENT ──────────────────────────────────────────────────── */
+    #{{ hero_id }} .mj-hero__content {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      z-index: 3;
+      width: min(100%, 1240px);
+      padding: 72px clamp(20px, 5vw, 64px);
+      color: var(--mj-hero-text);
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      line-height: normal;
+      transform: translateX(-50%);
+    }
+
+    #{{ hero_id }} .mj-hero__content--left  { align-items: flex-start; text-align: left; }
+    #{{ hero_id }} .mj-hero__content--center { align-items: center; text-align: center; }
+    #{{ hero_id }} .mj-hero__content--right  { align-items: flex-end; text-align: right; }
+
+    #{{ hero_id }} .mj-hero__eyebrow {
+      margin: 0 0 14px;
+      font-size: clamp(12px, 1.4vw, 14px);
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    #{{ hero_id }} .mj-hero__heading {
+      max-width: 720px;
+      margin: 0;
+      font-size: clamp(42px, 7vw, 86px);
+      font-weight: 900;
+      letter-spacing: -0.055em;
+      line-height: 0.92;
+    }
+
+    #{{ hero_id }} .mj-hero__content--center .mj-hero__heading,
+    #{{ hero_id }} .mj-hero__content--center .mj-hero__subheading { margin-left: auto; margin-right: auto; }
+    #{{ hero_id }} .mj-hero__content--right  .mj-hero__heading,
+    #{{ hero_id }} .mj-hero__content--right  .mj-hero__subheading { margin-left: auto; }
+
+    #{{ hero_id }} .mj-hero__subheading {
+      max-width: 560px;
+      margin-top: 18px;
+      margin-bottom: 0;
+      font-size: clamp(16px, 2vw, 22px);
+      line-height: 1.45;
+    }
+
+    #{{ hero_id }} .mj-hero__button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 30px;
+      min-width: 180px;
+      padding: 15px 24px;
+      border-radius: 999px;
+      color: var(--mj-hero-button-text);
+      background: var(--mj-hero-button-bg);
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      text-transform: uppercase;
+      box-shadow: 0 16px 34px rgba(0,0,0,0.22);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    #{{ hero_id }} .mj-hero__button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 22px 44px rgba(0,0,0,0.28);
+    }
+
+    /* ─── ARROWS ───────────────────────────────────────────────────── */
+    #{{ hero_id }} .mj-hero__arrow {
+      position: absolute;
+      top: 50%;
+      z-index: 5;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      background: rgba(255,255,255,0.18);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #fff;
+      transition: background 200ms ease, transform 200ms ease;
+    }
+
+    #{{ hero_id }} .mj-hero__arrow:hover { background: rgba(255,255,255,0.32); }
+    #{{ hero_id }} .mj-hero__arrow--prev { left: 20px; }
+    #{{ hero_id }} .mj-hero__arrow--next { right: 20px; }
+
+    /* ─── DOTS ─────────────────────────────────────────────────────── */
+    #{{ hero_id }} .mj-hero__dots {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      z-index: 5;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    #{{ hero_id }} .mj-hero__dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      background: rgba(255,255,255,0.4);
+      transition: background 250ms ease, width 250ms ease;
+    }
+
+    #{{ hero_id }} .mj-hero__dot.is-active {
+      background: #fff;
+      width: 24px;
+    }
+
+    /* ─── PROGRESS BAR ─────────────────────────────────────────────── */
+    #{{ hero_id }} .mj-hero__progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      z-index: 5;
+      background: rgba(255,255,255,0.2);
+    }
+
+    #{{ hero_id }} .mj-hero__progress-bar {
+      height: 100%;
+      width: 0;
+      background: rgba(255,255,255,0.85);
+      transition: width linear;
+    }
+
+    #{{ hero_id }} .mj-hero__progress-bar.is-running {
+      transition-duration: var(--mj-autoplay-speed);
+      width: 100%;
+    }
+
+    /* ─── KEYFRAMES ────────────────────────────────────────────────── */
+    @keyframes mjMarquee-{{ section.id }} {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ─── MOBILE ───────────────────────────────────────────────────── */
+    @media (max-width: 749px) {
+      #{{ hero_id }} .mj-hero__image {
+        max-height: var(--mj-hero-mobile-max-height);
+      }
+
+      #{{ hero_id }} .mj-hero__marquee span {
+        min-height: 32px;
+        padding: 0 16px;
+        font-size: 10px;
+      }
+
+      #{{ hero_id }} .mj-hero__marquee span::after {
+        width: 5px;
+        height: 5px;
+        margin-left: 16px;
+      }
+
+      #{{ hero_id }} .mj-hero__overlay {
+        background:
+          linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,var(--mj-hero-overlay-opacity))),
+          radial-gradient(circle at 50% 18%, rgba(255,255,255,0.2), transparent 36%);
+      }
+
+      #{{ hero_id }} .mj-hero__content {
+        padding: 42px 20px 72px;
+        justify-content: flex-end;
+        align-items: center !important;
+        text-align: center !important;
+      }
+
+      #{{ hero_id }} .mj-hero__heading,
+      #{{ hero_id }} .mj-hero__subheading { margin-left: auto; margin-right: auto; }
+
+      #{{ hero_id }} .mj-hero__heading { font-size: clamp(34px, 11vw, 54px); }
+
+      #{{ hero_id }} .mj-hero__arrow { display: none; }
+    }
+
+    /* ─── REDUCED MOTION ───────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      #{{ hero_id }} .mj-hero__marquee-track,
+      #{{ hero_id }} .mj-hero__button,
+      #{{ hero_id }} .mj-hero__slide { animation: none; transition: none; }
+    }
+  </style>
+
+  <script>
+  (function () {
+    /* ── Full-bleed: neutralize every ancestor's max-width / padding ── */
+    var el = document.getElementById('{{ hero_id }}');
+    if (el) {
+      var node = el.parentElement;
+      while (node && node !== document.body) {
+        node.classList.add('mj-hero-full-bleed');
+        node = node.parentElement;
+      }
+    }
+  })();
+  </script>
+
+  {% if slide_count > 1 %}
+  <script>
+  (function () {
+    var section = document.getElementById('{{ hero_id }}');
+    if (!section) return;
+
+    var slides    = section.querySelectorAll('.mj-hero__slide');
+    var dots      = section.querySelectorAll('.mj-hero__dot');
+    var prevBtn   = section.querySelector('.mj-hero__arrow--prev');
+    var nextBtn   = section.querySelector('.mj-hero__arrow--next');
+    var progressBar = section.querySelector('.mj-hero__progress-bar');
+
+    var total     = slides.length;
+    var current   = 0;
+    var autoplay  = section.dataset.autoplay === 'true';
+    var speed     = parseFloat(getComputedStyle(section).getPropertyValue('--mj-autoplay-speed')) || 5;
+    var timer     = null;
+
+    function goTo(index) {
+      slides[current].classList.remove('is-active');
+      slides[current].setAttribute('aria-hidden', 'true');
+      slides[current].querySelectorAll('a').forEach(function(a){ a.setAttribute('tabindex','-1'); });
+
+      dots[current] && dots[current].classList.remove('is-active');
+      dots[current] && dots[current].setAttribute('aria-selected', 'false');
+
+      current = (index + total) % total;
+
+      slides[current].classList.add('is-active');
+      slides[current].setAttribute('aria-hidden', 'false');
+      slides[current].querySelectorAll('a').forEach(function(a){ a.setAttribute('tabindex','0'); });
+
+      dots[current] && dots[current].classList.add('is-active');
+      dots[current] && dots[current].setAttribute('aria-selected', 'true');
+
+      resetProgress();
+    }
+
+    function resetProgress() {
+      if (!progressBar) return;
+      progressBar.classList.remove('is-running');
+      void progressBar.offsetWidth; // reflow
+      if (autoplay) progressBar.classList.add('is-running');
+    }
+
+    function startAutoplay() {
+      if (!autoplay) return;
+      timer = setInterval(function(){ goTo(current + 1); }, speed * 1000);
+      resetProgress();
+    }
+
+    function stopAutoplay() {
+      clearInterval(timer);
+      if (progressBar) progressBar.classList.remove('is-running');
+    }
+
+    if (prevBtn) prevBtn.addEventListener('click', function(){ stopAutoplay(); goTo(current - 1); startAutoplay(); });
+    if (nextBtn) nextBtn.addEventListener('click', function(){ stopAutoplay(); goTo(current + 1); startAutoplay(); });
+
+    dots.forEach(function(dot) {
+      dot.addEventListener('click', function(){
+        stopAutoplay();
+        goTo(parseInt(dot.dataset.index));
+        startAutoplay();
+      });
+    });
+
+    // Touch / swipe
+    var touchStartX = 0;
+    section.addEventListener('touchstart', function(e){ touchStartX = e.touches[0].clientX; }, { passive: true });
+    section.addEventListener('touchend', function(e){
+      var diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) { stopAutoplay(); goTo(diff > 0 ? current + 1 : current - 1); startAutoplay(); }
+    });
+
+    // Pause on hover
+    section.addEventListener('mouseenter', stopAutoplay);
+    section.addEventListener('mouseleave', startAutoplay);
+
+    // Pause when tab not visible
+    document.addEventListener('visibilitychange', function(){
+      document.hidden ? stopAutoplay() : startAutoplay();
+    });
+
+    startAutoplay();
+  })();
+  </script>
+  {% endif %}
+
+</section>
+
+{% schema %}
+{
+  "name": "Hero banners (Slider)",
+  "max_blocks": 8,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Carrusel de texto (marquee)"
+    },
+    {
+      "type": "text",
+      "id": "marquee_text",
+      "label": "Texto del carrusel (dejar vacío para ocultar)",
+      "default": "42% OFF EN PRODUCTOS SELECCIONADOS"
+    },
+    {
+      "type": "range",
+      "id": "marquee_speed",
+      "label": "Velocidad del carrusel",
+      "min": 12,
+      "max": 60,
+      "step": 2,
+      "unit": "s",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "marquee_bg",
+      "label": "Fondo del carrusel",
+      "default": "#b87386"
+    },
+    {
+      "type": "color",
+      "id": "marquee_text_color",
+      "label": "Color de texto del carrusel",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Slider automático"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Activar autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Tiempo por slide",
+      "min": 3,
+      "max": 12,
+      "step": 1,
+      "unit": "s",
+      "default": 5
+    },
+    {
+      "type": "header",
+      "content": "Tamaño de imagen"
+    },
+    {
+      "type": "range",
+      "id": "desktop_max_width",
+      "label": "Ancho máximo desktop",
+      "min": 900,
+      "max": 2400,
+      "step": 50,
+      "unit": "px",
+      "default": 1800
+    },
+    {
+      "type": "range",
+      "id": "desktop_max_height",
+      "label": "Alto del banner desktop",
+      "min": 360,
+      "max": 820,
+      "step": 20,
+      "unit": "px",
+      "default": 640
+    },
+    {
+      "type": "range",
+      "id": "mobile_max_height",
+      "label": "Alto del banner mobile",
+      "min": 420,
+      "max": 760,
+      "step": 20,
+      "unit": "px",
+      "default": 680
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Opacidad de overlay (global)",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Imágenes"
+        },
+        {
+          "type": "image_picker",
+          "id": "desktop_image",
+          "label": "Imagen desktop"
+        },
+        {
+          "type": "image_picker",
+          "id": "mobile_image",
+          "label": "Imagen mobile (opcional, usa desktop si se deja vacío)"
+        },
+        {
+          "type": "text",
+          "id": "desktop_fallback_url",
+          "label": "URL de imagen desktop (si no se elige imagen arriba)",
+          "default": "https://cdn.shopify.com/s/files/1/0483/6697/7184/files/Desktop.png?v=1777658922"
+        },
+        {
+          "type": "text",
+          "id": "mobile_fallback_url",
+          "label": "URL de imagen mobile (si no se elige imagen arriba)"
+        },
+        {
+          "type": "text",
+          "id": "image_alt",
+          "label": "Texto alternativo de la imagen"
+        },
+        {
+          "type": "select",
+          "id": "image_fit",
+          "label": "Ajuste de imagen",
+          "default": "cover",
+          "options": [
+            { "value": "cover",   "label": "Cubrir (recorta si es necesario)" },
+            { "value": "contain", "label": "Mostrar completa (sin recortar)" }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "image_position",
+          "label": "Posición focal de imagen",
+          "default": "center center",
+          "options": [
+            { "value": "center center", "label": "Centro" },
+            { "value": "top center",    "label": "Arriba centro" },
+            { "value": "bottom center", "label": "Abajo centro" },
+            { "value": "left center",   "label": "Izquierda" },
+            { "value": "right center",  "label": "Derecha" }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "frame_bg",
+          "label": "Color de fondo (visible con imagen completa)",
+          "default": "#1a1a1a"
+        },
+        {
+          "type": "header",
+          "content": "Enlace"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Enlace del slide"
+        },
+        {
+          "type": "text",
+          "id": "accessibility_label",
+          "label": "Etiqueta accesible (si el banner completo es el enlace)",
+          "default": "Ver promoción"
+        },
+        {
+          "type": "header",
+          "content": "Contenido de texto (dejar vacío para ocultar)"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Texto superior (eyebrow)"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Título"
+        },
+        {
+          "type": "textarea",
+          "id": "subheading",
+          "label": "Descripción"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Texto del botón"
+        },
+        {
+          "type": "select",
+          "id": "content_position",
+          "label": "Posición del contenido",
+          "default": "left",
+          "options": [
+            { "value": "left",   "label": "Izquierda" },
+            { "value": "center", "label": "Centro" },
+            { "value": "right",  "label": "Derecha" }
+          ]
+        },
+        {
+          "type": "header",
+          "content": "Colores de este slide"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Color de texto",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "button_bg",
+          "label": "Color de botón",
+          "default": "#111111"
+        },
+        {
+          "type": "color",
+          "id": "button_text_color",
+          "label": "Color de texto del botón",
+          "default": "#ffffff"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero banners (Slider)",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "slide" }
+      ]
+    }
+  ]
+}
+{% endschema %}

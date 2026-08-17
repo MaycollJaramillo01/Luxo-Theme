@@ -1,0 +1,401 @@
+<section
+  id="LuxoHomeCountdown-{{ section.id }}"
+  class="luxo-home-countdown"
+  data-start="{{ section.settings.event_start | escape }}"
+  data-end="{{ section.settings.event_end | escape }}"
+  data-before-message="{{ section.settings.before_message | escape }}"
+  data-live-message="{{ section.settings.live_message | escape }}"
+  data-ended-message="{{ section.settings.ended_message | escape }}"
+  style="
+    --lhc-bg: {{ section.settings.bg_color }};
+    --lhc-surface: {{ section.settings.surface_color }};
+    --lhc-text: {{ section.settings.text_color }};
+    --lhc-muted: {{ section.settings.muted_color }};
+    --lhc-accent: {{ section.settings.accent_color }};
+    --lhc-border: {{ section.settings.border_color }};
+  "
+>
+  <div class="luxo-home-countdown__inner">
+    <div class="luxo-home-countdown__copy">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="luxo-home-countdown__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <h2 class="luxo-home-countdown__heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+
+      <p class="luxo-home-countdown__message" data-countdown-message>
+        {{ section.settings.before_message }}
+      </p>
+    </div>
+
+    <div class="luxo-home-countdown__timer" role="timer" aria-live="polite" aria-label="Cuenta regresiva de la promocion">
+      <div class="luxo-home-countdown__unit">
+        <span class="luxo-home-countdown__number" data-days>00</span>
+        <span class="luxo-home-countdown__label">Dias</span>
+      </div>
+      <div class="luxo-home-countdown__unit">
+        <span class="luxo-home-countdown__number" data-hours>00</span>
+        <span class="luxo-home-countdown__label">Horas</span>
+      </div>
+      <div class="luxo-home-countdown__unit">
+        <span class="luxo-home-countdown__number" data-minutes>00</span>
+        <span class="luxo-home-countdown__label">Min</span>
+      </div>
+      <div class="luxo-home-countdown__unit">
+        <span class="luxo-home-countdown__number" data-seconds>00</span>
+        <span class="luxo-home-countdown__label">Seg</span>
+      </div>
+    </div>
+
+    {%- if section.settings.cta_label != blank -%}
+      <a class="luxo-home-countdown__button" href="{{ section.settings.cta_link | default: routes.all_products_collection_url }}">
+        {{ section.settings.cta_label }}
+      </a>
+    {%- endif -%}
+  </div>
+</section>
+
+<script>
+  (() => {
+    const section = document.getElementById('LuxoHomeCountdown-{{ section.id }}');
+    if (!section) return;
+
+    const start = new Date(section.dataset.start);
+    const end = new Date(section.dataset.end);
+    const message = section.querySelector('[data-countdown-message]');
+    const fields = {
+      days: section.querySelector('[data-days]'),
+      hours: section.querySelector('[data-hours]'),
+      minutes: section.querySelector('[data-minutes]'),
+      seconds: section.querySelector('[data-seconds]')
+    };
+
+    const pad = (value) => String(value).padStart(2, '0');
+
+    const render = (distance) => {
+      const safeDistance = Math.max(distance, 0);
+      const days = Math.floor(safeDistance / 86400000);
+      const hours = Math.floor((safeDistance % 86400000) / 3600000);
+      const minutes = Math.floor((safeDistance % 3600000) / 60000);
+      const seconds = Math.floor((safeDistance % 60000) / 1000);
+
+      fields.days.textContent = pad(days);
+      fields.hours.textContent = pad(hours);
+      fields.minutes.textContent = pad(minutes);
+      fields.seconds.textContent = pad(seconds);
+    };
+
+    const setState = (state, text, distance) => {
+      section.dataset.state = state;
+      if (message) message.textContent = text;
+      render(distance);
+    };
+
+    const tick = () => {
+      if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+        setState('ended', 'Configura la fecha del evento en formato ISO.', 0);
+        return;
+      }
+
+      const now = new Date();
+
+      if (now < start) {
+        setState('before', section.dataset.beforeMessage, start - now);
+        return;
+      }
+
+      if (now <= end) {
+        setState('live', section.dataset.liveMessage, end - now);
+        return;
+      }
+
+      setState('ended', section.dataset.endedMessage, 0);
+    };
+
+    tick();
+    window.setInterval(tick, 1000);
+  })();
+</script>
+
+<style>
+  #LuxoHomeCountdown-{{ section.id }} {
+    background: var(--lhc-bg);
+    color: var(--lhc-text);
+    border-top: 1px solid var(--lhc-border);
+    border-bottom: 1px solid var(--lhc-border);
+  }
+
+  #LuxoHomeCountdown-{{ section.id }} .luxo-home-countdown__inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    width: min(100%, 1320px);
+    margin: 0 auto;
+    padding: 26px 18px;
+    box-sizing: border-box;
+  }
+
+  #LuxoHomeCountdown-{{ section.id }} .luxo-home-countdown__eyebrow {
+    margin: 0 0 8px;
+    color: var(--lhc-accent);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  #LuxoHomeCountdown-{{ section.id }} .luxo-home-countdown__heading {
+    margin: 0;
+    color: var(--lhc-text);
+    font-size: clamp(24px, 3vw, 42px);
+    font-weight: 800;
+    letter-spacing: 0;
+    line-height: 1.05;
+  }
+
+  #LuxoHomeCountdown-{{ section.id }} .luxo-home-countdown__message {
+    margin: 10px 0 0;
+    color: var(--lhc-muted);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  #LuxoHomeCountdown-{{ section.id }} .luxo-home-countdown__timer {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  #LuxoHomeCountdown-{{ section.id }} .luxo-home-countdown__unit {
+    min-height: 78px;
+    padding: 12px 8px;
+    border: 1px solid var(--lhc-border);
+    background: var(--lhc-surface);
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  #LuxoHomeCountdown-{{ section.id }} .luxo-home-countdown__number {
+    display: block;
+    color: var(--lhc-text);
+    font-size: clamp(26px, 3vw, 42px);
+    font-weight: 850;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  #LuxoHomeCountdown-{{ section.id }} .luxo-home-countdown__label {
+    display: block;
+    margin-top: 8px;
+    color: var(--lhc-muted);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  #LuxoHomeCountdown-{{ section.id }} .luxo-home-countdown__button {
+    display: inline-flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    border: 1px solid var(--lhc-accent);
+    background: var(--lhc-accent);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 850;
+    letter-spacing: 0;
+    line-height: 1;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: transform 180ms ease, opacity 180ms ease;
+  }
+
+  #LuxoHomeCountdown-{{ section.id }} .luxo-home-countdown__button:hover,
+  #LuxoHomeCountdown-{{ section.id }} .luxo-home-countdown__button:focus-visible {
+    transform: translateY(-1px);
+  }
+
+  #LuxoHomeCountdown-{{ section.id }} .luxo-home-countdown__button:focus-visible {
+    outline: 3px solid var(--lhc-text);
+    outline-offset: 3px;
+  }
+
+  #LuxoHomeCountdown-{{ section.id }}[data-state="live"] {
+    --lhc-bg: {{ section.settings.live_bg_color }};
+    --lhc-text: {{ section.settings.live_text_color }};
+    --lhc-muted: {{ section.settings.live_muted_color }};
+  }
+
+  #LuxoHomeCountdown-{{ section.id }}[data-state="ended"] .luxo-home-countdown__button {
+    pointer-events: none;
+    opacity: 0.48;
+  }
+
+  @media screen and (min-width: 990px) {
+    #LuxoHomeCountdown-{{ section.id }} .luxo-home-countdown__inner {
+      grid-template-columns: minmax(0, 1.1fr) minmax(420px, 0.9fr) auto;
+      gap: 28px;
+      align-items: center;
+      padding: 30px 32px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #LuxoHomeCountdown-{{ section.id }} .luxo-home-countdown__inner {
+      padding: 22px 14px;
+    }
+
+    #LuxoHomeCountdown-{{ section.id }} .luxo-home-countdown__timer {
+      gap: 6px;
+    }
+
+    #LuxoHomeCountdown-{{ section.id }} .luxo-home-countdown__unit {
+      min-height: 68px;
+      padding: 10px 4px;
+    }
+
+    #LuxoHomeCountdown-{{ section.id }} .luxo-home-countdown__button {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #LuxoHomeCountdown-{{ section.id }} .luxo-home-countdown__button {
+      transition: none;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Luxo home countdown",
+  "tag": "section",
+  "class": "section-luxo-home-countdown",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Texto superior",
+      "default": "Promocion por tiempo limitado"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titulo",
+      "default": "42% OFF solo de 6:59 p. m. a 9:59 p. m."
+    },
+    {
+      "type": "text",
+      "id": "event_start",
+      "label": "Inicio del evento",
+      "default": "2026-05-13T18:59:00-06:00",
+      "info": "Formato ISO. Configurado para miercoles 13 de mayo de 2026, 6:59 p. m. hora -06:00."
+    },
+    {
+      "type": "text",
+      "id": "event_end",
+      "label": "Fin del evento",
+      "default": "2026-05-13T21:59:00-06:00",
+      "info": "Formato ISO. Configurado para miercoles 13 de mayo de 2026, 9:59 p. m. hora -06:00."
+    },
+    {
+      "type": "text",
+      "id": "before_message",
+      "label": "Mensaje antes de iniciar",
+      "default": "Inicia el miercoles 13 de mayo a las 6:59 p. m."
+    },
+    {
+      "type": "text",
+      "id": "live_message",
+      "label": "Mensaje durante el evento",
+      "default": "El 42% OFF esta activo. Termina a las 9:59 p. m."
+    },
+    {
+      "type": "text",
+      "id": "ended_message",
+      "label": "Mensaje al finalizar",
+      "default": "La promocion finalizo."
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Texto del boton",
+      "default": "Comprar ahora"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Enlace del boton"
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fondo",
+      "default": "#f8f1f3"
+    },
+    {
+      "type": "color",
+      "id": "surface_color",
+      "label": "Fondo de numeros",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Texto principal",
+      "default": "#171313"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Texto secundario",
+      "default": "#665b5d"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Color acento",
+      "default": "#b87386"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Bordes",
+      "default": "#e7d6db"
+    },
+    {
+      "type": "color",
+      "id": "live_bg_color",
+      "label": "Fondo cuando esta activo",
+      "default": "#211718"
+    },
+    {
+      "type": "color",
+      "id": "live_text_color",
+      "label": "Texto cuando esta activo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "live_muted_color",
+      "label": "Texto secundario activo",
+      "default": "#f2dce2"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo home countdown"
+    }
+  ]
+}
+{% endschema %}

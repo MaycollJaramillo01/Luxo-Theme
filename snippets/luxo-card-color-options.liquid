@@ -1,0 +1,105 @@
+{%- comment -%}
+  Color-only variant previews for product cards.
+  Every other option (size, compression, style) stays on the product page.
+{%- endcomment -%}
+
+{%- liquid
+  assign color_option = blank
+
+  for product_option in product.options_with_values
+    assign normalized_option_name = product_option.name | downcase | strip
+    if normalized_option_name contains 'color' or normalized_option_name contains 'colour' or normalized_option_name contains 'tono'
+      assign color_option = product_option
+      break
+    endif
+  endfor
+-%}
+
+{%- if color_option != blank and color_option.values.size > 1 -%}
+  <div class="card-color-options" role="list" aria-label="Colores disponibles para {{ product.title | escape }}">
+    {%- for option_value in color_option.values limit: 5 -%}
+      {%- liquid
+        assign option_value_text = option_value | append: ''
+        assign color_variant = blank
+
+        for candidate_variant in product.variants
+          assign candidate_value = candidate_variant.option1
+          if color_option.position == 2
+            assign candidate_value = candidate_variant.option2
+          elsif color_option.position == 3
+            assign candidate_value = candidate_variant.option3
+          endif
+
+          if candidate_value == option_value_text
+            if color_variant == blank or candidate_variant.available
+              assign color_variant = candidate_variant
+            endif
+            if candidate_variant.available
+              break
+            endif
+          endif
+        endfor
+
+        assign preview_media = color_variant.featured_media.preview_image | default: color_variant.image
+        assign swatch_background = blank
+        if option_value.swatch.image
+          assign swatch_image_url = option_value.swatch.image | image_url: width: 80
+          assign swatch_background = 'url(' | append: swatch_image_url | append: ')'
+        elsif option_value.swatch.color
+          assign swatch_background = 'rgb(' | append: option_value.swatch.color.rgb | append: ')'
+        endif
+
+        assign color_key = option_value_text | handleize
+        assign fallback_color = '#B9ADA3'
+        if color_key contains 'negro' or color_key contains 'black'
+          assign fallback_color = '#171513'
+        elsif color_key contains 'blanco' or color_key contains 'white'
+          assign fallback_color = '#F8F7F4'
+        elsif color_key contains 'beige' or color_key contains 'nude' or color_key contains 'arena'
+          assign fallback_color = '#CDBAA7'
+        elsif color_key contains 'cafe' or color_key contains 'brown' or color_key contains 'chocolate' or color_key contains 'cocoa'
+          assign fallback_color = '#765648'
+        elsif color_key contains 'rosa' or color_key contains 'pink'
+          assign fallback_color = '#D8A5AE'
+        elsif color_key contains 'rojo' or color_key contains 'red' or color_key contains 'vino'
+          assign fallback_color = '#7B2638'
+        elsif color_key contains 'azul' or color_key contains 'blue'
+          assign fallback_color = '#374C67'
+        elsif color_key contains 'gris' or color_key contains 'gray' or color_key contains 'grey'
+          assign fallback_color = '#8B8B88'
+        endif
+
+        assign variant_url = product.url
+        if color_variant != blank
+          assign variant_url = product.url | append: '?variant=' | append: color_variant.id
+        endif
+      -%}
+      <a
+        class="card-color-options__item{% if option_value.selected %} is-selected{% endif %}{% unless option_value.available %} is-unavailable{% endunless %}"
+        href="{{ variant_url }}"
+        role="listitem"
+        aria-label="Ver {{ product.title | escape }} en color {{ option_value_text | escape }}"
+        title="{{ option_value_text | escape }}"
+      >
+        {%- if swatch_background != blank -%}
+          <span class="card-color-options__swatch" style="--card-swatch: {{ swatch_background }};"></span>
+        {%- elsif preview_media != blank -%}
+          {{ preview_media | image_url: width: 80 | image_tag:
+            class: 'card-color-options__image',
+            width: 32,
+            height: 32,
+            loading: 'lazy',
+            alt: ''
+          }}
+        {%- else -%}
+          <span class="card-color-options__swatch" style="--card-swatch: {{ fallback_color }};"></span>
+        {%- endif -%}
+      </a>
+    {%- endfor -%}
+    {%- if color_option.values.size > 5 -%}
+      <a class="card-color-options__more" href="{{ product.url }}" role="listitem" aria-label="Ver todos los colores">
+        +{{ color_option.values.size | minus: 5 }}
+      </a>
+    {%- endif -%}
+  </div>
+{%- endif -%}

@@ -1,0 +1,661 @@
+{% liquid
+  assign section_id = section.id
+  assign reviews_count = section.blocks.size
+%}
+
+<section
+  id="LuxoPremiumReviews-{{ section_id }}"
+  class="luxo-premium-reviews"
+  style="
+    --lpr-bg: {{ section.settings.bg_color }};
+    --lpr-text: {{ section.settings.text_color }};
+    --lpr-muted: {{ section.settings.muted_color }};
+    --lpr-accent: {{ section.settings.accent_color }};
+    --lpr-border: {{ section.settings.border_color }};
+    --lpr-max-width: {{ section.settings.max_width }}px;
+    --lpr-pt: {{ section.settings.padding_top }}px;
+    --lpr-pb: {{ section.settings.padding_bottom }}px;
+    --lpr-radius: {{ section.settings.card_radius }}px;
+    --lpr-autoplay: {{ section.settings.autoplay_speed }}ms;
+  "
+>
+  <div class="lpr-shell">
+    {% if section.settings.eyebrow != blank %}
+      <div class="lpr-eyebrow">{{ section.settings.eyebrow }}</div>
+    {% endif %}
+
+    {% if section.settings.heading != blank %}
+      <h2 class="lpr-heading">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    {% if section.settings.description != blank %}
+      <div class="lpr-description">{{ section.settings.description }}</div>
+    {% endif %}
+
+    <div
+      class="lpr-slider"
+      data-slider
+      data-autoplay="{{ section.settings.enable_autoplay }}"
+      data-autoplay-speed="{{ section.settings.autoplay_speed }}"
+      data-total-slides="{{ reviews_count }}"
+      {% if reviews_count <= 1 %}data-static="true"{% endif %}
+    >
+      <div class="lpr-viewport">
+        <div class="lpr-track" data-track>
+          {% for block in section.blocks %}
+            <article
+              class="lpr-slide"
+              data-slide
+              {{ block.shopify_attributes }}
+              aria-label="Reseña {{ forloop.index }} de {{ reviews_count }}"
+            >
+              <div class="lpr-card">
+                <div class="lpr-stars" aria-label="{{ block.settings.stars }} de 5 estrellas">
+                  {% for i in (1..5) %}
+                    <span class="lpr-star {% if i <= block.settings.stars %}is-active{% endif %}">★</span>
+                  {% endfor %}
+                </div>
+
+                <div class="lpr-quote-wrap">
+                  <span class="lpr-quote-mark" aria-hidden="true">“</span>
+                  <blockquote class="lpr-quote">
+                    {{ block.settings.review_text | escape }}
+                  </blockquote>
+                </div>
+
+                <div class="lpr-author-wrap">
+                  <span class="lpr-author-line"></span>
+                  <p class="lpr-author">{{ block.settings.author_name }}</p>
+                </div>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      </div>
+
+      {% if reviews_count > 1 %}
+        <div class="lpr-controls">
+          <button class="lpr-arrow lpr-arrow--prev" type="button" aria-label="Reseña anterior" data-prev>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+              <path d="M15 18l-6-6 6-6"></path>
+            </svg>
+          </button>
+
+          <div class="lpr-dots" data-dots>
+            {% for block in section.blocks %}
+              <button
+                type="button"
+                class="lpr-dot {% if forloop.first %}is-active{% endif %}"
+                aria-label="Ir a la reseña {{ forloop.index }}"
+                aria-current="{% if forloop.first %}true{% else %}false{% endif %}"
+                data-dot
+                data-index="{{ forloop.index0 }}"
+              ></button>
+            {% endfor %}
+          </div>
+
+          <button class="lpr-arrow lpr-arrow--next" type="button" aria-label="Siguiente reseña" data-next>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+              <path d="M9 18l6-6-6-6"></path>
+            </svg>
+          </button>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<style>
+  #LuxoPremiumReviews-{{ section_id }} {
+    background: var(--lpr-bg);
+    padding-top: var(--lpr-pt);
+    padding-bottom: var(--lpr-pb);
+    overflow: hidden;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-shell {
+    width: min(100% - 32px, var(--lpr-max-width));
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-eyebrow {
+    display: inline-block;
+    margin: 0 0 14px;
+    padding: 6px 12px;
+    border: 1px solid var(--lpr-border);
+    border-radius: 999px;
+    color: var(--lpr-muted);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-heading {
+    margin: 0;
+    color: var(--lpr-text);
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 500;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-description {
+    max-width: 680px;
+    margin: 14px auto 0;
+    color: var(--lpr-muted);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-slider {
+    margin-top: 42px;
+    position: relative;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-viewport {
+    overflow: hidden;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-track {
+    display: flex;
+    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-slide {
+    flex: 0 0 100%;
+    min-width: 100%;
+    box-sizing: border-box;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-card {
+    position: relative;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 56px 42px 38px;
+    border: 1px solid var(--lpr-border);
+    border-radius: var(--lpr-radius);
+    background: #fff;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-stars {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 26px;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-star {
+    font-size: 18px;
+    line-height: 1;
+    color: #d8d8d8;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-star.is-active {
+    color: var(--lpr-accent);
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-quote-wrap {
+    position: relative;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-quote-mark {
+    position: absolute;
+    top: -44px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 112px;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.05);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-quote {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    color: var(--lpr-text);
+    font-size: clamp(20px, 2.1vw, 29px);
+    line-height: 1.65;
+    font-style: normal;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    border: 0;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-author-wrap {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    margin-top: 32px;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-author-line {
+    width: 72px;
+    height: 1px;
+    background: var(--lpr-accent);
+    opacity: 0.7;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-author {
+    margin: 0;
+    color: var(--lpr-text);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-controls {
+    display: grid;
+    grid-template-columns: 48px 1fr 48px;
+    align-items: center;
+    gap: 20px;
+    max-width: 340px;
+    margin: 28px auto 0;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-arrow {
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--lpr-border);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--lpr-text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-arrow:hover {
+    transform: translateY(-1px);
+    background: #fafafa;
+    border-color: color-mix(in srgb, var(--lpr-border) 70%, #000 30%);
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-arrow svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-dot {
+    width: 9px;
+    height: 9px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: #dedede;
+    cursor: pointer;
+    transition: width 0.28s ease, background-color 0.28s ease, transform 0.28s ease;
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-dot.is-active {
+    width: 28px;
+    background: var(--lpr-text);
+  }
+
+  #LuxoPremiumReviews-{{ section_id }} .lpr-slider[data-static="true"] .lpr-controls {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    #LuxoPremiumReviews-{{ section_id }} {
+      padding-top: calc(var(--lpr-pt) * 0.72);
+      padding-bottom: calc(var(--lpr-pb) * 0.72);
+    }
+
+    #LuxoPremiumReviews-{{ section_id }} .lpr-shell {
+      width: min(100% - 20px, var(--lpr-max-width));
+    }
+
+    #LuxoPremiumReviews-{{ section_id }} .lpr-slider {
+      margin-top: 30px;
+    }
+
+    #LuxoPremiumReviews-{{ section_id }} .lpr-card {
+      padding: 38px 20px 28px;
+      border-radius: calc(var(--lpr-radius) - 4px);
+    }
+
+    #LuxoPremiumReviews-{{ section_id }} .lpr-stars {
+      margin-bottom: 18px;
+      gap: 4px;
+    }
+
+    #LuxoPremiumReviews-{{ section_id }} .lpr-star {
+      font-size: 16px;
+    }
+
+    #LuxoPremiumReviews-{{ section_id }} .lpr-quote-mark {
+      font-size: 72px;
+      top: -26px;
+    }
+
+    #LuxoPremiumReviews-{{ section_id }} .lpr-quote {
+      font-size: 17px;
+      line-height: 1.75;
+    }
+
+    #LuxoPremiumReviews-{{ section_id }} .lpr-author-wrap {
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    #LuxoPremiumReviews-{{ section_id }} .lpr-controls {
+      grid-template-columns: 42px 1fr 42px;
+      gap: 12px;
+      max-width: 270px;
+      margin-top: 20px;
+    }
+
+    #LuxoPremiumReviews-{{ section_id }} .lpr-arrow {
+      width: 42px;
+      height: 42px;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    const section = document.getElementById('LuxoPremiumReviews-{{ section_id }}');
+    if (!section || section.dataset.initialized === 'true') return;
+
+    section.dataset.initialized = 'true';
+
+    const slider = section.querySelector('[data-slider]');
+    if (!slider) return;
+
+    const track = slider.querySelector('[data-track]');
+    const slides = Array.from(slider.querySelectorAll('[data-slide]'));
+    const dots = Array.from(slider.querySelectorAll('[data-dot]'));
+    const prevBtn = slider.querySelector('[data-prev]');
+    const nextBtn = slider.querySelector('[data-next]');
+
+    if (!track || slides.length === 0) return;
+
+    let currentIndex = 0;
+    let autoplayTimer = null;
+    const totalSlides = slides.length;
+    const isAutoplayEnabled = slider.dataset.autoplay === 'true';
+    const autoplaySpeed = parseInt(slider.dataset.autoplaySpeed, 10) || 5000;
+
+    function goToSlide(index) {
+      if (totalSlides <= 1) return;
+
+      if (index < 0) index = totalSlides - 1;
+      if (index >= totalSlides) index = 0;
+
+      currentIndex = index;
+      track.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
+
+      dots.forEach(function(dot, dotIndex) {
+        const isActive = dotIndex === currentIndex;
+        dot.classList.toggle('is-active', isActive);
+        dot.setAttribute('aria-current', isActive ? 'true' : 'false');
+      });
+    }
+
+    function nextSlide() {
+      goToSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+      goToSlide(currentIndex - 1);
+    }
+
+    function stopAutoplay() {
+      if (autoplayTimer) {
+        clearInterval(autoplayTimer);
+        autoplayTimer = null;
+      }
+    }
+
+    function startAutoplay() {
+      stopAutoplay();
+
+      if (!isAutoplayEnabled || totalSlides <= 1) return;
+
+      autoplayTimer = setInterval(function() {
+        nextSlide();
+      }, autoplaySpeed);
+    }
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function() {
+        prevSlide();
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function() {
+        nextSlide();
+      });
+    }
+
+    dots.forEach(function(dot) {
+      dot.addEventListener('click', function() {
+        const index = parseInt(dot.dataset.index, 10);
+        goToSlide(index);
+      });
+    });
+
+    slider.addEventListener('mouseenter', stopAutoplay);
+    slider.addEventListener('mouseleave', startAutoplay);
+    slider.addEventListener('focusin', stopAutoplay);
+    slider.addEventListener('focusout', startAutoplay);
+    slider.addEventListener('touchstart', stopAutoplay, { passive: true });
+    slider.addEventListener('touchend', startAutoplay, { passive: true });
+
+    goToSlide(0);
+    startAutoplay();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Luxo Premium Reviews",
+  "tag": "section",
+  "class": "section-luxo-premium-reviews",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Texto superior",
+      "default": "Testimonios reales"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título",
+      "default": "Lo que dicen nuestras clientas"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Descripción",
+      "default": "Opiniones reales sobre la experiencia, la atención y la calidad de los productos."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_autoplay",
+      "label": "Activar autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Velocidad autoplay",
+      "min": 3000,
+      "max": 9000,
+      "step": 500,
+      "unit": "ms",
+      "default": 5000
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Ancho máximo",
+      "min": 800,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 1100
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Radio de bordes",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fondo sección",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color texto",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Color secundario",
+      "default": "#6f6f6f"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Color acento",
+      "default": "#b08a47"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Color borde",
+      "default": "#e8e2d8"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding superior",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding inferior",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 96
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Reseña",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "review_text",
+          "label": "Texto reseña",
+          "default": "Amo sus fajas, son súper cómodas y sus productos cumplen lo que prometen. Pero la atención supera las expectativas."
+        },
+        {
+          "type": "text",
+          "id": "author_name",
+          "label": "Autor",
+          "default": "Genesis Luna"
+        },
+        {
+          "type": "range",
+          "id": "stars",
+          "label": "Estrellas",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo Premium Reviews",
+      "blocks": [
+        {
+          "type": "review",
+          "settings": {
+            "review_text": "Amo sus fajas, son súper cómodas y sus productos cumplen lo que prometen. Pero la atención supera las expectativas.",
+            "author_name": "Genesis Luna",
+            "stars": 5
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "review_text": "Calidad excelente, fajas muy cómodas y el personal muy profesional. Mi pedido llegó súper rápido, las recomiendo 100%.",
+            "author_name": "Darling Rosales",
+            "stars": 5
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "review_text": "No solo les interesa vender, realmente te ayudan con información para sentirnos todas unas mujeres empoderadas.",
+            "author_name": "Abigail Enamorado",
+            "stars": 5
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "review_text": "Amo las fajas, el gel es mi favorito y el jabón aclarante es una maravilla. Gracias por pensar en nosotras.",
+            "author_name": "Nancy Yamileth",
+            "stars": 5
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "review_text": "Para mí son las mejores fajas del mercado, me han ayudado mucho con la pérdida de peso. Soy clienta fiel.",
+            "author_name": "Yanuaria Arias",
+            "stars": 5
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

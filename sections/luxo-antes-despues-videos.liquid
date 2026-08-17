@@ -1,0 +1,492 @@
+{% liquid
+  assign autoplay_video = section.settings.autoplay
+  assign loop_video = section.settings.loop
+  assign muted_video = section.settings.mute
+  assign controls_video = section.settings.controles
+%}
+
+<section
+  id="luxo-antes-despues-{{ section.id }}"
+  class="luxo-antes-despues"
+  style="
+    --pad-top: {{ section.settings.padding_top }}px;
+    --pad-bottom: {{ section.settings.padding_bottom }}px;
+    --bg: {{ section.settings.color_fondo }};
+    --card-bg: {{ section.settings.color_tarjeta }};
+    --text: {{ section.settings.color_texto }};
+    --muted: {{ section.settings.color_texto_secundario }};
+    --badge-bg: {{ section.settings.color_badge_fondo }};
+    --badge-text: {{ section.settings.color_badge_texto }};
+    --radius: {{ section.settings.radio_borde }}px;
+    --gap: {{ section.settings.espacio_columnas }}px;
+  "
+>
+  <div class="page-width">
+    <div class="luxo-antes-despues__header {% if section.settings.centrar_encabezado %}is-centered{% endif %}">
+      {% if section.settings.etiqueta != blank %}
+        <span class="luxo-antes-despues__eyebrow">{{ section.settings.etiqueta }}</span>
+      {% endif %}
+
+      {% if section.settings.titulo != blank %}
+        <h2 class="luxo-antes-despues__title">{{ section.settings.titulo }}</h2>
+      {% endif %}
+
+      {% if section.settings.descripcion != blank %}
+        <div class="luxo-antes-despues__description rte">
+          {{ section.settings.descripcion }}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="luxo-antes-despues__grid">
+      <article class="luxo-antes-despues__card">
+        <div class="luxo-antes-despues__media-wrap">
+          {% if section.settings.video_antes != blank %}
+            {{
+              section.settings.video_antes
+              | video_tag:
+                image_size: '1100x',
+                autoplay: autoplay_video,
+                loop: loop_video,
+                muted: muted_video,
+                controls: controls_video,
+                playsinline: true,
+                class: 'luxo-antes-despues__video'
+            }}
+          {% else %}
+            <div class="luxo-antes-despues__placeholder">
+              <span>Sube aquí el video de “Antes”</span>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="luxo-antes-despues__content">
+          {% if section.settings.label_antes != blank %}
+            <span class="luxo-antes-despues__badge">{{ section.settings.label_antes }}</span>
+          {% endif %}
+
+          {% if section.settings.titulo_antes != blank %}
+            <h3 class="luxo-antes-despues__card-title">{{ section.settings.titulo_antes }}</h3>
+          {% endif %}
+
+          {% if section.settings.texto_antes != blank %}
+            <div class="luxo-antes-despues__card-text rte">
+              {{ section.settings.texto_antes }}
+            </div>
+          {% endif %}
+        </div>
+      </article>
+
+      <article class="luxo-antes-despues__card">
+        <div class="luxo-antes-despues__media-wrap">
+          {% if section.settings.video_despues != blank %}
+            {{
+              section.settings.video_despues
+              | video_tag:
+                image_size: '1100x',
+                autoplay: autoplay_video,
+                loop: loop_video,
+                muted: muted_video,
+                controls: controls_video,
+                playsinline: true,
+                class: 'luxo-antes-despues__video'
+            }}
+          {% else %}
+            <div class="luxo-antes-despues__placeholder">
+              <span>Sube aquí el video de “Después”</span>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="luxo-antes-despues__content">
+          {% if section.settings.label_despues != blank %}
+            <span class="luxo-antes-despues__badge">{{ section.settings.label_despues }}</span>
+          {% endif %}
+
+          {% if section.settings.titulo_despues != blank %}
+            <h3 class="luxo-antes-despues__card-title">{{ section.settings.titulo_despues }}</h3>
+          {% endif %}
+
+          {% if section.settings.texto_despues != blank %}
+            <div class="luxo-antes-despues__card-text rte">
+              {{ section.settings.texto_despues }}
+            </div>
+          {% endif %}
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  #luxo-antes-despues-{{ section.id }} {
+    background: var(--bg);
+    padding-top: var(--pad-top);
+    padding-bottom: var(--pad-bottom);
+  }
+
+  #luxo-antes-despues-{{ section.id }} .page-width {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__header {
+    margin-bottom: 34px;
+    color: var(--text);
+  }
+
+  #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__header.is-centered {
+    text-align: center;
+    max-width: 820px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 40px;
+  }
+
+  #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__eyebrow {
+    display: inline-block;
+    margin-bottom: 12px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--badge-bg);
+    color: var(--badge-text);
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__title {
+    margin: 0 0 12px;
+    color: var(--text);
+    font-size: clamp(28px, 4vw, 48px);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+
+  #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__description {
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__description p {
+    margin: 0;
+  }
+
+  #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--gap);
+  }
+
+  #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    overflow: hidden;
+    color: var(--text);
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+  }
+
+  #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__media-wrap {
+    position: relative;
+    background: #f3f3f3;
+    overflow: hidden;
+  }
+
+  #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__video,
+  #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__media-wrap video {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 9 / 16;
+    object-fit: cover;
+    background: #000;
+  }
+
+  #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 9 / 16;
+    min-height: 420px;
+    padding: 24px;
+    text-align: center;
+    color: #666;
+    background:
+      linear-gradient(135deg, rgba(0,0,0,0.04), rgba(0,0,0,0.08));
+  }
+
+  #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__content {
+    padding: 24px;
+  }
+
+  #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 8px 14px;
+    margin-bottom: 14px;
+    border-radius: 999px;
+    background: var(--badge-bg);
+    color: var(--badge-text);
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__card-title {
+    margin: 0 0 10px;
+    color: var(--text);
+    font-size: clamp(20px, 2vw, 28px);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__card-text {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__card-text p {
+    margin: 0;
+  }
+
+  #luxo-antes-despues-{{ section.id }} .video-wrapper,
+  #luxo-antes-despues-{{ section.id }} .media,
+  #luxo-antes-despues-{{ section.id }} deferred-media {
+    display: block;
+    width: 100%;
+  }
+
+  @media screen and (max-width: 989px) {
+    #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__grid {
+      grid-template-columns: 1fr;
+    }
+
+    #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__header {
+      margin-bottom: 28px;
+    }
+
+    #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__content {
+      padding: 20px;
+    }
+
+    #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__video,
+    #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__media-wrap video,
+    #luxo-antes-despues-{{ section.id }} .luxo-antes-despues__placeholder {
+      aspect-ratio: 4 / 5;
+      min-height: auto;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Luxo Antes y Después",
+  "tag": "section",
+  "class": "section section-luxo-antes-despues",
+  "settings": [
+    {
+      "type": "text",
+      "id": "etiqueta",
+      "label": "Etiqueta superior",
+      "default": "Antes y después"
+    },
+    {
+      "type": "text",
+      "id": "titulo",
+      "label": "Título principal",
+      "default": "Mira la transformación"
+    },
+    {
+      "type": "richtext",
+      "id": "descripcion",
+      "label": "Descripción",
+      "default": "<p>Presenta de forma visual el cambio real con dos videos comparativos totalmente editables.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "centrar_encabezado",
+      "label": "Centrar encabezado",
+      "default": true
+    },
+
+    {
+      "type": "header",
+      "content": "Bloque Antes"
+    },
+    {
+      "type": "video",
+      "id": "video_antes",
+      "label": "Video Antes"
+    },
+    {
+      "type": "text",
+      "id": "label_antes",
+      "label": "Etiqueta Antes",
+      "default": "Antes"
+    },
+    {
+      "type": "text",
+      "id": "titulo_antes",
+      "label": "Título Antes",
+      "default": "Estado inicial"
+    },
+    {
+      "type": "richtext",
+      "id": "texto_antes",
+      "label": "Texto Antes",
+      "default": "<p>Muestra el punto de partida para que la diferencia sea clara y atractiva.</p>"
+    },
+
+    {
+      "type": "header",
+      "content": "Bloque Después"
+    },
+    {
+      "type": "video",
+      "id": "video_despues",
+      "label": "Video Después"
+    },
+    {
+      "type": "text",
+      "id": "label_despues",
+      "label": "Etiqueta Después",
+      "default": "Después"
+    },
+    {
+      "type": "text",
+      "id": "titulo_despues",
+      "label": "Título Después",
+      "default": "Resultado final"
+    },
+    {
+      "type": "richtext",
+      "id": "texto_despues",
+      "label": "Texto Después",
+      "default": "<p>Destaca el acabado final con un video limpio, elegante y persuasivo.</p>"
+    },
+
+    {
+      "type": "header",
+      "content": "Opciones de video"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Reproducción automática",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "mute",
+      "label": "Silenciar videos",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "loop",
+      "label": "Repetir videos",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "controles",
+      "label": "Mostrar controles",
+      "default": true
+    },
+
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "color",
+      "id": "color_fondo",
+      "label": "Color de fondo de la sección",
+      "default": "#f8f4ef"
+    },
+    {
+      "type": "color",
+      "id": "color_tarjeta",
+      "label": "Color de fondo de las tarjetas",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "color_texto",
+      "label": "Color de texto principal",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "color_texto_secundario",
+      "label": "Color de texto secundario",
+      "default": "#5c5c5c"
+    },
+    {
+      "type": "color",
+      "id": "color_badge_fondo",
+      "label": "Color de fondo de etiquetas",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "color_badge_texto",
+      "label": "Color de texto de etiquetas",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "radio_borde",
+      "label": "Radio de borde",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "espacio_columnas",
+      "label": "Espacio entre columnas",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Espacio superior",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Espacio inferior",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo Antes y Después"
+    }
+  ]
+}
+{% endschema %}

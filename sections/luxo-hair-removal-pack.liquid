@@ -1,0 +1,318 @@
+{{ 'luxo-hair-removal-campaign.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+  assign selected_product = section.settings.product
+  assign current_variant = blank
+  assign product_title = section.settings.manual_title
+  assign product_desc = section.settings.manual_description
+  assign product_url = section.settings.button_url
+  assign featured_media = section.settings.image
+  assign price = blank
+  assign compare_price = blank
+
+  if selected_product != blank
+    assign current_variant = selected_product.selected_or_first_available_variant
+
+    if product_title == blank
+      assign product_title = selected_product.title
+    endif
+
+    if product_desc == blank
+      assign product_desc = selected_product.description | strip_html | truncate: 220
+    endif
+
+    if product_url == blank
+      assign product_url = selected_product.url
+    endif
+
+    if featured_media == blank and selected_product.featured_image != blank
+      assign featured_media = selected_product.featured_image
+    endif
+
+    assign price = current_variant.price
+    if current_variant.compare_at_price > current_variant.price
+      assign compare_price = current_variant.compare_at_price
+    endif
+  endif
+%}
+
+<section
+  class="lxhr"
+  style="
+    --lxhr-bg: {{ section.settings.bg_color }};
+    --lxhr-surface: {{ section.settings.surface_color }};
+    --lxhr-surface-soft: {{ section.settings.surface_soft_color }};
+    --lxhr-text: {{ section.settings.text_color }};
+    --lxhr-muted: {{ section.settings.muted_color }};
+    --lxhr-border: {{ section.settings.border_color }};
+    --lxhr-accent: {{ section.settings.accent_color }};
+    --lxhr-accent-soft: {{ section.settings.accent_soft_color }};
+    --lxhr-radius: {{ section.settings.radius }}px;
+    --lxhr-max: {{ section.settings.page_width }}px;
+    --lxhr-space: {{ section.settings.section_spacing }}px;
+  "
+>
+  <div class="lxhr-wrap">
+    <div class="lxhr-section">
+      <div class="lxhr-center">
+        {% if section.settings.eyebrow != blank %}
+          <div class="lxhr-eyebrow">{{ section.settings.eyebrow }}</div>
+        {% endif %}
+        <h2 class="lxhr-title">{{ section.settings.title }}</h2>
+        {% if section.settings.subtitle != blank %}
+          <div class="lxhr-subtitle">{{ section.settings.subtitle }}</div>
+        {% endif %}
+      </div>
+
+      <div class="lxhr-split">
+        <div class="lxhr-pack-box">
+          <span class="lxhr-tag">{{ section.settings.pack_tag }}</span>
+
+          <div class="lxhr-price-row">
+            {% if price != blank %}
+              <p class="lxhr-price">{{ price | money }}</p>
+            {% else %}
+              <p class="lxhr-price">{{ section.settings.manual_price }}</p>
+            {% endif %}
+
+            {% if compare_price != blank %}
+              <div class="lxhr-compare-price">{{ compare_price | money }}</div>
+            {% elsif section.settings.manual_compare_price != blank %}
+              <div class="lxhr-compare-price">{{ section.settings.manual_compare_price }}</div>
+            {% endif %}
+          </div>
+
+          <div class="lxhr-pack-list">
+            {% if section.settings.item_1 != blank %}
+              <div class="lxhr-pack-item"><span class="lxhr-pack-bullet"></span><span>{{ section.settings.item_1 }}</span></div>
+            {% endif %}
+            {% if section.settings.item_2 != blank %}
+              <div class="lxhr-pack-item"><span class="lxhr-pack-bullet"></span><span>{{ section.settings.item_2 }}</span></div>
+            {% endif %}
+            {% if section.settings.item_3 != blank %}
+              <div class="lxhr-pack-item"><span class="lxhr-pack-bullet"></span><span>{{ section.settings.item_3 }}</span></div>
+            {% endif %}
+            {% if section.settings.item_4 != blank %}
+              <div class="lxhr-pack-item"><span class="lxhr-pack-bullet"></span><span>{{ section.settings.item_4 }}</span></div>
+            {% endif %}
+          </div>
+
+          <div style="margin-top: 24px;">
+            {% if section.settings.button_label != blank and product_url != blank %}
+              <a class="lxhr-btn lxhr-btn-primary" href="{{ product_url }}">{{ section.settings.button_label }}</a>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="lxhr-product-panel">
+          <div class="lxhr-product-image">
+            {% if featured_media != blank %}
+              {{
+                featured_media
+                | image_url: width: 1200
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '375, 550, 750, 900, 1200',
+                  sizes: '(max-width: 989px) 100vw, 180px',
+                  alt: product_title | escape
+              }}
+            {% else %}
+              <div class="lxhr-video-placeholder">Agrega la imagen del producto o selecciona el producto.</div>
+            {% endif %}
+          </div>
+
+          <div>
+            <h3 class="lxhr-product-title">{{ product_title }}</h3>
+            {% if product_desc != blank %}
+              <div class="lxhr-product-desc">{{ product_desc }}</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxo Hair Removal Pack",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Producto"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Imagen manual"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Contenido del pack"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Qué incluye esta oferta"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtítulo",
+      "default": "Usa esta sección para dejar claro qué compra exactamente la persona y reforzar la percepción de valor."
+    },
+    {
+      "type": "text",
+      "id": "pack_tag",
+      "label": "Etiqueta del pack",
+      "default": "5 cremas depiladoras"
+    },
+    {
+      "type": "text",
+      "id": "manual_title",
+      "label": "Título manual",
+      "default": "5 Cremas Depiladoras"
+    },
+    {
+      "type": "textarea",
+      "id": "manual_description",
+      "label": "Descripción manual",
+      "default": "Pack premium pensado para una rutina de depilación más práctica, cómoda y conveniente desde casa."
+    },
+    {
+      "type": "text",
+      "id": "manual_price",
+      "label": "Precio manual",
+      "default": "$89.99"
+    },
+    {
+      "type": "text",
+      "id": "manual_compare_price",
+      "label": "Precio anterior manual",
+      "default": "$100.00"
+    },
+    {
+      "type": "text",
+      "id": "item_1",
+      "label": "Ítem 1",
+      "default": "Pack de 5 unidades en una sola compra"
+    },
+    {
+      "type": "text",
+      "id": "item_2",
+      "label": "Ítem 2",
+      "default": "Mejor percepción de ahorro frente a compra individual"
+    },
+    {
+      "type": "text",
+      "id": "item_3",
+      "label": "Ítem 3",
+      "default": "Ideal para rutina de cuidado personal en casa"
+    },
+    {
+      "type": "text",
+      "id": "item_4",
+      "label": "Ítem 4",
+      "default": "Oferta del pack visible dentro de la landing"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Texto botón",
+      "default": "Comprar el pack"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "URL botón manual"
+    },
+    {
+      "type": "range",
+      "id": "page_width",
+      "label": "Ancho máximo",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1240
+    },
+    {
+      "type": "range",
+      "id": "section_spacing",
+      "label": "Espaciado",
+      "min": 40,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "default": 88
+    },
+    {
+      "type": "range",
+      "id": "radius",
+      "label": "Radio",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fondo",
+      "default": "#fbf5f4"
+    },
+    {
+      "type": "color",
+      "id": "surface_color",
+      "label": "Tarjeta",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "surface_soft_color",
+      "label": "Tarjeta suave",
+      "default": "#fff9f8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Texto principal",
+      "default": "#1b1718"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Texto secundario",
+      "default": "#6d6265"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Acento",
+      "default": "#d7c56f"
+    },
+    {
+      "type": "color",
+      "id": "accent_soft_color",
+      "label": "Acento suave",
+      "default": "#d8e7af"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Borde",
+      "default": "#eadfdf"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo Hair Removal Pack"
+    }
+  ]
+}
+{% endschema %}

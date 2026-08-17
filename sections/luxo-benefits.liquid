@@ -1,0 +1,162 @@
+{{ 'luxo-landing.css' | asset_url | stylesheet_tag }}
+
+<section
+  class="luxo-block"
+  style="
+    --lb-bg: {{ section.settings.bg_color }};
+    --lb-surface: {{ section.settings.surface_color }};
+    --lb-text: {{ section.settings.text_color }};
+    --lb-muted: {{ section.settings.muted_color }};
+    --lb-accent: {{ section.settings.accent_color }};
+    --lb-border: {{ section.settings.border_color }};
+    --lb-max: {{ section.settings.page_width }}px;
+    --lb-radius: {{ section.settings.card_radius }}px;
+    --lb-section-space: {{ section.settings.section_spacing }}px;
+  "
+>
+  <div class="lb-section">
+    <div class="lb-wrap">
+      <div class="lb-center">
+        {% if section.settings.eyebrow != blank %}
+          <span class="lb-eyebrow">{{ section.settings.eyebrow }}</span>
+        {% endif %}
+        {% if section.settings.title != blank %}
+          <h2 class="lb-title">{{ section.settings.title }}</h2>
+        {% endif %}
+      </div>
+
+      {% if section.blocks.size > 0 %}
+        <div class="lb-benefit-grid">
+          {% for block in section.blocks %}
+            <div class="lb-benefit" {{ block.shopify_attributes }}>
+              <div class="lb-benefit-mark">✦</div>
+              {% if block.settings.title != blank %}
+                <h3 class="lb-card-title">{{ block.settings.title }}</h3>
+              {% endif %}
+              {% if block.settings.text != blank %}
+                <div class="lb-muted lb-small">{{ block.settings.text }}</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxo - Beneficios",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Por qué elegirnos"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "COMPRA FÁCIL, SEGURA Y RÁPIDA"
+    },
+    {
+      "type": "range",
+      "id": "page_width",
+      "label": "Ancho máximo",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1280
+    },
+    {
+      "type": "range",
+      "id": "section_spacing",
+      "label": "Espaciado",
+      "min": 40,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Radio",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fondo",
+      "default": "#f7f4ef"
+    },
+    {
+      "type": "color",
+      "id": "surface_color",
+      "label": "Tarjeta",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Texto",
+      "default": "#181511"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Texto secundario",
+      "default": "#6f675d"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Acento",
+      "default": "#b89057"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Borde",
+      "default": "#ddd5cb"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Beneficio",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "Comodidad real"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Texto",
+          "default": "Materiales suaves y diseño pensado para acompañarte durante todo el día."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo - Beneficios",
+      "blocks": [
+        { "type": "benefit", "settings": { "title": "Envío rápido", "text": "Recibe tu pedido en tiempo récord directo en la puerta de tu casa." } },
+        { "type": "benefit", "settings": { "title": "Pago seguro", "text": "Tus datos están protegidos. Compra con total confianza." } },
+        { "type": "benefit", "settings": { "title": "Asesoría experta", "text": "Te ayudamos a elegir la talla y compresión ideal para ti." } },
+        { "type": "benefit", "settings": { "title": "Resultados reales", "text": "Fajas diseñadas para reducir medidas visualmente al instante." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

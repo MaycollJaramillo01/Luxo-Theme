@@ -1,0 +1,368 @@
+{% comment %}
+  Luxo | Creemos que te gustaría - VERSIÓN FINAL CORREGIDA
+  - Precio REAL del producto usando {{ product.price | money }}
+  - Sin corazones ni botones de wishlist
+  - Título correcto: CREEMOS QUE TE GUSTARÍA
+  - Carrusel horizontal con bordes finos, estilo minimalista
+  - 100% automático (usa productos de "los-mas-vendidos")
+  - NUEVO: Descuento visual global configurable desde el editor.
+{% endcomment %}
+
+<section id="LuxCreemosQueTeGustaria-{{ section.id }}" class="lux-creemos-que-te-gustaria">
+  <div class="lux-creemos-container">
+    
+    <div class="lux-creemos-header">
+      <h2 class="lux-creemos-title">CREEMOS QUE TE GUSTARÍA</h2>
+      
+      <div class="lux-creemos-nav">
+        <button class="lux-creemos-arrow lux-creemos-arrow--left" aria-label="Anterior">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
+        </button>
+        <div class="lux-creemos-pagination">
+          <span id="current-{{ section.id }}">1</span> / <span id="total-{{ section.id }}">3</span>
+        </div>
+        <button class="lux-creemos-arrow lux-creemos-arrow--right" aria-label="Siguiente">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="lux-creemos-carousel-wrapper">
+      <div class="lux-creemos-carousel" id="carousel-{{ section.id }}">
+        
+        {%- assign recommended = collections['los-mas-vendidos'] -%}
+        {%- if recommended == blank -%}
+          {%- assign recommended = collections['todos-los-productos'] -%}
+        {%- endif -%}
+
+        {%- assign global_discount = section.settings.global_discount -%}
+
+        {%- for product in recommended.products limit: 12 -%}
+          <div class="lux-creemos-card">
+            <a href="{{ product.url }}" class="lux-creemos-card-link">
+              <div class="lux-creemos-image-wrapper">
+                {%- if product.featured_image != blank -%}
+                  <img 
+                    src="{{ product.featured_image | image_url: width: 600 }}" 
+                    alt="{{ product.title | escape }}"
+                    loading="lazy"
+                    width="400" 
+                    height="400">
+                {%- else -%}
+                  {{ 'product-1' | placeholder_svg_tag: 'lux-creemos-placeholder' }}
+                {%- endif -%}
+              </div>
+            </a>
+            
+            <div class="lux-creemos-info">
+              <div class="lux-creemos-info-left">
+                <p class="lux-creemos-product-type">{{ product.vendor | default: 'LUXO' | upcase }}</p>
+                <a href="{{ product.url }}" class="lux-creemos-title-link">{{ product.title | upcase }}</a>
+                
+                {% comment %} === LÓGICA DE PRECIOS Y DESCUENTOS === {% endcomment %}
+                <div class="lux-creemos-price-wrap">
+                  {%- if global_discount > 0 -%}
+                    {%- assign discount_multiplier = 100 | minus: global_discount | divided_by: 100.0 -%}
+                    {%- assign sale_price = product.price | times: discount_multiplier -%}
+                    <span class="lux-creemos-price lux-price--sale">{{ sale_price | money }}</span>
+                    <s class="lux-creemos-price lux-price--compare">{{ product.price | money }}</s>
+                  
+                  {%- elsif product.compare_at_price > product.price -%}
+                    <span class="lux-creemos-price lux-price--sale">{{ product.price | money }}</span>
+                    <s class="lux-creemos-price lux-price--compare">{{ product.compare_at_price | money }}</s>
+                  
+                  {%- else -%}
+                    <span class="lux-creemos-price">{{ product.price | money }}</span>
+                  {%- endif -%}
+                </div>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+        
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  #LuxCreemosQueTeGustaria-{{ section.id }} {
+    padding: 60px 0;
+    background: #ffffff;
+    border-top: 1px solid #eaeaea;
+    border-bottom: 1px solid #eaeaea;
+  }
+
+  .lux-creemos-container { 
+    max-width: 100%; 
+    margin: 0; 
+  }
+
+  .lux-creemos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    margin-bottom: 30px;
+  }
+
+  .lux-creemos-title {
+    font-family: var(--font-heading-family, sans-serif);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #111;
+    margin: 0;
+  }
+
+  .lux-creemos-nav {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .lux-creemos-arrow {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    color: #111;
+  }
+  
+  .lux-creemos-arrow svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .lux-creemos-pagination {
+    font-family: var(--font-body-family, sans-serif);
+    font-size: 13px;
+    font-weight: 500;
+    color: #111;
+    letter-spacing: 0.1em;
+  }
+
+  .lux-creemos-carousel-wrapper {
+    position: relative;
+    border-top: 1px solid #eaeaea;
+    border-bottom: 1px solid #eaeaea;
+  }
+
+  .lux-creemos-carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .lux-creemos-carousel::-webkit-scrollbar { 
+    display: none;
+  }
+
+  .lux-creemos-card {
+    flex: 0 0 20%;
+    min-width: 280px;
+    scroll-snap-align: start;
+    background: #fff;
+    border-right: 1px solid #eaeaea;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .lux-creemos-card:last-child {
+    border-right: none;
+  }
+
+  .lux-creemos-card-link {
+    display: block;
+    text-decoration: none;
+  }
+
+  .lux-creemos-image-wrapper {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+  }
+
+  .lux-creemos-image-wrapper img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.4s ease;
+  }
+
+  .lux-creemos-card:hover img { 
+    transform: scale(1.03); 
+  }
+
+  .lux-creemos-info {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: auto;
+  }
+
+  .lux-creemos-info-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .lux-creemos-product-type {
+    font-family: var(--font-body-family, sans-serif);
+    font-size: 11px;
+    font-weight: 600;
+    color: #111;
+    margin: 0;
+    letter-spacing: 0.05em;
+  }
+
+  .lux-creemos-title-link {
+    font-family: var(--font-body-family, sans-serif);
+    font-size: 13px;
+    font-weight: 700;
+    color: #111;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+  
+  .lux-creemos-title-link:hover {
+    text-decoration: underline;
+  }
+
+  /* ESTILOS PRECIO Y DESCUENTO */
+  .lux-creemos-price-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+  }
+
+  .lux-creemos-price {
+    font-family: var(--font-body-family, sans-serif);
+    font-size: 12px;
+    font-weight: 500;
+    color: #666;
+  }
+
+  .lux-price--sale {
+    color: #c02b2b; /* Rojo premium */
+    font-weight: 700;
+  }
+
+  .lux-price--compare {
+    opacity: 0.5;
+    text-decoration: line-through;
+    font-size: 11px;
+  }
+
+  @media (max-width: 1200px) {
+    .lux-creemos-card { flex: 0 0 25%; }
+  }
+
+  @media (max-width: 900px) {
+    .lux-creemos-card { flex: 0 0 33.333%; }
+  }
+
+  @media (max-width: 768px) {
+    .lux-creemos-header {
+      padding: 0 20px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 15px;
+    }
+    
+    .lux-creemos-nav {
+      align-self: flex-end;
+    }
+
+    .lux-creemos-card { flex: 0 0 70%; min-width: 240px; } 
+    
+    .lux-creemos-image-wrapper { padding: 30px; }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const section = document.getElementById('LuxCreemosQueTeGustaria-{{ section.id }}');
+    if (!section) return;
+
+    const carousel = section.querySelector('.lux-creemos-carousel');
+    const leftBtn = section.querySelector('.lux-creemos-arrow--left');
+    const rightBtn = section.querySelector('.lux-creemos-arrow--right');
+    const currentSpan = section.querySelector('#current-{{ section.id }}');
+    const totalSpan = section.querySelector('#total-{{ section.id }}');
+
+    let totalPages = 1;
+    let currentPage = 1;
+
+    const updatePaginationInfo = () => {
+      const containerWidth = carousel.clientWidth;
+      const scrollWidth = carousel.scrollWidth;
+      if(containerWidth === 0) return;
+      
+      totalPages = Math.ceil(scrollWidth / containerWidth);
+      totalSpan.textContent = totalPages;
+      if(currentPage > totalPages) currentPage = totalPages;
+      currentSpan.textContent = currentPage;
+    };
+
+    const updateCurrentPageOnScroll = () => {
+      const containerWidth = carousel.clientWidth;
+      const scrollPosition = carousel.scrollLeft;
+      currentPage = Math.round(scrollPosition / containerWidth) + 1;
+      currentSpan.textContent = currentPage;
+    };
+
+    leftBtn.addEventListener('click', () => {
+      carousel.scrollBy({ left: -carousel.clientWidth, behavior: 'smooth' });
+    });
+
+    rightBtn.addEventListener('click', () => {
+      carousel.scrollBy({ left: carousel.clientWidth, behavior: 'smooth' });
+    });
+
+    let scrollTimeout;
+    carousel.addEventListener('scroll', () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(updateCurrentPageOnScroll, 100);
+    });
+
+    window.addEventListener('resize', updatePaginationInfo);
+
+    setTimeout(updatePaginationInfo, 100);
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Luxo | Sugerencias",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Promociones"
+    },
+    {
+      "type": "range",
+      "id": "global_discount",
+      "label": "Descuento visual global (%)",
+      "info": "Aplica un descuento matemático solo visual a los productos sugeridos (0 para desactivar).",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "default": 0
+    }
+  ],
+  "presets": [{ "name": "Luxo | Creemos que te gustaría" }]
+}
+{% endschema %}

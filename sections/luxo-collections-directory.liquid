@@ -1,0 +1,332 @@
+{%- comment -%}
+  Luxo — Directorio de colecciones.
+  Reemplaza la grilla plana de Dawn por un directorio editorial con grupos,
+  navegación fija y tarjetas destacadas.
+
+  Estructura pensada para el informe comercial:
+  - Grupo A (probar y escalar) y B (mantener) arriba, con tarjetas destacadas.
+  - Grupo C (venta cruzada) más abajo, como complemento y no como captación.
+  - Grupo E (pausar) se excluye con la lista de handles ocultos.
+{%- endcomment -%}
+
+{{ 'luxo-collections.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign collection_blocks = section.blocks | where: 'type', 'collection'
+  assign group_blocks = section.blocks | where: 'type', 'group'
+
+  case section.settings.image_ratio
+    when 'square'
+      assign card_ratio = '1 / 1'
+    when 'tall'
+      assign card_ratio = '3 / 4'
+    else
+      assign card_ratio = '4 / 5'
+  endcase
+
+  assign show_count = section.settings.show_count
+  assign show_peek = section.settings.show_peek
+  assign section_anchor = section.settings.anchor_id | default: 'collection-directory' | handleize
+-%}
+
+<section
+  id="{{ section_anchor }}"
+  class="luxo-cols"
+  style="--luxo-cols-desktop: {{ section.settings.columns_desktop }}; --luxo-col-ratio: {{ card_ratio }};"
+>
+  <div class="luxo-container luxo-container--wide">
+    <header class="luxo-cols__head">
+      <div>
+        {%- if section.settings.kicker != blank -%}
+          <p class="luxo-kicker">{{ section.settings.kicker | escape }}</p>
+        {%- endif -%}
+        {%- if section.settings.heading_tag == 'h2' -%}
+          <h2 class="luxo-cols__title">{{ section.settings.title }}</h2>
+        {%- else -%}
+          <h1 class="luxo-cols__title">{{ section.settings.title }}</h1>
+        {%- endif -%}
+      </div>
+      <div>
+        {%- if section.settings.copy != blank -%}
+          <div class="luxo-cols__copy rte">{{ section.settings.copy }}</div>
+        {%- endif -%}
+        {%- if section.settings.show_total -%}
+          <span class="luxo-cols__count">{{ collections.size }} colecciones</span>
+        {%- endif -%}
+      </div>
+    </header>
+  </div>
+
+  {%- if section.settings.show_nav and group_blocks.size > 0 -%}
+    <nav class="luxo-cols__nav" aria-label="Índice de colecciones">
+      <div class="luxo-container luxo-container--wide">
+        <div class="luxo-cols__nav-track">
+          {%- for block in group_blocks -%}
+            {%- if block.settings.title != blank -%}
+              <a class="luxo-cols__chip" href="#luxo-grupo-{{ block.id }}">{{ block.settings.title | escape }}</a>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </nav>
+  {%- endif -%}
+
+  <div class="luxo-container luxo-container--wide">
+    {%- if collection_blocks.size > 0 -%}
+      {%- if group_blocks.size > 0 -%}
+        {%- for group_block in section.blocks -%}
+          {%- if group_block.type == 'group' -%}
+            {%- liquid
+              assign group_offset = forloop.index
+              assign group_collection_count = 0
+
+              for candidate_block in section.blocks offset: group_offset
+                if candidate_block.type == 'group'
+                  break
+                endif
+                if candidate_block.type == 'collection'
+                  assign group_collection_count = group_collection_count | plus: 1
+                endif
+              endfor
+            -%}
+
+            <div class="luxo-cols__group" id="luxo-grupo-{{ group_block.id }}" {{ group_block.shopify_attributes }}>
+              {%- if group_block.settings.title != blank -%}
+                <div class="luxo-cols__group-head">
+                  <div>
+                    <h2 class="luxo-cols__group-title">{{ group_block.settings.title | escape }}</h2>
+                    {%- if group_block.settings.note != blank -%}
+                      <p class="luxo-cols__group-note">{{ group_block.settings.note | escape }}</p>
+                    {%- endif -%}
+                  </div>
+                  {%- if group_block.settings.link_label != blank and group_block.settings.link_url != blank -%}
+                    <a class="luxo-cols__group-link" href="{{ group_block.settings.link_url }}">
+                      {{- group_block.settings.link_label | escape -}}
+                    </a>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+
+              <ul class="luxo-cols__grid" role="list">
+                {%- for block in section.blocks offset: group_offset limit: group_collection_count -%}
+                  {%- if block.type == 'collection' -%}
+                    {%- render 'luxo-collection-tile',
+                      tile_collection: block.settings.collection,
+                      tile_title: block.settings.title,
+                      tile_image: block.settings.image,
+                      tile_badge: block.settings.badge,
+                      tile_link: block.settings.link,
+                      tile_desc: block.settings.description,
+                      tile_feature: block.settings.feature,
+                      tile_show_count: show_count,
+                      tile_show_peek: show_peek,
+                      tile_attributes: block.shopify_attributes
+                    -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              </ul>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- else -%}
+        <div class="luxo-cols__group">
+          <ul class="luxo-cols__grid" role="list">
+            {%- for block in collection_blocks -%}
+              {%- render 'luxo-collection-tile',
+                tile_collection: block.settings.collection,
+                tile_title: block.settings.title,
+                tile_image: block.settings.image,
+                tile_badge: block.settings.badge,
+                tile_link: block.settings.link,
+                tile_desc: block.settings.description,
+                tile_feature: block.settings.feature,
+                tile_show_count: show_count,
+                tile_show_peek: show_peek,
+                tile_attributes: block.shopify_attributes
+              -%}
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+    {%- else -%}
+      {%- liquid
+        case section.settings.sort
+          when 'products_high'
+            assign sorted_collections = collections | sort: 'all_products_count' | reverse
+          when 'products_low'
+            assign sorted_collections = collections | sort: 'all_products_count'
+          when 'date_reversed'
+            assign sorted_collections = collections | sort: 'published_at' | reverse
+          else
+            assign sorted_collections = collections
+        endcase
+
+        assign excluded_handles = section.settings.exclude_handles | remove: ' ' | downcase | prepend: ',' | append: ','
+      -%}
+
+      {%- paginate sorted_collections by 24 -%}
+        <div class="luxo-cols__group">
+          {%- if section.settings.fallback_heading != blank -%}
+            <div class="luxo-cols__group-head">
+              <div>
+                <h2 class="luxo-cols__group-title">{{ section.settings.fallback_heading | escape }}</h2>
+                {%- if section.settings.fallback_note != blank -%}
+                  <p class="luxo-cols__group-note">{{ section.settings.fallback_note | escape }}</p>
+                {%- endif -%}
+              </div>
+            </div>
+          {%- endif -%}
+
+          <ul class="luxo-cols__grid" role="list">
+            {%- for directory_collection in sorted_collections -%}
+              {%- liquid
+                assign handle_needle = directory_collection.handle | prepend: ',' | append: ','
+                assign skip_collection = false
+                if excluded_handles contains handle_needle
+                  assign skip_collection = true
+                endif
+                if section.settings.hide_empty and directory_collection.all_products_count == 0
+                  assign skip_collection = true
+                endif
+              -%}
+              {%- unless skip_collection -%}
+                {%- render 'luxo-collection-tile',
+                  tile_collection: directory_collection,
+                  tile_show_count: show_count,
+                  tile_show_peek: show_peek
+                -%}
+              {%- endunless -%}
+            {%- endfor -%}
+          </ul>
+        </div>
+
+        {%- render 'pagination', paginate: paginate -%}
+      {%- endpaginate -%}
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxo — Directorio",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "anchor_id", "label": "Identificador del enlace", "default": "collection-directory", "info": "Permite enlazar directamente al directorio desde el hero." },
+    { "type": "text", "id": "kicker", "label": "Antetítulo", "default": "TIENDA LUXO" },
+    { "type": "inline_richtext", "id": "title", "label": "Título", "default": "Colecciones" },
+    {
+      "type": "richtext",
+      "id": "copy",
+      "label": "Texto de apoyo",
+      "default": "<p>Encuentra tu compresión, tu talla y tu rutina. Cada colección reúne lo que mejor funciona junto.</p>"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Nivel del título",
+      "default": "h1",
+      "info": "Usa H2 si arriba ya hay una sección con el título de la página.",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" }
+      ]
+    },
+    { "type": "checkbox", "id": "show_total", "label": "Mostrar total de colecciones", "default": true },
+    { "type": "checkbox", "id": "show_nav", "label": "Mostrar índice fijo de grupos", "default": true },
+    {
+      "type": "header",
+      "content": "Tarjetas"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columnas en escritorio",
+      "min": 3,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Proporción de imagen",
+      "default": "portrait",
+      "options": [
+        { "value": "portrait", "label": "Vertical 4:5" },
+        { "value": "tall", "label": "Vertical 3:4" },
+        { "value": "square", "label": "Cuadrada" }
+      ]
+    },
+    { "type": "checkbox", "id": "show_count", "label": "Mostrar número de productos", "default": true },
+    {
+      "type": "checkbox",
+      "id": "show_peek",
+      "label": "Mostrar avance de productos al pasar el cursor",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Sin grupos configurados",
+      "info": "Se usa cuando la sección no tiene bloques de colección."
+    },
+    {
+      "type": "text",
+      "id": "fallback_heading",
+      "label": "Título del listado",
+      "default": "Todas las colecciones"
+    },
+    { "type": "text", "id": "fallback_note", "label": "Nota del listado" },
+    {
+      "type": "select",
+      "id": "sort",
+      "label": "Orden",
+      "default": "products_high",
+      "options": [
+        { "value": "products_high", "label": "Más productos primero" },
+        { "value": "products_low", "label": "Menos productos primero" },
+        { "value": "date_reversed", "label": "Más recientes primero" },
+        { "value": "alphabetical", "label": "Alfabético" }
+      ]
+    },
+    {
+      "type": "textarea",
+      "id": "exclude_handles",
+      "label": "Ocultar colecciones (handles separados por coma)",
+      "info": "Úsalo para el grupo E del informe: colecciones pausadas por margen negativo."
+    },
+    { "type": "checkbox", "id": "hide_empty", "label": "Ocultar colecciones sin productos", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "group",
+      "name": "Grupo",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Título del grupo", "default": "Más vendidos" },
+        {
+          "type": "text",
+          "id": "note",
+          "label": "Nota",
+          "info": "Ej. grupo A del informe: probar y escalar."
+        },
+        { "type": "text", "id": "link_label", "label": "Enlace del grupo" },
+        { "type": "url", "id": "link_url", "label": "URL del enlace" }
+      ]
+    },
+    {
+      "type": "collection",
+      "name": "Colección",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Colección" },
+        { "type": "checkbox", "id": "feature", "label": "Destacada (doble ancho)", "default": false },
+        { "type": "image_picker", "id": "image", "label": "Imagen alternativa" },
+        { "type": "text", "id": "title", "label": "Título alternativo" },
+        { "type": "text", "id": "badge", "label": "Etiqueta", "info": "Ej. Más vendida, Nueva, Reposición." },
+        { "type": "text", "id": "description", "label": "Descripción corta" },
+        { "type": "url", "id": "link", "label": "Enlace alternativo" }
+      ]
+    }
+  ],
+  "max_blocks": 50,
+  "presets": [{ "name": "Luxo — Directorio" }]
+}
+{% endschema %}

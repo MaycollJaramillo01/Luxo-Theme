@@ -1,0 +1,1317 @@
+{% comment %}
+  Sección: Luxo Reels (Estilo Minimalista)
+  Carrusel de videos estilo social con modal tipo reel.
+{% endcomment %}
+
+<section class="lux-reels-section" id="LuxReels-{{ section.id }}">
+  <div class="lux-reels__header">
+    <h2 class="lux-reels__title">{{ section.settings.title }}</h2>
+
+    {%- if section.settings.ig_link != blank -%}
+      <a href="{{ section.settings.ig_link }}" target="_blank" class="lux-reels__ig-link" rel="noopener noreferrer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <rect x="2" y="2" width="20" height="20" rx="4" ry="4"></rect>
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+        </svg>
+        {{ section.settings.ig_handle }}
+      </a>
+    {%- endif -%}
+  </div>
+
+  <div class="lux-reels__wrapper">
+    {%- if section.settings.show_arrows -%}
+      <button class="lux-carousel-btn lux-carousel-btn--prev" type="button" aria-label="Anterior">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </button>
+    {%- endif -%}
+
+    <div class="lux-reels__track" id="ReelsTrack-{{ section.id }}">
+      {%- for block in section.blocks -%}
+        {%- assign author = block.settings.author | default: section.settings.default_author | default: 'luxo_7' -%}
+        {%- assign author_avatar = block.settings.author_avatar -%}
+        {%- if author_avatar == blank and section.settings.default_avatar != blank -%}
+          {%- assign author_avatar = section.settings.default_avatar -%}
+        {%- endif -%}
+
+        {%- assign has_linked_products = false -%}
+        {%- if block.settings.product_1 != blank or block.settings.product_2 != blank -%}
+          {%- assign has_linked_products = true -%}
+        {%- endif -%}
+
+        <div
+          class="lux-reel-card"
+          data-modal-target="Modal-{{ block.id }}"
+          role="button"
+          tabindex="0"
+          aria-label="Abrir reel de {{ author | escape }}"
+          {{ block.shopify_attributes }}
+        >
+          <div class="lux-reel-card__media">
+            {%- if block.settings.video != blank -%}
+              {{
+                block.settings.video
+                | video_tag:
+                  autoplay: true,
+                  loop: true,
+                  muted: true,
+                  playsinline: true,
+                  controls: false,
+                  preload: 'metadata',
+                  class: 'lux-media-asset'
+              }}
+              <div class="lux-reel-card__play-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5v14l11-7z"></path>
+                </svg>
+              </div>
+            {%- elsif block.settings.image != blank -%}
+              <img
+                src="{{ block.settings.image | image_url: width: 700 }}"
+                alt="Publicación de {{ author | escape }}"
+                class="lux-media-asset"
+                loading="lazy"
+              >
+            {%- else -%}
+              {{ 'lifestyle-1' | placeholder_svg_tag: 'lux-media-asset' }}
+            {%- endif -%}
+
+            <div class="lux-reel-card__gradient"></div>
+          </div>
+
+          <div class="lux-reel-card__overlay">
+            <div class="lux-reel-card__author-wrap">
+              <div class="lux-reel-card__avatar">
+                {%- if author_avatar != blank -%}
+                  {{
+                    author_avatar
+                    | image_url: width: 96
+                    | image_tag:
+                      loading: 'lazy',
+                      class: 'lux-avatar-image',
+                      alt: author
+                  }}
+                {%- else -%}
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                {%- endif -%}
+              </div>
+
+              <div class="lux-reel-card__author-meta">
+                <span class="lux-reel-card__author-name">@{{ author }}</span>
+                {%- if has_linked_products -%}
+                  <span class="lux-reel-card__author-note">{{ section.settings.products_heading }}</span>
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lux-modal" id="Modal-{{ block.id }}">
+          <div class="lux-modal__backdrop" data-close></div>
+
+          <div class="lux-modal__dialog" role="dialog" aria-modal="true" aria-label="Detalle de publicación de {{ author | escape }}">
+            <button class="lux-modal__close" type="button" data-close aria-label="Cerrar">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M18 6L6 18M6 6l12 12"></path>
+              </svg>
+            </button>
+
+            <div class="lux-modal__media-col">
+              <div class="lux-reel-player">
+                <div class="lux-reel-player__progress">
+                  <span class="lux-reel-player__progress-fill" data-video-progress></span>
+                </div>
+
+                <div class="lux-reel-player__topbar">
+                  <div class="lux-reel-player__topbar-left">
+                    <button class="lux-player-icon-btn is-paused" type="button" data-video-toggle aria-label="Reproducir o pausar">
+                      <span class="lux-player-icon lux-player-icon--play" aria-hidden="true">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M8 5v14l11-7z"></path>
+                        </svg>
+                      </span>
+                      <span class="lux-player-icon lux-player-icon--pause" aria-hidden="true">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                          <rect x="7" y="5" width="3" height="14" rx="0.5"></rect>
+                          <rect x="14" y="5" width="3" height="14" rx="0.5"></rect>
+                        </svg>
+                      </span>
+                    </button>
+
+                    <button class="lux-player-icon-btn" type="button" data-video-sound aria-label="Activar o silenciar sonido">
+                      <span class="lux-player-icon lux-player-icon--sound-on" aria-hidden="true">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M5 9v6h4l5 5V4L9 9H5z"></path>
+                          <path d="M18.5 12c0-1.77-1-3.29-2.5-4.03v8.05A4.47 4.47 0 0 0 18.5 12z"></path>
+                        </svg>
+                      </span>
+                      <span class="lux-player-icon lux-player-icon--sound-off" aria-hidden="true">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M16.5 12c0-1.2-.48-2.29-1.26-3.09l-1.08 1.08c.42.51.67 1.16.67 1.85 0 .68-.25 1.33-.67 1.84l1.08 1.08A4.43 4.43 0 0 0 16.5 12z"></path>
+                          <path d="M5 9v6h4l5 5V9.83l-5-5V9H5z"></path>
+                          <path d="M4 4l16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                        </svg>
+                      </span>
+                    </button>
+                  </div>
+
+                  <div class="lux-reel-player__time" data-video-time>0:00 / 0:00</div>
+                </div>
+
+                <div class="lux-reel-player__stage">
+                  {%- if block.settings.video != blank -%}
+                    {{
+                      block.settings.video
+                      | video_tag:
+                        autoplay: false,
+                        loop: true,
+                        playsinline: true,
+                        controls: false,
+                        preload: 'metadata',
+                        class: 'lux-modal-video'
+                    }}
+                  {%- elsif block.settings.image != blank -%}
+                    <img
+                      src="{{ block.settings.image | image_url: width: 1200 }}"
+                      alt="Publicación de {{ author | escape }}"
+                      class="lux-modal-image"
+                      loading="lazy"
+                    >
+                  {%- else -%}
+                    {{ 'lifestyle-1' | placeholder_svg_tag: 'lux-modal-image' }}
+                  {%- endif -%}
+                </div>
+              </div>
+            </div>
+
+            <div class="lux-modal__info-col">
+              <div class="lux-modal__profile">
+                <div class="lux-reel-card__avatar">
+                  {%- if author_avatar != blank -%}
+                    {{
+                      author_avatar
+                      | image_url: width: 96
+                      | image_tag:
+                        loading: 'lazy',
+                        class: 'lux-avatar-image',
+                        alt: author
+                    }}
+                  {%- else -%}
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                  {%- endif -%}
+                </div>
+                <span class="lux-modal__profile-name">@{{ author }}</span>
+              </div>
+
+              {% assign safe_caption = block.settings.caption
+                | replace: '</p><p>', '\n\n'
+                | replace: '<br>', '\n'
+                | replace: '<br/>', '\n'
+                | replace: '<br />', '\n'
+                | strip_html
+                | strip
+              %}
+
+              {% if safe_caption != blank %}
+                <div class="lux-modal__caption-box reel-caption">{{ safe_caption | escape | newline_to_br }}</div>
+              {% endif %}
+
+              {%- if has_linked_products -%}
+                <div class="lux-modal__products">
+                  <div class="lux-modal__products-title">{{ section.settings.products_heading }}</div>
+
+                  {%- if block.settings.product_1 != blank -%}
+                    {%- assign linked_product = block.settings.product_1 -%}
+                    <div class="lux-product-card">
+                      <a href="{{ linked_product.url }}" class="lux-product-card__image-link" aria-label="{{ linked_product.title | escape }}">
+                        {%- if linked_product.featured_image != blank -%}
+                          {{
+                            linked_product.featured_image
+                            | image_url: width: 260
+                            | image_tag:
+                              loading: 'lazy',
+                              class: 'lux-product-card__image',
+                              alt: linked_product.title
+                          }}
+                        {%- else -%}
+                          {{ 'product-1' | placeholder_svg_tag: 'lux-product-card__image lux-product-card__image--placeholder' }}
+                        {%- endif -%}
+                      </a>
+
+                      <div class="lux-product-card__info">
+                        <a href="{{ linked_product.url }}" class="lux-product-card__title">{{ linked_product.title }}</a>
+                        <div class="lux-product-card__price">{{ linked_product.price | money }}</div>
+                        <a href="{{ linked_product.url }}" class="lux-product-card__btn">
+                          {{ section.settings.product_cta_text }}
+                        </a>
+                      </div>
+                    </div>
+                  {%- endif -%}
+
+                  {%- if block.settings.product_2 != blank -%}
+                    {%- assign linked_product = block.settings.product_2 -%}
+                    <div class="lux-product-card">
+                      <a href="{{ linked_product.url }}" class="lux-product-card__image-link" aria-label="{{ linked_product.title | escape }}">
+                        {%- if linked_product.featured_image != blank -%}
+                          {{
+                            linked_product.featured_image
+                            | image_url: width: 260
+                            | image_tag:
+                              loading: 'lazy',
+                              class: 'lux-product-card__image',
+                              alt: linked_product.title
+                          }}
+                        {%- else -%}
+                          {{ 'product-1' | placeholder_svg_tag: 'lux-product-card__image lux-product-card__image--placeholder' }}
+                        {%- endif -%}
+                      </a>
+
+                      <div class="lux-product-card__info">
+                        <a href="{{ linked_product.url }}" class="lux-product-card__title">{{ linked_product.title }}</a>
+                        <div class="lux-product-card__price">{{ linked_product.price | money }}</div>
+                        <a href="{{ linked_product.url }}" class="lux-product-card__btn">
+                          {{ section.settings.product_cta_text }}
+                        </a>
+                      </div>
+                    </div>
+                  {%- endif -%}
+                </div>
+              {%- elsif block.settings.product_url != blank -%}
+                <a href="{{ block.settings.product_url }}" class="lux-modal__btn">
+                  {{ block.settings.btn_text | default: section.settings.product_cta_text }}
+                </a>
+              {%- endif -%}
+            </div>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.show_arrows -%}
+      <button class="lux-carousel-btn lux-carousel-btn--next" type="button" aria-label="Siguiente">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </button>
+    {%- endif -%}
+  </div>
+</section>
+
+<style>
+  {% if section.settings.title_font == 'theme' %}
+    #LuxReels-{{ section.id }} .lux-reels__title,
+    #LuxReels-{{ section.id }} .lux-product-card__title {
+      font-family: var(--font-heading-family);
+    }
+
+    #LuxReels-{{ section.id }} {
+      font-family: var(--font-body-family);
+    }
+  {% else %}
+    #LuxReels-{{ section.id }} .lux-reels__title,
+    #LuxReels-{{ section.id }} .lux-product-card__title {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    #LuxReels-{{ section.id }} {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+    }
+  {% endif %}
+
+  #LuxReels-{{ section.id }} {
+    --lux-modal-height: min(calc(100dvh - 48px), 760px);
+    --lux-modal-info-width: 360px;
+    --lux-modal-video-width: calc(var(--lux-modal-height) * 9 / 16);
+    --lux-modal-total-width: calc(var(--lux-modal-video-width) + var(--lux-modal-info-width));
+    --lux-modal-border: rgba(17, 17, 17, 0.12);
+
+    background-color: {{ section.settings.bg_color }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reels__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 40px;
+    padding: 0 20px;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reels__title {
+    font-size: clamp(24px, 3.5vw, 36px);
+    font-weight: 400;
+    color: {{ section.settings.text_color }};
+    margin: 0;
+    text-align: center;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reels__ig-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: {{ section.settings.text_color }};
+    text-decoration: none;
+    font-weight: 500;
+    border: 1px solid currentColor;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reels__ig-link:hover {
+    background-color: {{ section.settings.text_color }};
+    color: {{ section.settings.bg_color }};
+  }
+
+  #LuxReels-{{ section.id }} .lux-reels__wrapper {
+    position: relative;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 44px;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reels__track {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 12px;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reels__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reels__track {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reel-card {
+    flex: 0 0 calc(25% - 12px);
+    scroll-snap-align: start;
+    position: relative;
+    cursor: pointer;
+    border-radius: 4px;
+    outline: none;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reel-card:focus-visible {
+    box-shadow: 0 0 0 2px {{ section.settings.accent_color }};
+  }
+
+  #LuxReels-{{ section.id }} .lux-reel-card__media {
+    position: relative;
+    aspect-ratio: 9 / 16;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #f4f4f4;
+  }
+
+  #LuxReels-{{ section.id }} .lux-media-asset {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  #LuxReels-{{ section.id }} .lux-media-asset video,
+  #LuxReels-{{ section.id }} video.lux-media-asset {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reel-card:hover .lux-media-asset {
+    transform: scale(1.02);
+  }
+
+  #LuxReels-{{ section.id }} .lux-reel-card__gradient {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 40%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
+    pointer-events: none;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reel-card__play-icon {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reel-card:hover .lux-reel-card__play-icon {
+    opacity: 0.8;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reel-card__overlay {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reel-card__author-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reel-card__avatar {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+  }
+
+  #LuxReels-{{ section.id }} .lux-avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reel-card__author-meta {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reel-card__author-name {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: #fff;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reel-card__author-note {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  #LuxReels-{{ section.id }} .lux-carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    color: {{ section.settings.text_color }};
+    border: 1px solid #e5e5e5;
+    transition: background 0.2s, border-color 0.2s, opacity 0.2s, visibility 0.2s;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+  }
+
+  #LuxReels-{{ section.id }} .lux-carousel-btn:hover {
+    background: #f9f9f9;
+    border-color: #ccc;
+  }
+
+  #LuxReels-{{ section.id }} .lux-carousel-btn.is-disabled {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  #LuxReels-{{ section.id }} .lux-carousel-btn--prev {
+    left: 0;
+  }
+
+  #LuxReels-{{ section.id }} .lux-carousel-btn--next {
+    right: 0;
+  }
+
+  #LuxReels-{{ section.id }} .lux-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  #LuxReels-{{ section.id }} .lux-modal.is-open {
+    display: flex;
+  }
+
+  #LuxReels-{{ section.id }} .lux-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.78);
+  }
+
+  #LuxReels-{{ section.id }} .lux-modal__dialog {
+    position: relative;
+    z-index: 2;
+    width: var(--lux-modal-total-width);
+    max-width: calc(100dvw - 48px);
+    height: var(--lux-modal-height);
+    display: grid;
+    grid-template-columns: var(--lux-modal-video-width) minmax(0, var(--lux-modal-info-width));
+    background: {{ section.settings.surface_color }};
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--lux-modal-border);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22);
+    isolation: isolate;
+  }
+
+  #LuxReels-{{ section.id }} .lux-modal__close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 15;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(17, 17, 17, 0.1);
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.92);
+    color: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, transform 0.2s ease;
+    backdrop-filter: blur(6px);
+  }
+
+  #LuxReels-{{ section.id }} .lux-modal__close:hover {
+    background: #fff;
+    transform: scale(1.04);
+  }
+
+  #LuxReels-{{ section.id }} .lux-modal__media-col {
+    min-width: 0;
+    min-height: 0;
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
+    background: {{ section.settings.surface_color }};
+    border-right: 1px solid rgba(17, 17, 17, 0.08);
+    overflow: hidden;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reel-player {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+    background: transparent;
+    overflow: hidden;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reel-player__progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.22);
+    z-index: 6;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reel-player__progress-fill {
+    display: block;
+    width: 0%;
+    height: 100%;
+    background: #fff;
+    transition: width 0.1s linear;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reel-player__topbar {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    z-index: 7;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: space-between;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reel-player__topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  #LuxReels-{{ section.id }} .lux-player-icon-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+  }
+
+  #LuxReels-{{ section.id }} .lux-player-icon--pause,
+  #LuxReels-{{ section.id }} .lux-player-icon--sound-off {
+    display: none;
+  }
+
+  #LuxReels-{{ section.id }} .lux-player-icon-btn.is-playing .lux-player-icon--play {
+    display: none;
+  }
+
+  #LuxReels-{{ section.id }} .lux-player-icon-btn.is-playing .lux-player-icon--pause {
+    display: inline-flex;
+  }
+
+  #LuxReels-{{ section.id }} .lux-player-icon-btn.is-muted .lux-player-icon--sound-on {
+    display: none;
+  }
+
+  #LuxReels-{{ section.id }} .lux-player-icon-btn.is-muted .lux-player-icon--sound-off {
+    display: inline-flex;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reel-player__time {
+    color: #fff;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  #LuxReels-{{ section.id }} .lux-reel-player__stage {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+  }
+
+  #LuxReels-{{ section.id }} .lux-modal-video,
+  #LuxReels-{{ section.id }} .lux-modal-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+    background: transparent;
+  }
+
+  #LuxReels-{{ section.id }} .lux-modal__info-col {
+    background: {{ section.settings.surface_color }};
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  #LuxReels-{{ section.id }} .lux-modal__profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: {{ section.settings.text_color }};
+    margin-bottom: 20px;
+    padding-right: 48px;
+  }
+
+  #LuxReels-{{ section.id }} .lux-modal__profile-name {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  #LuxReels-{{ section.id }} .lux-modal__caption-box {
+    font-size: 14px;
+    line-height: 1.6;
+    color: {{ section.settings.text_color }};
+    margin-bottom: 24px;
+  }
+
+  #LuxReels-{{ section.id }} .lux-modal__caption-box p {
+    margin: 0 0 10px;
+  }
+
+  #LuxReels-{{ section.id }} .lux-modal__caption-box p:last-child {
+    margin-bottom: 0;
+  }
+
+  #LuxReels-{{ section.id }} .lux-modal__products {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border-top: 1px solid #eee;
+    padding-top: 24px;
+  }
+
+  #LuxReels-{{ section.id }} .lux-modal__products-title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #888;
+  }
+
+  #LuxReels-{{ section.id }} .lux-product-card {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 16px;
+    align-items: center;
+  }
+
+  #LuxReels-{{ section.id }} .lux-product-card__image-link {
+    display: block;
+    width: 80px;
+    height: 100px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #f7f7f7;
+  }
+
+  #LuxReels-{{ section.id }} .lux-product-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #LuxReels-{{ section.id }} .lux-product-card__info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  #LuxReels-{{ section.id }} .lux-product-card__title {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: {{ section.settings.text_color }};
+    text-decoration: none;
+  }
+
+  #LuxReels-{{ section.id }} .lux-product-card__price {
+    font-size: 13px;
+    color: #555;
+  }
+
+  #LuxReels-{{ section.id }} .lux-product-card__btn,
+  #LuxReels-{{ section.id }} .lux-modal__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border-radius: 4px;
+    background: transparent;
+    color: {{ section.settings.accent_color }};
+    border: 1px solid {{ section.settings.accent_color }};
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    width: fit-content;
+    transition: all 0.2s ease;
+  }
+
+  #LuxReels-{{ section.id }} .lux-product-card__btn:hover,
+  #LuxReels-{{ section.id }} .lux-modal__btn:hover {
+    background: {{ section.settings.accent_color }};
+    color: #fff;
+  }
+
+  #LuxReels-{{ section.id }} .lux-modal__btn {
+    width: 100%;
+    margin-top: 16px;
+  }
+
+  @media (max-width: 1200px) {
+    #LuxReels-{{ section.id }} .lux-reel-card {
+      flex: 0 0 calc(33.33% - 11px);
+    }
+  }
+
+  @media (max-width: 1024px) {
+    #LuxReels-{{ section.id }} {
+      --lux-mobile-modal-width: min(calc(100dvw - 16px), 560px);
+    }
+
+    #LuxReels-{{ section.id }} .lux-modal {
+      padding: 8px;
+      align-items: flex-start;
+      justify-content: center;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    #LuxReels-{{ section.id }} .lux-modal__dialog {
+      width: var(--lux-mobile-modal-width);
+      max-width: var(--lux-mobile-modal-width);
+      height: auto;
+      max-height: none;
+      display: flex;
+      flex-direction: column;
+      border-radius: 16px;
+      overflow: hidden;
+      margin: 8px auto;
+    }
+
+    #LuxReels-{{ section.id }} .lux-modal__media-col {
+      border-right: 0;
+      border-bottom: 1px solid rgba(17, 17, 17, 0.08);
+      padding: 12px;
+      justify-content: center;
+      align-items: center;
+      flex: 0 0 auto;
+    }
+
+    #LuxReels-{{ section.id }} .lux-reel-player {
+      width: min(100%, calc((100dvh - 260px) * 9 / 16));
+      aspect-ratio: 9 / 16;
+      height: auto;
+      margin: 0 auto;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    #LuxReels-{{ section.id }} .lux-modal__close {
+      top: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.92);
+    }
+
+    #LuxReels-{{ section.id }} .lux-modal__info-col {
+      padding: 24px 20px;
+      overflow: visible;
+      flex: 0 0 auto;
+    }
+  }
+
+  @media (max-width: 768px) {
+    #LuxReels-{{ section.id }} .lux-reels__wrapper {
+      padding: 0 18px;
+    }
+
+    #LuxReels-{{ section.id }} .lux-reel-card {
+      flex: 0 0 calc(70% - 8px);
+    }
+
+    #LuxReels-{{ section.id }} .lux-carousel-btn {
+      display: flex;
+      width: 38px;
+      height: 38px;
+      top: calc(50% - 6px);
+      background: rgba(255, 255, 255, 0.96);
+      border-color: rgba(0, 0, 0, 0.08);
+    }
+
+    #LuxReels-{{ section.id }} .lux-carousel-btn--prev {
+      left: 4px;
+    }
+
+    #LuxReels-{{ section.id }} .lux-carousel-btn--next {
+      right: 4px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    #LuxReels-{{ section.id }} .lux-reel-card {
+      flex: 0 0 calc(78% - 8px);
+    }
+
+    #LuxReels-{{ section.id }} .lux-carousel-btn {
+      width: 36px;
+      height: 36px;
+    }
+
+    #LuxReels-{{ section.id }} .lux-reel-player {
+      width: min(100%, calc((100dvh - 230px) * 9 / 16));
+    }
+  }
+</style>
+
+<script>
+  function initLuxReels(sectionId) {
+    const section = document.querySelector('#LuxReels-' + sectionId);
+    if (!section || section.dataset.initialized === 'true') return;
+
+    section.dataset.initialized = 'true';
+
+    const track = section.querySelector('.lux-reels__track');
+    const btnNext = section.querySelector('.lux-carousel-btn--next');
+    const btnPrev = section.querySelector('.lux-carousel-btn--prev');
+    const cards = section.querySelectorAll('.lux-reel-card');
+    const modals = section.querySelectorAll('.lux-modal');
+    const closeBtns = section.querySelectorAll('[data-close]');
+
+    if (!track) return;
+
+    function getScrollAmount() {
+      const firstCard = track.querySelector('.lux-reel-card');
+      if (!firstCard) return 0;
+      const styles = window.getComputedStyle(track);
+      const gap = parseFloat(styles.columnGap || styles.gap || 16) || 16;
+      return firstCard.offsetWidth + gap;
+    }
+
+    function syncNavButtons() {
+      if (!track) return;
+
+      const maxScrollLeft = Math.max(0, track.scrollWidth - track.clientWidth);
+      const current = Math.ceil(track.scrollLeft);
+
+      if (btnPrev) {
+        btnPrev.classList.toggle('is-disabled', current <= 2);
+      }
+
+      if (btnNext) {
+        btnNext.classList.toggle('is-disabled', current >= (maxScrollLeft - 2));
+      }
+    }
+
+    if (btnNext) {
+      btnNext.addEventListener('click', function (event) {
+        event.stopPropagation();
+        track.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
+      });
+    }
+
+    if (btnPrev) {
+      btnPrev.addEventListener('click', function (event) {
+        event.stopPropagation();
+        track.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
+      });
+    }
+
+    track.addEventListener('scroll', syncNavButtons, { passive: true });
+    window.addEventListener('resize', syncNavButtons);
+    syncNavButtons();
+
+    function formatTime(seconds) {
+      const safe = Number.isFinite(seconds) ? Math.max(0, Math.floor(seconds)) : 0;
+      const mins = Math.floor(safe / 60);
+      const secs = safe % 60;
+      return mins + ':' + String(secs).padStart(2, '0');
+    }
+
+    function updateVideoState(modal) {
+      if (!modal) return;
+
+      const video = modal.querySelector('.lux-modal-video');
+      if (!video) return;
+
+      const progressFill = modal.querySelector('[data-video-progress]');
+      const timeLabel = modal.querySelector('[data-video-time]');
+      const playBtn = modal.querySelector('[data-video-toggle]');
+      const soundBtn = modal.querySelector('[data-video-sound]');
+
+      if (progressFill) {
+        const duration = video.duration || 0;
+        const current = video.currentTime || 0;
+        const progress = duration > 0 ? (current / duration) * 100 : 0;
+        progressFill.style.width = progress + '%';
+      }
+
+      if (timeLabel) {
+        timeLabel.textContent = formatTime(video.currentTime || 0) + ' / ' + formatTime(video.duration || 0);
+      }
+
+      if (playBtn) {
+        if (video.paused) {
+          playBtn.classList.add('is-paused');
+          playBtn.classList.remove('is-playing');
+        } else {
+          playBtn.classList.remove('is-paused');
+          playBtn.classList.add('is-playing');
+        }
+      }
+
+      if (soundBtn) {
+        soundBtn.classList.toggle('is-muted', !!video.muted);
+      }
+    }
+
+    function forceVideoSound(video) {
+      if (!video) return;
+
+      video.defaultMuted = false;
+      video.muted = false;
+      video.volume = 1;
+
+      try { video.removeAttribute('muted'); } catch (e) {}
+      try { video.setAttribute('playsinline', ''); } catch (e) {}
+      try { video.setAttribute('webkit-playsinline', ''); } catch (e) {}
+    }
+
+    function forceVideoMuted(video) {
+      if (!video) return;
+
+      video.defaultMuted = true;
+      video.muted = true;
+      try { video.setAttribute('muted', 'muted'); } catch (e) {}
+    }
+
+    function pauseAllOpenVideos() {
+      section.querySelectorAll('.lux-modal.is-open .lux-modal-video').forEach(function(video) {
+        try { video.pause(); } catch (e) {}
+      });
+    }
+
+    function closeModal(modal) {
+      if (!modal) return;
+
+      modal.classList.remove('is-open');
+      document.body.style.overflow = '';
+
+      const video = modal.querySelector('.lux-modal-video');
+      if (video) {
+        try { video.pause(); } catch (e) {}
+        try { video.currentTime = 0; } catch (e) {}
+        updateVideoState(modal);
+      }
+    }
+
+    function openModal(modal) {
+      if (!modal) return;
+
+      pauseAllOpenVideos();
+
+      modal.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+
+      const video = modal.querySelector('.lux-modal-video');
+      if (!video) return;
+
+      forceVideoSound(video);
+
+      const playAttempt = video.play();
+
+      if (playAttempt && typeof playAttempt.then === 'function') {
+        playAttempt
+          .then(function() {
+            updateVideoState(modal);
+          })
+          .catch(function() {
+            forceVideoMuted(video);
+            const fallbackPlay = video.play();
+            if (fallbackPlay && typeof fallbackPlay.catch === 'function') {
+              fallbackPlay.catch(function(){});
+            }
+            updateVideoState(modal);
+          });
+      } else {
+        updateVideoState(modal);
+      }
+    }
+
+    cards.forEach(function(card) {
+      card.addEventListener('click', function() {
+        const modalId = card.getAttribute('data-modal-target');
+        openModal(document.getElementById(modalId));
+      });
+
+      card.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          const modalId = card.getAttribute('data-modal-target');
+          openModal(document.getElementById(modalId));
+        }
+      });
+    });
+
+    closeBtns.forEach(function(btn) {
+      btn.addEventListener('click', function(event) {
+        event.stopPropagation();
+        closeModal(this.closest('.lux-modal'));
+      });
+    });
+
+    modals.forEach(function(modal) {
+      const video = modal.querySelector('.lux-modal-video');
+      const playBtn = modal.querySelector('[data-video-toggle]');
+      const soundBtn = modal.querySelector('[data-video-sound]');
+
+      if (!video) return;
+
+      try { video.setAttribute('playsinline', ''); } catch (e) {}
+      try { video.setAttribute('webkit-playsinline', ''); } catch (e) {}
+
+      if (playBtn) {
+        playBtn.addEventListener('click', function(event) {
+          event.stopPropagation();
+
+          if (video.paused) {
+            const p = video.play();
+            if (p && typeof p.catch === 'function') {
+              p.catch(function(){});
+            }
+          } else {
+            video.pause();
+          }
+
+          updateVideoState(modal);
+        });
+      }
+
+      if (soundBtn) {
+        soundBtn.addEventListener('click', function(event) {
+          event.stopPropagation();
+
+          if (video.muted) {
+            forceVideoSound(video);
+            const p = video.play();
+            if (p && typeof p.catch === 'function') {
+              p.catch(function() {
+                forceVideoMuted(video);
+                updateVideoState(modal);
+              });
+            }
+          } else {
+            forceVideoMuted(video);
+          }
+
+          updateVideoState(modal);
+        });
+      }
+
+      video.addEventListener('timeupdate', function() {
+        updateVideoState(modal);
+      });
+
+      video.addEventListener('loadedmetadata', function() {
+        updateVideoState(modal);
+      });
+
+      video.addEventListener('play', function() {
+        updateVideoState(modal);
+      });
+
+      video.addEventListener('pause', function() {
+        updateVideoState(modal);
+      });
+
+      video.addEventListener('volumechange', function() {
+        updateVideoState(modal);
+      });
+
+      updateVideoState(modal);
+    });
+
+    if (!section._luxEscHandler) {
+      section._luxEscHandler = function(event) {
+        if (event.key === 'Escape') {
+          const openModalElement = section.querySelector('.lux-modal.is-open');
+          if (openModalElement) closeModal(openModalElement);
+        }
+      };
+      document.addEventListener('keydown', section._luxEscHandler);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    initLuxReels('{{ section.id }}');
+  });
+
+  document.addEventListener('shopify:section:load', function(event) {
+    if (event.detail.sectionId === '{{ section.id }}') {
+      initLuxReels('{{ section.id }}');
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Luxo Reels Minimal",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Título Principal", "default": "Leonisa in real life" },
+    {
+      "type": "select",
+      "id": "title_font",
+      "label": "Estilo de Tipografía",
+      "options": [
+        { "value": "theme", "label": "Usar fuentes del tema" },
+        { "value": "sans", "label": "Minimalista (Sans-serif)" }
+      ],
+      "default": "theme"
+    },
+    { "type": "text", "id": "ig_handle", "label": "Nombre de Usuario (IG)", "default": "@luxoboutique" },
+    { "type": "url", "id": "ig_link", "label": "Enlace al perfil de Instagram" },
+    { "type": "checkbox", "id": "show_arrows", "label": "Mostrar flechas en carrusel", "default": true },
+
+    { "type": "header", "content": "Valores por defecto" },
+    { "type": "text", "id": "default_author", "label": "Usuario por defecto", "default": "luxo_7" },
+    { "type": "image_picker", "id": "default_avatar", "label": "Foto de perfil por defecto" },
+    { "type": "text", "id": "products_heading", "label": "Título de productos", "default": "Get the look" },
+    { "type": "text", "id": "product_cta_text", "label": "Texto del botón", "default": "Shop the Look" },
+
+    { "type": "header", "content": "Colores y Espaciado" },
+    { "type": "color", "id": "bg_color", "label": "Fondo de la sección", "default": "#ffffff" },
+    { "type": "color", "id": "surface_color", "label": "Fondo del modal", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "Color de textos", "default": "#111111" },
+    { "type": "color", "id": "accent_color", "label": "Color de botones/acento", "default": "#000000" },
+    { "type": "range", "id": "padding_top", "label": "Padding Superior", "min": 0, "max": 100, "step": 4, "default": 64 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding Inferior", "min": 0, "max": 100, "step": 4, "default": 64 }
+  ],
+  "blocks": [
+    {
+      "type": "reel",
+      "name": "Post/Reel",
+      "settings": [
+        { "type": "video", "id": "video", "label": "Video (MP4)" },
+        { "type": "image_picker", "id": "image", "label": "Imagen (si no usas video)" },
+        { "type": "image_picker", "id": "author_avatar", "label": "Foto de perfil" },
+        { "type": "text", "id": "author", "label": "Usuario (sin @)", "default": "luxo_7" },
+        { "type": "richtext", "id": "caption", "label": "Texto", "default": "<p>Look real, fit real, lujo real.</p>" },
+        { "type": "product", "id": "product_1", "label": "Producto relacionado 1" },
+        { "type": "product", "id": "product_2", "label": "Producto relacionado 2" },
+        { "type": "url", "id": "product_url", "label": "Enlace manual (opcional)" },
+        { "type": "text", "id": "btn_text", "label": "Texto botón manual", "default": "Shop the Look" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo Reels Minimal",
+      "blocks": [
+        { "type": "reel" },
+        { "type": "reel" },
+        { "type": "reel" },
+        { "type": "reel" }
+      ]
+    }
+  ]
+}
+{% endschema %}

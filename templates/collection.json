@@ -1,0 +1,85 @@
+{
+  "sections": {
+    "cover": {
+      "type": "luxo-collection-cover",
+      "settings": {
+        "kicker": "COLECCIÓN LUXO",
+        "show_description": true,
+        "fallback_copy": "Una selección pensada para acompañarte con soporte, comodidad y confianza.",
+        "show_breadcrumb": true,
+        "show_product_count": true,
+        "show_index": true,
+        "show_cta": true,
+        "cta_label": "EXPLORAR LA COLECCIÓN",
+        "image_position_desktop": "center center",
+        "image_position_mobile": "center center",
+        "desktop_height": 620,
+        "mobile_height": 620,
+        "overlay_color": "#110D0B",
+        "overlay_opacity": 40,
+        "overlay_blur": 6,
+        "scrim_opacity": 45
+      }
+    },
+    "collection_trust": {
+      "type": "luxo-commerce-trust",
+      "blocks": {
+        "fit": { "type": "item", "settings": { "title": "ASESORÍA DE TALLA", "text": "Te ayudamos a elegir la medida correcta" } },
+        "shipping": { "type": "item", "settings": { "title": "ENTREGA RASTREABLE", "text": "Sigue tu pedido de principio a fin" } },
+        "changes": { "type": "item", "settings": { "title": "CAMBIOS FÁCILES", "text": "Acompañamiento antes y después de comprar" } },
+        "secure": { "type": "item", "settings": { "title": "PAGO PROTEGIDO", "text": "Checkout seguro en cada compra" } }
+      },
+      "block_order": ["fit", "shipping", "changes", "secure"],
+      "settings": {}
+    },
+    "main_collection_grid": {
+      "type": "main-collection-product-grid",
+      "settings": {
+        "products_per_page": 24,
+        "columns_desktop": 4,
+        "columns_mobile": "2",
+        "color_scheme": "scheme-1",
+        "image_ratio": "portrait",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": true,
+        "quick_add": "standard",
+        "enable_filtering": true,
+        "filter_type": "horizontal",
+        "enable_sorting": true,
+        "padding_top": 0,
+        "padding_bottom": 88
+      }
+    },
+    "related_collections": {
+      "type": "luxo-related-collections",
+      "blocks": {
+        "media": {
+          "type": "collection",
+          "settings": {
+            "collection": "fajas-de-mediana-compresion",
+            "label": "COMPRESIÓN MEDIA"
+          }
+        },
+        "max": {
+          "type": "collection",
+          "settings": {
+            "collection": "fajas-de-maxima-compresion",
+            "label": "MÁXIMA COMPRESIÓN"
+          }
+        }
+      },
+      "block_order": ["media", "max"],
+      "settings": {
+        "kicker": "TAMBIÉN PARA TI",
+        "heading": "Colecciones similares",
+        "copy": "Otras selecciones pensadas para el mismo momento del día.",
+        "columns": 2,
+        "ratio": "16 / 11",
+        "label_position": "bottom"
+      }
+    }
+  },
+  "order": ["cover", "collection_trust", "main_collection_grid", "related_collections"]
+}

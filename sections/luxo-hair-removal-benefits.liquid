@@ -1,0 +1,186 @@
+{{ 'luxo-hair-removal-campaign.css' | asset_url | stylesheet_tag }}
+
+<section
+  class="lxhr"
+  style="
+    --lxhr-bg: {{ section.settings.bg_color }};
+    --lxhr-surface: {{ section.settings.surface_color }};
+    --lxhr-text: {{ section.settings.text_color }};
+    --lxhr-muted: {{ section.settings.muted_color }};
+    --lxhr-border: {{ section.settings.border_color }};
+    --lxhr-accent: {{ section.settings.accent_color }};
+    --lxhr-radius: {{ section.settings.radius }}px;
+    --lxhr-max: {{ section.settings.page_width }}px;
+    --lxhr-space: {{ section.settings.section_spacing }}px;
+  "
+>
+  <div class="lxhr-wrap">
+    <div class="lxhr-section">
+      <div class="lxhr-center">
+        {% if section.settings.eyebrow != blank %}
+          <div class="lxhr-eyebrow">{{ section.settings.eyebrow }}</div>
+        {% endif %}
+        <h2 class="lxhr-title">{{ section.settings.title }}</h2>
+        {% if section.settings.subtitle != blank %}
+          <div class="lxhr-subtitle">{{ section.settings.subtitle }}</div>
+        {% endif %}
+      </div>
+
+      <div class="lxhr-grid-4">
+        {% for block in section.blocks %}
+          <div class="lxhr-card" {{ block.shopify_attributes }}>
+            <h3 class="lxhr-card-title">{{ block.settings.title }}</h3>
+            <div class="lxhr-card-text">{{ block.settings.text }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxo Hair",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Beneficios del pack"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Una rutina más práctica, cómoda y conveniente"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtítulo",
+      "default": "Esta sección está pensada para reforzar valor antes de mostrar prueba social y contenido visual del producto."
+    },
+    {
+      "type": "range",
+      "id": "page_width",
+      "label": "Ancho máximo",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1240
+    },
+    {
+      "type": "range",
+      "id": "section_spacing",
+      "label": "Espaciado",
+      "min": 40,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "default": 88
+    },
+    {
+      "type": "range",
+      "id": "radius",
+      "label": "Radio",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fondo",
+      "default": "#fbf5f4"
+    },
+    {
+      "type": "color",
+      "id": "surface_color",
+      "label": "Tarjeta",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Texto principal",
+      "default": "#1b1718"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Texto secundario",
+      "default": "#6d6265"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Acento",
+      "default": "#d7c56f"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Borde",
+      "default": "#eadfdf"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Beneficio",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "Uso práctico en casa"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Texto",
+          "default": "Pensado para una rutina simple y cómoda sin depender de citas externas."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo Hair Removal Benefits",
+      "blocks": [
+        {
+          "type": "benefit",
+          "settings": {
+            "title": "Pack de 5 unidades",
+            "text": "Más cantidad en una sola compra para que tu rutina tenga mejor continuidad."
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "title": "Depilación en casa",
+            "text": "Una solución práctica para integrar a tu cuidado personal desde casa."
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "title": "Experiencia más cómoda",
+            "text": "Fórmulas pensadas para una rutina sencilla y agradable de usar."
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "title": "Mejor valor del pack",
+            "text": "El formato de 5 cremas ayuda a comunicar conveniencia y ahorro frente a compras unitarias."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

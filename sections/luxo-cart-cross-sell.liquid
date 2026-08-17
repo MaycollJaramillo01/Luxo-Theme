@@ -1,0 +1,50 @@
+{%- liquid
+  assign cross_sell_collection = section.settings.collection
+  if cross_sell_collection == blank
+    assign cross_sell_collection = settings.cart_drawer_collection
+  endif
+  assign cart_product_ids = cart.items | map: 'product_id'
+-%}
+
+{%- if cart != empty and cross_sell_collection != blank -%}
+  <section class="luxo-cart-page-upsell">
+    <div class="luxo-container">
+      <header class="luxo-section__head">
+        <div>
+          <p class="luxo-kicker">{{ section.settings.kicker | escape }}</p>
+          <h2 class="luxo-section__title">{{ section.settings.heading }}</h2>
+        </div>
+        {%- if section.settings.copy != blank -%}
+          <div class="luxo-copy">{{ section.settings.copy }}</div>
+        {%- endif -%}
+      </header>
+      <ul class="luxo-product-rail" role="list">
+        {%- assign products_rendered = 0 -%}
+        {%- for product in cross_sell_collection.products -%}
+          {%- unless cart_product_ids contains product.id -%}
+            {%- if products_rendered < section.settings.products_to_show -%}
+              {%- assign products_rendered = products_rendered | plus: 1 -%}
+              <li>{% render 'luxo-product-card', product: product %}</li>
+            {%- endif -%}
+          {%- endunless -%}
+        {%- endfor -%}
+      </ul>
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Luxo — Venta cruzada",
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Antetítulo", "default": "Antes de finalizar" },
+    { "type": "inline_richtext", "id": "heading", "label": "Título", "default": "También funciona bien <em>con esto.</em>" },
+    { "type": "richtext", "id": "copy", "label": "Descripción", "default": "<p>Complementos seleccionados para ayudarte a sacar más provecho de tu compra.</p>" },
+    { "type": "collection", "id": "collection", "label": "Colección recomendada" },
+    { "type": "range", "id": "products_to_show", "label": "Productos a mostrar", "min": 2, "max": 4, "step": 1, "default": 4 }
+  ],
+  "presets": [
+    { "name": "Luxo — Venta cruzada" }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,100 @@
+{%- comment -%}
+  Tarjeta de colección del directorio Luxo.
+  Sólo lee datos reales de Shopify: nunca inventa títulos, conteos ni imágenes.
+
+  Acepta:
+  - tile_collection: {Object} colección
+  - tile_title: {String} título alternativo (opcional)
+  - tile_image: {Object} imagen alternativa (opcional)
+  - tile_badge: {String} etiqueta (opcional)
+  - tile_link: {String} enlace alternativo (opcional)
+  - tile_desc: {String} texto corto bajo el título (opcional)
+  - tile_feature: {Boolean} tarjeta destacada a doble ancho
+  - tile_show_count: {Boolean} mostrar número de productos
+  - tile_show_peek: {Boolean} mostrar miniaturas de productos al pasar el cursor
+  - tile_attributes: {String} block.shopify_attributes (opcional)
+{%- endcomment -%}
+
+{%- liquid
+  assign tile_link_url = tile_link | default: tile_collection.url
+  assign tile_heading = tile_title | default: tile_collection.title
+
+  assign tile_media = tile_image
+  if tile_media == blank
+    assign tile_media = tile_collection.image
+  endif
+  if tile_media == blank
+    assign tile_media = tile_collection.featured_image
+  endif
+  if tile_media == blank
+    assign tile_media = tile_collection.products.first.featured_media.preview_image
+  endif
+-%}
+
+{%- if tile_link_url != blank -%}
+  <li
+    class="luxo-col-card{% if tile_feature %} luxo-col-card--feature{% endif %}"
+    {% if tile_attributes %}{{ tile_attributes }}{% endif %}
+  >
+    <a class="luxo-col-card__link" href="{{ tile_link_url }}">
+      <span class="luxo-col-card__media{% if tile_media == blank %} luxo-col-card__media--empty{% endif %}">
+        {%- if tile_media != blank -%}
+          {{
+            tile_media
+            | image_url: width: 1400
+            | image_tag:
+              widths: '360, 540, 720, 1000, 1400',
+              sizes: '(max-width: 749px) 50vw, (max-width: 1100px) 33vw, 25vw',
+              loading: 'lazy',
+              alt: tile_heading
+          }}
+        {%- endif -%}
+
+        {%- if tile_badge != blank -%}
+          <span class="luxo-col-card__badge{% if tile_feature %} luxo-col-card__badge--soft{% endif %}">
+            {{- tile_badge | escape -}}
+          </span>
+        {%- endif -%}
+
+        {%- if tile_feature -%}
+          <span class="luxo-col-card__overlay">
+            <h3>{{ tile_heading | escape }}</h3>
+            <span>
+              {%- if tile_show_count and tile_collection.all_products_count > 0 -%}
+                {{ tile_collection.all_products_count }} productos
+              {%- else -%}
+                Ver colección
+              {%- endif -%}
+              <i aria-hidden="true">→</i>
+            </span>
+          </span>
+        {%- endif -%}
+
+        {%- if tile_show_peek and tile_collection != blank -%}
+          <span class="luxo-col-card__peek" aria-hidden="true">
+            {%- for peek_product in tile_collection.products limit: 3 -%}
+              {%- if peek_product.featured_media != blank -%}
+                {{
+                  peek_product.featured_media.preview_image
+                  | image_url: width: 140
+                  | image_tag: loading: 'lazy', alt: ''
+                }}
+              {%- endif -%}
+            {%- endfor -%}
+          </span>
+        {%- endif -%}
+      </span>
+
+      <span class="luxo-col-card__body">
+        <h3 class="luxo-col-card__title">{{ tile_heading | escape }}</h3>
+        {%- if tile_show_count and tile_collection.all_products_count > 0 -%}
+          <span class="luxo-col-card__meta">{{ tile_collection.all_products_count }}</span>
+        {%- endif -%}
+      </span>
+    </a>
+
+    {%- if tile_desc != blank and tile_feature != true -%}
+      <p class="luxo-col-card__desc">{{ tile_desc | escape }}</p>
+    {%- endif -%}
+  </li>
+{%- endif -%}

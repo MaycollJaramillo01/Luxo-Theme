@@ -1,0 +1,210 @@
+{%- comment -%}
+  Luxo — Combos y ventas cruzadas.
+  Responde a la mayor palanca del informe: 22,1% de los pedidos ya llevan 2+ productos.
+  Los precios se calculan desde las variantes reales de Shopify; no se inventan cifras.
+  El botón agrega todo el combo con un POST nativo a /cart/add (sin JavaScript).
+{%- endcomment -%}
+
+{{ 'luxo-collections.css' | asset_url | stylesheet_tag }}
+
+{%- capture bundles_markup -%}
+  {%- for block in section.blocks -%}
+    {%- liquid
+      assign bundle_total = 0
+      assign bundle_count = 0
+      assign bundle_available = true
+
+      for slot in (1..3)
+        assign slot_key = 'product_' | append: slot
+        assign bundle_product = block.settings[slot_key]
+        if bundle_product == blank
+          continue
+        endif
+        assign bundle_count = bundle_count | plus: 1
+        assign bundle_variant = bundle_product.selected_or_first_available_variant
+        if bundle_variant == blank or bundle_variant.available == false
+          assign bundle_available = false
+        else
+          assign bundle_total = bundle_total | plus: bundle_variant.price
+        endif
+      endfor
+
+      assign bundle_discount = block.settings.discount_percent | default: 0
+      assign bundle_price = bundle_total
+      if bundle_discount > 0
+        assign discount_multiplier = 100 | minus: bundle_discount | divided_by: 100.0
+        assign bundle_price = bundle_total | times: discount_multiplier | round
+      endif
+    -%}
+
+    {%- if bundle_count >= 2 -%}
+      <li class="luxo-bundle" {{ block.shopify_attributes }}>
+        <div class="luxo-bundle__stack">
+          {%- assign shot_index = 0 -%}
+          {%- for slot in (1..3) -%}
+            {%- assign slot_key = 'product_' | append: slot -%}
+            {%- assign bundle_product = block.settings[slot_key] -%}
+            {%- if bundle_product == blank -%}
+              {%- continue -%}
+            {%- endif -%}
+            {%- if shot_index > 0 -%}
+              <span class="luxo-bundle__plus" aria-hidden="true">+</span>
+            {%- endif -%}
+            <span class="luxo-bundle__shot">
+              {%- if bundle_product.featured_media != blank -%}
+                {{
+                  bundle_product.featured_media.preview_image
+                  | image_url: width: 600
+                  | image_tag:
+                    widths: '200, 300, 450, 600',
+                    sizes: '(max-width: 749px) 30vw, 14vw',
+                    loading: 'lazy',
+                    alt: bundle_product.title
+                }}
+              {%- endif -%}
+            </span>
+            {%- assign shot_index = shot_index | plus: 1 -%}
+          {%- endfor -%}
+        </div>
+
+        {%- if block.settings.tag != blank -%}
+          <span class="luxo-bundle__tag">{{ block.settings.tag | escape }}</span>
+        {%- endif -%}
+
+        <h3 class="luxo-bundle__title">{{ block.settings.title | escape }}</h3>
+
+        <ul class="luxo-bundle__items">
+          {%- for slot in (1..3) -%}
+            {%- assign slot_key = 'product_' | append: slot -%}
+            {%- assign bundle_product = block.settings[slot_key] -%}
+            {%- if bundle_product == blank -%}
+              {%- continue -%}
+            {%- endif -%}
+            {%- assign bundle_variant = bundle_product.selected_or_first_available_variant -%}
+            <li>
+              <a href="{{ bundle_product.url }}">{{ bundle_product.title | escape }}</a>
+              {%- if bundle_variant != blank -%}
+                <span>{{ bundle_variant.price | money }}</span>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+
+        <div class="luxo-bundle__pricing">
+          <span class="luxo-bundle__total">{{ bundle_price | money }}</span>
+          {%- if bundle_discount > 0 -%}
+            <s class="luxo-bundle__was">{{ bundle_total | money }}</s>
+            <span class="luxo-bundle__save">-{{ bundle_discount }}%</span>
+          {%- endif -%}
+        </div>
+
+        {%- if block.settings.proof != blank -%}
+          <p class="luxo-bundle__note">{{ block.settings.proof | escape }}</p>
+        {%- endif -%}
+
+        {%- if bundle_available -%}
+          <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data">
+            {%- assign item_index = 0 -%}
+            {%- for slot in (1..3) -%}
+              {%- assign slot_key = 'product_' | append: slot -%}
+              {%- assign bundle_product = block.settings[slot_key] -%}
+              {%- if bundle_product == blank -%}
+                {%- continue -%}
+              {%- endif -%}
+              {%- assign bundle_variant = bundle_product.selected_or_first_available_variant -%}
+              <input type="hidden" name="items[{{ item_index }}][id]" value="{{ bundle_variant.id }}">
+              <input type="hidden" name="items[{{ item_index }}][quantity]" value="1">
+              {%- assign item_index = item_index | plus: 1 -%}
+            {%- endfor -%}
+            <input type="hidden" name="return_to" value="{{ routes.cart_url }}">
+            <button class="luxo-bundle__btn" type="submit">
+              {{- section.settings.button_label | default: 'Agregar el combo' | escape -}}
+            </button>
+          </form>
+        {%- else -%}
+          <button class="luxo-bundle__btn" type="button" disabled>Sin stock completo</button>
+        {%- endif -%}
+
+        {%- if block.settings.link_label != blank and block.settings.link_url != blank -%}
+          <a class="luxo-bundle__link" href="{{ block.settings.link_url }}">{{ block.settings.link_label | escape }}</a>
+        {%- endif -%}
+      </li>
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- assign has_bundles = bundles_markup | strip -%}
+
+{%- if has_bundles != blank -%}
+  <section id="luxo-combos" class="luxo-bundles" aria-label="{{ section.settings.title | escape }}">
+    <div class="luxo-container luxo-container--wide">
+      <header class="luxo-bundles__head">
+        <div>
+          {%- if section.settings.kicker != blank -%}
+            <p class="luxo-kicker">{{ section.settings.kicker | escape }}</p>
+          {%- endif -%}
+          <h2 class="luxo-bundles__title">{{ section.settings.title }}</h2>
+        </div>
+        {%- if section.settings.copy != blank -%}
+          <div class="luxo-bundles__copy rte">{{ section.settings.copy }}</div>
+        {%- endif -%}
+      </header>
+
+      <ul class="luxo-bundles__grid" role="list">
+        {{ bundles_markup }}
+      </ul>
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Luxo — Combos",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Antetítulo", "default": "COMBINAN MEJOR JUNTOS" },
+    { "type": "inline_richtext", "id": "title", "label": "Título", "default": "Combos Luxo" },
+    {
+      "type": "richtext",
+      "id": "copy",
+      "label": "Texto de apoyo",
+      "default": "<p>Combinaciones que nuestras clientas ya compran juntas. Un solo clic agrega todo al carrito.</p>"
+    },
+    { "type": "text", "id": "button_label", "label": "Texto del botón", "default": "Agregar el combo" }
+  ],
+  "blocks": [
+    {
+      "type": "bundle",
+      "name": "Combo",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Nombre del combo", "default": "Combo Luxo" },
+        { "type": "text", "id": "tag", "label": "Etiqueta", "info": "Ej. Más pedido, Rutina completa." },
+        { "type": "product", "id": "product_1", "label": "Producto 1" },
+        { "type": "product", "id": "product_2", "label": "Producto 2" },
+        { "type": "product", "id": "product_3", "label": "Producto 3 (opcional)" },
+        {
+          "type": "text",
+          "id": "proof",
+          "label": "Prueba social",
+          "info": "Ej. 73 pedidos ya llevan esta combinación."
+        },
+        {
+          "type": "range",
+          "id": "discount_percent",
+          "label": "Descuento mostrado",
+          "min": 0,
+          "max": 40,
+          "step": 1,
+          "unit": "%",
+          "default": 0,
+          "info": "Sólo visual. Requiere un descuento automático equivalente en Shopify."
+        },
+        { "type": "text", "id": "link_label", "label": "Enlace secundario" },
+        { "type": "url", "id": "link_url", "label": "URL del enlace" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [{ "name": "Luxo — Combos" }]
+}
+{% endschema %}

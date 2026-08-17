@@ -1,0 +1,568 @@
+{% comment %}
+  Section: Lux Grain Banner
+  Responsive hero banner with animated grain overlay and freely positioned content.
+{% endcomment %}
+
+{%- liquid
+  assign id = 'LuxGrainBanner-' | append: section.id
+
+  assign anchor = section.settings.content_anchor
+  assign tx = '-50%'
+  assign ty = '-50%'
+
+  case anchor
+    when 'top_left'
+      assign tx = '0%'
+      assign ty = '0%'
+    when 'top_center'
+      assign tx = '-50%'
+      assign ty = '0%'
+    when 'top_right'
+      assign tx = '-100%'
+      assign ty = '0%'
+    when 'center_left'
+      assign tx = '0%'
+      assign ty = '-50%'
+    when 'center'
+      assign tx = '-50%'
+      assign ty = '-50%'
+    when 'center_right'
+      assign tx = '-100%'
+      assign ty = '-50%'
+    when 'bottom_left'
+      assign tx = '0%'
+      assign ty = '-100%'
+    when 'bottom_center'
+      assign tx = '-50%'
+      assign ty = '-100%'
+    when 'bottom_right'
+      assign tx = '-100%'
+      assign ty = '-100%'
+  endcase
+-%}
+
+<section
+  id="{{ id }}"
+  class="lux-grain-banner"
+  style="
+    --lux-bg: {{ section.settings.bg_color }};
+    --lux-text: {{ section.settings.text_color }};
+    --lux-accent: {{ section.settings.accent_color }};
+    --lux-height-desktop: {{ section.settings.height_desktop }}px;
+    --lux-height-mobile: {{ section.settings.height_mobile }}px;
+
+    --lux-pos-x: {{ section.settings.pos_x_desktop }}%;
+    --lux-pos-y: {{ section.settings.pos_y_desktop }}%;
+    --lux-pos-x-m: {{ section.settings.pos_x_mobile }}%;
+    --lux-pos-y-m: {{ section.settings.pos_y_mobile }}%;
+    --lux-tx: {{ tx }};
+    --lux-ty: {{ ty }};
+
+    --lux-content-max: {{ section.settings.content_max_width }}px;
+    --lux-content-gap: {{ section.settings.content_gap }}px;
+    --lux-content-pad-y: {{ section.settings.content_pad_y }}px;
+    --lux-content-pad-x: {{ section.settings.content_pad_x }}px;
+    --lux-content-radius: {{ section.settings.content_radius }}px;
+
+    --lux-overlay: {{ section.settings.content_bg_color }};
+    --lux-overlay-opacity: {{ section.settings.content_bg_opacity | divided_by: 100.0 }};
+
+    --lux-h-size: {{ section.settings.heading_size_desktop }}px;
+    --lux-h-size-m: {{ section.settings.heading_size_mobile }}px;
+    --lux-h-weight: {{ section.settings.heading_weight }};
+    --lux-h-letter: {{ section.settings.heading_letter_spacing }}em;
+    --lux-h-line: {{ section.settings.heading_line_height }};
+
+    --lux-p-size: {{ section.settings.text_size_desktop }}px;
+    --lux-p-size-m: {{ section.settings.text_size_mobile }}px;
+    --lux-p-weight: {{ section.settings.text_weight }};
+    --lux-p-line: {{ section.settings.text_line_height }};
+
+    --lux-cta-size: {{ section.settings.cta_font_size }}px;
+    --lux-cta-pad-y: {{ section.settings.cta_pad_y }}px;
+    --lux-cta-pad-x: {{ section.settings.cta_pad_x }}px;
+    --lux-cta-radius: {{ section.settings.cta_radius }}px;
+    --lux-cta-border: {{ section.settings.cta_border }}px;
+
+    --lux-cta-bg: {{ section.settings.cta_bg }};
+    --lux-cta-text: {{ section.settings.cta_text }};
+    --lux-cta-border-color: {{ section.settings.cta_border_color }};
+
+    --lux-grain-opacity: {{ section.settings.grain_opacity | divided_by: 100.0 }};
+    --lux-grain-size: {{ section.settings.grain_size }}px;
+    --lux-grain-blur: {{ section.settings.grain_blur }}px;
+    --lux-grain-speed: {{ section.settings.grain_speed }}s;
+  "
+>
+  <div class="lux-grain-banner__media">
+    {%- if section.settings.image_desktop != blank or section.settings.image_mobile != blank -%}
+      <picture>
+        {%- if section.settings.image_mobile != blank -%}
+          <source
+            media="(max-width: 749px)"
+            srcset="
+              {{ section.settings.image_mobile | image_url: width: 600 }} 600w,
+              {{ section.settings.image_mobile | image_url: width: 900 }} 900w,
+              {{ section.settings.image_mobile | image_url: width: 1200 }} 1200w
+            "
+            sizes="100vw"
+          >
+        {%- endif -%}
+
+        {%- if section.settings.image_desktop != blank -%}
+          <source
+            media="(min-width: 750px)"
+            srcset="
+              {{ section.settings.image_desktop | image_url: width: 1200 }} 1200w,
+              {{ section.settings.image_desktop | image_url: width: 1800 }} 1800w,
+              {{ section.settings.image_desktop | image_url: width: 2400 }} 2400w
+            "
+            sizes="100vw"
+          >
+        {%- endif -%}
+
+        <img
+          class="lux-grain-banner__img"
+          src="{% if section.settings.image_desktop != blank %}{{ section.settings.image_desktop | image_url: width: 1800 }}{% elsif section.settings.image_mobile != blank %}{{ section.settings.image_mobile | image_url: width: 1200 }}{% endif %}"
+          alt="{{ section.settings.alt_text | escape }}"
+          loading="{% if section.settings.loading_mode == 'eager' %}eager{% else %}lazy{% endif %}"
+          fetchpriority="{% if section.settings.loading_mode == 'eager' %}high{% else %}auto{% endif %}"
+        >
+      </picture>
+    {%- else -%}
+      <div class="lux-grain-banner__placeholder">
+        {{ 'lifestyle-1' | placeholder_svg_tag: 'lux-grain-banner__placeholder-svg' }}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.grain_enable -%}
+      <div class="lux-grain-banner__grain" aria-hidden="true"></div>
+    {%- endif -%}
+
+    {%- if section.settings.scrim_enable -%}
+      <div class="lux-grain-banner__scrim" aria-hidden="true"></div>
+    {%- endif -%}
+  </div>
+
+  <div class="lux-grain-banner__content-wrap">
+    <div class="lux-grain-banner__content">
+      {%- if section.settings.eyebrow != blank -%}
+        <div class="lux-grain-banner__eyebrow">{{ section.settings.eyebrow }}</div>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <h2 class="lux-grain-banner__heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+
+      {%- if section.settings.text != blank -%}
+        <div class="lux-grain-banner__text rte">{{ section.settings.text }}</div>
+      {%- endif -%}
+
+      {%- if section.settings.cta_type != 'none' and section.settings.cta_label != blank and section.settings.cta_url != blank -%}
+        <div class="lux-grain-banner__cta">
+          <a
+            class="lux-grain-banner__cta-link lux-cta--{{ section.settings.cta_type }} {% if section.settings.cta_uppercase %}is-upper{% endif %}"
+            href="{{ section.settings.cta_url }}"
+            {% if section.settings.cta_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}
+            aria-label="{{ section.settings.cta_label | escape }}"
+          >
+            {{ section.settings.cta_label }}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  #{{ id }} {
+    background: var(--lux-bg);
+  }
+
+  #{{ id }} .lux-grain-banner__media {
+    position: relative;
+    width: 100%;
+    height: var(--lux-height-desktop);
+    overflow: hidden;
+  }
+
+  #{{ id }} .lux-grain-banner__img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: {{ section.settings.image_focus }};
+    transform: scale({{ section.settings.image_scale | divided_by: 100.0 }});
+  }
+
+  #{{ id }} .lux-grain-banner__placeholder {
+    width: 100%;
+    height: 100%;
+    background: #e9e9e9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #{{ id }} .lux-grain-banner__placeholder-svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Optional scrim for readability */
+  #{{ id }} .lux-grain-banner__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      {{ section.settings.scrim_direction }},
+      rgba(0,0,0,{{ section.settings.scrim_opacity | divided_by: 100.0 }}) 0%,
+      rgba(0,0,0,0) 60%
+    );
+    pointer-events: none;
+  }
+
+  /* Grain overlay */
+#{{ id }} .lux-grain-banner__grain {
+  position: absolute;
+  inset: -30%;
+  pointer-events: none;
+  opacity: var(--lux-grain-opacity);
+  mix-blend-mode: {{ section.settings.grain_blend }};
+  filter: blur(var(--lux-grain-blur));
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='1.9' intercept='-0.35'/%3E%3CfeFuncG type='linear' slope='1.9' intercept='-0.35'/%3E%3CfeFuncB type='linear' slope='1.9' intercept='-0.35'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: var(--lux-grain-size) var(--lux-grain-size);
+  animation: luxGrainMove-{{ section.id }} var(--lux-grain-speed) steps(8) infinite;
+  will-change: transform;
+}
+  @keyframes luxGrainMove-{{ section.id }} {
+    0%   { transform: translate3d(-2%, -2%, 0); }
+    20%  { transform: translate3d( 3%, -4%, 0); }
+    40%  { transform: translate3d(-4%,  3%, 0); }
+    60%  { transform: translate3d( 4%,  2%, 0); }
+    80%  { transform: translate3d(-3%,  4%, 0); }
+    100% { transform: translate3d( 2%, -3%, 0); }
+  }
+
+  /* Content positioning */
+  #{{ id }} .lux-grain-banner__content-wrap {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  #{{ id }} .lux-grain-banner__content {
+    pointer-events: auto;
+    position: absolute;
+    left: var(--lux-pos-x);
+    top: var(--lux-pos-y);
+    transform: translate(var(--lux-tx), var(--lux-ty));
+    max-width: var(--lux-content-max);
+    width: min(var(--lux-content-max), calc(100% - 32px));
+    display: flex;
+    flex-direction: column;
+    gap: var(--lux-content-gap);
+    text-align: {{ section.settings.text_align }};
+    color: var(--lux-text);
+    padding: var(--lux-content-pad-y) var(--lux-content-pad-x);
+    border-radius: var(--lux-content-radius);
+    {% if section.settings.content_bg_enable %}
+      background: rgba(0,0,0,var(--lux-overlay-opacity));
+      background: color-mix(in srgb, var(--lux-overlay) calc(var(--lux-overlay-opacity) * 100%), transparent);
+      backdrop-filter: blur({{ section.settings.content_bg_blur }}px);
+    {% endif %}
+  }
+
+  /* Eyebrow */
+  #{{ id }} .lux-grain-banner__eyebrow {
+    font-size: {{ section.settings.eyebrow_size }}px;
+    font-weight: {{ section.settings.eyebrow_weight }};
+    letter-spacing: {{ section.settings.eyebrow_letter_spacing }}em;
+    text-transform: {% if section.settings.eyebrow_uppercase %}uppercase{% else %}none{% endif %};
+    opacity: {{ section.settings.eyebrow_opacity | divided_by: 100.0 }};
+  }
+
+  /* Heading */
+  #{{ id }} .lux-grain-banner__heading {
+    margin: 0;
+    font-size: var(--lux-h-size);
+    font-weight: var(--lux-h-weight);
+    letter-spacing: var(--lux-h-letter);
+    line-height: var(--lux-h-line);
+    text-transform: {% if section.settings.heading_uppercase %}uppercase{% else %}none{% endif %};
+  }
+
+  /* Text */
+  #{{ id }} .lux-grain-banner__text {
+    font-size: var(--lux-p-size);
+    font-weight: var(--lux-p-weight);
+    line-height: var(--lux-p-line);
+    opacity: {{ section.settings.text_opacity | divided_by: 100.0 }};
+  }
+
+  #{{ id }} .lux-grain-banner__text p { margin: 0 0 10px; }
+  #{{ id }} .lux-grain-banner__text p:last-child { margin-bottom: 0; }
+
+  /* CTA */
+  #{{ id }} .lux-grain-banner__cta-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--lux-cta-size);
+    font-weight: {{ section.settings.cta_weight }};
+    letter-spacing: {{ section.settings.cta_letter_spacing }}em;
+    text-decoration: none;
+    border-radius: var(--lux-cta-radius);
+    transition: transform .15s ease, opacity .15s ease, background .15s ease, color .15s ease, border-color .15s ease;
+    will-change: transform;
+  }
+
+  #{{ id }} .lux-grain-banner__cta-link:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+  }
+
+  #{{ id }} .lux-grain-banner__cta-link.is-upper {
+    text-transform: uppercase;
+  }
+
+  /* CTA variants */
+  #{{ id }} .lux-cta--button {
+    padding: var(--lux-cta-pad-y) var(--lux-cta-pad-x);
+    background: var(--lux-cta-bg);
+    color: var(--lux-cta-text);
+    border: var(--lux-cta-border) solid var(--lux-cta-border-color);
+  }
+
+  #{{ id }} .lux-cta--outline {
+    padding: var(--lux-cta-pad-y) var(--lux-cta-pad-x);
+    background: transparent;
+    color: var(--lux-cta-text);
+    border: var(--lux-cta-border) solid var(--lux-cta-border-color);
+  }
+
+  #{{ id }} .lux-cta--link {
+    padding: 0;
+    background: transparent;
+    color: var(--lux-cta-text);
+    border: none;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  /* Mobile */
+  @media (max-width: 749px) {
+    #{{ id }} .lux-grain-banner__media {
+      height: var(--lux-height-mobile);
+    }
+
+    #{{ id }} .lux-grain-banner__content {
+      left: var(--lux-pos-x-m);
+      top: var(--lux-pos-y-m);
+    }
+
+    #{{ id }} .lux-grain-banner__heading {
+      font-size: var(--lux-h-size-m);
+    }
+
+    #{{ id }} .lux-grain-banner__text {
+      font-size: var(--lux-p-size-m);
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Lux Grain Banner",
+  "tag": "section",
+  "settings": [
+    { "type": "header", "content": "Imágenes" },
+    { "type": "image_picker", "id": "image_desktop", "label": "Imagen Desktop (PC)" },
+    { "type": "image_picker", "id": "image_mobile", "label": "Imagen Mobile" },
+    { "type": "text", "id": "alt_text", "label": "Alt (accesibilidad)", "default": "Banner" },
+    {
+      "type": "select",
+      "id": "loading_mode",
+      "label": "Carga de imagen",
+      "options": [
+        { "value": "eager", "label": "Eager (hero principal)" },
+        { "value": "lazy", "label": "Lazy" }
+      ],
+      "default": "eager"
+    },
+    {
+      "type": "select",
+      "id": "image_focus",
+      "label": "Enfoque de imagen (object-position)",
+      "options": [
+        { "value": "center", "label": "Centro" },
+        { "value": "top", "label": "Arriba" },
+        { "value": "bottom", "label": "Abajo" },
+        { "value": "left", "label": "Izquierda" },
+        { "value": "right", "label": "Derecha" },
+        { "value": "center top", "label": "Centro Arriba" },
+        { "value": "center bottom", "label": "Centro Abajo" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "image_scale",
+      "label": "Zoom de imagen (%)",
+      "min": 100,
+      "max": 120,
+      "step": 1,
+      "default": 100
+    },
+
+    { "type": "header", "content": "Tamaño del banner" },
+    { "type": "range", "id": "height_desktop", "label": "Altura Desktop (px)", "min": 320, "max": 900, "step": 10, "default": 520 },
+    { "type": "range", "id": "height_mobile", "label": "Altura Mobile (px)", "min": 260, "max": 820, "step": 10, "default": 420 },
+
+    { "type": "header", "content": "Contenido (texto y botón)" },
+    { "type": "text", "id": "title", "label": "Título interno (opcional)", "default": "Banner" },
+
+    { "type": "text", "id": "eyebrow", "label": "Frase pequeña (eyebrow)", "default": "JUST IN" },
+    { "type": "text", "id": "heading", "label": "Frase principal (heading)", "default": "JUST IN" },
+    { "type": "richtext", "id": "text", "label": "Texto secundario", "default": "<p>New today, gone tomorrow—shop our latest arrivals before they sell out</p>" },
+
+    { "type": "select", "id": "text_align", "label": "Alineación del texto", "options": [
+      { "value": "left", "label": "Izquierda" },
+      { "value": "center", "label": "Centro" },
+      { "value": "right", "label": "Derecha" }
+    ], "default": "left" },
+
+    { "type": "header", "content": "Posición libre del contenido" },
+    {
+      "type": "select",
+      "id": "content_anchor",
+      "label": "Ancla del contenido",
+      "options": [
+        { "value": "top_left", "label": "Arriba Izquierda" },
+        { "value": "top_center", "label": "Arriba Centro" },
+        { "value": "top_right", "label": "Arriba Derecha" },
+        { "value": "center_left", "label": "Centro Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "center_right", "label": "Centro Derecha" },
+        { "value": "bottom_left", "label": "Abajo Izquierda" },
+        { "value": "bottom_center", "label": "Abajo Centro" },
+        { "value": "bottom_right", "label": "Abajo Derecha" }
+      ],
+      "default": "bottom_left"
+    },
+    { "type": "range", "id": "pos_x_desktop", "label": "Posición X Desktop (%)", "min": 0, "max": 100, "step": 1, "default": 8 },
+    { "type": "range", "id": "pos_y_desktop", "label": "Posición Y Desktop (%)", "min": 0, "max": 100, "step": 1, "default": 78 },
+    { "type": "range", "id": "pos_x_mobile", "label": "Posición X Mobile (%)", "min": 0, "max": 100, "step": 1, "default": 8 },
+    { "type": "range", "id": "pos_y_mobile", "label": "Posición Y Mobile (%)", "min": 0, "max": 100, "step": 1, "default": 78 },
+
+    { "type": "header", "content": "Estilos del contenedor del contenido" },
+    { "type": "range", "id": "content_max_width", "label": "Ancho máximo contenido (px)", "min": 240, "max": 800, "step": 10, "default": 420 },
+    { "type": "range", "id": "content_gap", "label": "Espaciado entre líneas (px)", "min": 6, "max": 40, "step": 1, "default": 12 },
+    { "type": "range", "id": "content_pad_y", "label": "Padding vertical (px)", "min": 0, "max": 60, "step": 2, "default": 0 },
+    { "type": "range", "id": "content_pad_x", "label": "Padding horizontal (px)", "min": 0, "max": 60, "step": 2, "default": 0 },
+    { "type": "range", "id": "content_radius", "label": "Borde redondeado (px)", "min": 0, "max": 40, "step": 1, "default": 0 },
+
+    { "type": "checkbox", "id": "content_bg_enable", "label": "Fondo detrás del texto (para legibilidad)", "default": false },
+    { "type": "color", "id": "content_bg_color", "label": "Color fondo contenido", "default": "#000000" },
+    { "type": "range", "id": "content_bg_opacity", "label": "Opacidad fondo contenido (%)", "min": 0, "max": 90, "step": 1, "default": 35 },
+    { "type": "range", "id": "content_bg_blur", "label": "Blur fondo contenido (px)", "min": 0, "max": 18, "step": 1, "default": 0 },
+
+    { "type": "header", "content": "Tipografías (usa las del tema)" },
+    { "type": "color", "id": "text_color", "label": "Color de texto", "default": "#ffffff" },
+
+    { "type": "text", "id": "accent_color", "label": "Acento (si lo necesitas)", "default": "#111111" },
+
+    { "type": "range", "id": "eyebrow_size", "label": "Eyebrow size (px)", "min": 10, "max": 22, "step": 1, "default": 12 },
+    { "type": "range", "id": "eyebrow_weight", "label": "Eyebrow weight", "min": 300, "max": 900, "step": 100, "default": 600 },
+    { "type": "range", "id": "eyebrow_letter_spacing", "label": "Eyebrow letter-spacing (em)", "min": 0, "max": 0.4, "step": 0.1, "default": 0.1 },
+    { "type": "checkbox", "id": "eyebrow_uppercase", "label": "Eyebrow uppercase", "default": true },
+    { "type": "range", "id": "eyebrow_opacity", "label": "Eyebrow opacity (%)", "min": 30, "max": 100, "step": 1, "default": 90 },
+
+    { "type": "range", "id": "heading_size_desktop", "label": "Heading size Desktop (px)", "min": 22, "max": 90, "step": 1, "default": 48 },
+    { "type": "range", "id": "heading_size_mobile", "label": "Heading size Mobile (px)", "min": 18, "max": 60, "step": 1, "default": 36 },
+    { "type": "range", "id": "heading_weight", "label": "Heading weight", "min": 300, "max": 900, "step": 100, "default": 700 },
+  { "type": "range", "id": "heading_letter_spacing", "label": "Heading letter-spacing (em)", "min": 0, "max": 0.2, "step": 0.1, "default": 0.0 },
+    { "type": "range", "id": "heading_line_height", "label": "Heading line-height", "min": 0.9, "max": 1.4, "step": 0.1, "default": 1.0 },
+    { "type": "checkbox", "id": "heading_uppercase", "label": "Heading uppercase", "default": true },
+
+    { "type": "range", "id": "text_size_desktop", "label": "Texto size Desktop (px)", "min": 12, "max": 24, "step": 1, "default": 14 },
+    { "type": "range", "id": "text_size_mobile", "label": "Texto size Mobile (px)", "min": 12, "max": 22, "step": 1, "default": 14 },
+    { "type": "range", "id": "text_weight", "label": "Texto weight", "min": 300, "max": 900, "step": 100, "default": 500 },
+    { "type": "range", "id": "text_line_height", "label": "Texto line-height", "min": 1.2, "max": 1.9, "step": 0.1, "default": 1.5 },
+    { "type": "range", "id": "text_opacity", "label": "Texto opacity (%)", "min": 40, "max": 100, "step": 1, "default": 90 },
+
+    { "type": "header", "content": "CTA (botón o link)" },
+    {
+      "type": "select",
+      "id": "cta_type",
+      "label": "Tipo de CTA",
+      "options": [
+        { "value": "none", "label": "Sin CTA" },
+        { "value": "button", "label": "Botón" },
+        { "value": "outline", "label": "Botón outline" },
+        { "value": "link", "label": "Link subrayado" }
+      ],
+      "default": "link"
+    },
+    { "type": "text", "id": "cta_label", "label": "Texto CTA", "default": "Shop Now" },
+    { "type": "url", "id": "cta_url", "label": "Link CTA" },
+    { "type": "checkbox", "id": "cta_new_tab", "label": "Abrir en nueva pestaña", "default": false },
+
+    { "type": "range", "id": "cta_font_size", "label": "CTA font-size (px)", "min": 12, "max": 22, "step": 1, "default": 14 },
+    { "type": "range", "id": "cta_weight", "label": "CTA font-weight", "min": 300, "max": 900, "step": 100, "default": 700 },
+   { "type": "range", "id": "cta_letter_spacing", "label": "CTA letter-spacing (em)", "min": 0, "max": 0.2, "step": 0.1, "default": 0.0 },
+    { "type": "checkbox", "id": "cta_uppercase", "label": "CTA uppercase", "default": false },
+
+    { "type": "range", "id": "cta_pad_y", "label": "CTA padding Y (px)", "min": 6, "max": 22, "step": 1, "default": 10 },
+    { "type": "range", "id": "cta_pad_x", "label": "CTA padding X (px)", "min": 10, "max": 40, "step": 1, "default": 18 },
+    { "type": "range", "id": "cta_radius", "label": "CTA border-radius (px)", "min": 0, "max": 40, "step": 1, "default": 40 },
+    { "type": "range", "id": "cta_border", "label": "CTA border (px)", "min": 0, "max": 4, "step": 1, "default": 1 },
+
+    { "type": "color", "id": "cta_bg", "label": "CTA background", "default": "#ffffff" },
+    { "type": "color", "id": "cta_text", "label": "CTA text color", "default": "#111111" },
+    { "type": "color", "id": "cta_border_color", "label": "CTA border color", "default": "#ffffff" },
+
+    { "type": "header", "content": "Grain (granulado)" },
+    { "type": "checkbox", "id": "grain_enable", "label": "Activar grain", "default": true },
+    {
+      "type": "select",
+      "id": "grain_blend",
+      "label": "Blend mode",
+      "options": [
+        { "value": "overlay", "label": "overlay" },
+        { "value": "soft-light", "label": "soft-light" },
+        { "value": "multiply", "label": "multiply" },
+        { "value": "normal", "label": "normal" }
+      ],
+      "default": "overlay"
+    },
+    { "type": "range", "id": "grain_opacity", "label": "Opacidad grain (%)", "min": 0, "max": 50, "step": 1, "default": 18 },
+    { "type": "range", "id": "grain_size", "label": "Tamaño grain (px)", "min": 80, "max": 420, "step": 10, "default": 220 },
+    { "type": "range", "id": "grain_blur", "label": "Blur grain (px)", "min": 0, "max": 6, "step": 1, "default": 1 },
+    { "type": "range", "id": "grain_speed", "label": "Velocidad animación (s)", "min": 2, "max": 14, "step": 1, "default": 7 },
+
+    { "type": "header", "content": "Scrim (oscurecer para legibilidad)" },
+    { "type": "checkbox", "id": "scrim_enable", "label": "Activar scrim", "default": false },
+    {
+      "type": "select",
+      "id": "scrim_direction",
+      "label": "Dirección scrim",
+      "options": [
+        { "value": "to right", "label": "Izquierda -> Derecha" },
+        { "value": "to left", "label": "Derecha -> Izquierda" },
+        { "value": "to bottom", "label": "Arriba -> Abajo" },
+        { "value": "to top", "label": "Abajo -> Arriba" }
+      ],
+      "default": "to right"
+    },
+    { "type": "range", "id": "scrim_opacity", "label": "Opacidad scrim (%)", "min": 0, "max": 80, "step": 1, "default": 35 },
+
+    { "type": "header", "content": "Colores base" },
+    { "type": "color", "id": "bg_color", "label": "Fondo (fallback)", "default": "#ffffff" }
+  ],
+  "presets": [
+    { "name": "Lux Grain Banner" }
+  ]
+}
+{% endschema %}

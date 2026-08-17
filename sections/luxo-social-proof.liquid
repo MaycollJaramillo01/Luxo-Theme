@@ -1,0 +1,52 @@
+{%- if section.blocks.size > 0 -%}
+  <section class="luxo-proof luxo-section">
+    <div class="luxo-container luxo-container--wide">
+      <header class="luxo-proof__head">
+        <p class="luxo-kicker">{{ section.settings.kicker | escape }}</p>
+        <h2>{{ section.settings.heading }}</h2>
+        {%- if section.settings.copy != blank -%}<div>{{ section.settings.copy }}</div>{%- endif -%}
+      </header>
+      <div class="luxo-proof__grid">
+        {%- for block in section.blocks -%}
+          <article class="luxo-proof__quote" {{ block.shopify_attributes }}>
+            <div class="luxo-proof__stars" aria-label="5 de 5 estrellas">★★★★★</div>
+            <blockquote>“{{ block.settings.quote | escape }}”</blockquote>
+            <cite>{{ block.settings.author | escape }} · Cliente verificada</cite>
+          </article>
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Luxo — Testimonios",
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Antetítulo", "default": "DICHO POR ELLAS" },
+    { "type": "inline_richtext", "id": "heading", "label": "Título", "default": "La confianza se nota." },
+    { "type": "richtext", "id": "copy", "label": "Descripción", "default": "<p>Experiencias de clientas que encontraron comodidad y acompañamiento.</p>" }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Reseña",
+      "settings": [
+        { "type": "textarea", "id": "quote", "label": "Reseña", "default": "Amo sus fajas: son cómodas y la atención supera las expectativas." },
+        { "type": "text", "id": "author", "label": "Nombre", "default": "Genesis Luna" }
+      ]
+    }
+  ],
+  "max_blocks": 3,
+  "presets": [
+    {
+      "name": "Luxo — Testimonios",
+      "blocks": [
+        { "type": "review", "settings": { "quote": "Amo sus fajas: son cómodas y la atención supera las expectativas.", "author": "Genesis Luna" } },
+        { "type": "review", "settings": { "quote": "Calidad excelente y un ajuste que sí puedo usar durante todo el día.", "author": "Darling Rosales" } },
+        { "type": "review", "settings": { "quote": "Me ayudaron a elegir la talla y compré con mucha más seguridad.", "author": "Abigail Enamorado" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,262 @@
+<product-info
+  id="MainProduct-{{ section.id }}"
+  class="luxo-pdp"
+  data-section="{{ section.id }}"
+  data-product-id="{{ product.id }}"
+  data-update-url="true"
+  data-url="{{ product.url }}"
+>
+  {{ 'section-main-product.css' | asset_url | stylesheet_tag }}
+  {{ 'component-accordion.css' | asset_url | stylesheet_tag }}
+  {{ 'component-price.css' | asset_url | stylesheet_tag }}
+  {{ 'component-slider.css' | asset_url | stylesheet_tag }}
+  {{ 'component-rating.css' | asset_url | stylesheet_tag }}
+  {{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
+
+  {%- unless product.has_only_default_variant -%}
+    {{ 'component-product-variant-picker.css' | asset_url | stylesheet_tag }}
+    {{ 'component-swatch-input.css' | asset_url | stylesheet_tag }}
+    {{ 'component-swatch.css' | asset_url | stylesheet_tag }}
+  {%- endunless -%}
+
+  <script src="{{ 'product-info.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+  {%- if product.media.size > 0 -%}
+    <script src="{{ 'product-modal.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'media-gallery.js' | asset_url }}" defer="defer"></script>
+  {%- endif -%}
+
+  {%- assign variant_images = product.images | where: 'attached_to_variant?', true | map: 'src' -%}
+  {%- assign product_form_id = 'product-form-' | append: section.id -%}
+
+  <nav class="luxo-pdp__breadcrumb luxo-container luxo-container--wide" aria-label="Ruta de navegación">
+    <a href="{{ routes.root_url }}">Inicio</a>
+    <span aria-hidden="true">/</span>
+    {%- if product.collections.first != blank -%}
+      <a href="{{ product.collections.first.url }}">{{ product.collections.first.title | escape }}</a>
+      <span aria-hidden="true">/</span>
+    {%- endif -%}
+    <span>{{ product.title | escape }}</span>
+  </nav>
+
+  <div class="luxo-pdp__layout luxo-container luxo-container--wide">
+    <div class="luxo-pdp__gallery">
+      {% render 'product-media-gallery', variant_images: variant_images %}
+    </div>
+
+    <section id="ProductInfo-{{ section.id }}" class="luxo-pdp__info">
+      <div class="luxo-pdp__eyebrow">
+        {{ product.type | default: product.collections.first.title | default: 'LUXO' | escape }}
+      </div>
+      <h1 class="luxo-pdp__title">{{ product.title | escape }}</h1>
+
+      {%- if product.metafields.reviews.rating.value != blank -%}
+        <div class="luxo-pdp__rating" aria-label="{{ product.metafields.reviews.rating.value }} de {{ product.metafields.reviews.rating.value.scale_max }} estrellas">
+          <span aria-hidden="true">★★★★★</span>
+          {%- if product.metafields.reviews.rating_count != blank -%}<small>{{ product.metafields.reviews.rating_count }}</small>{%- endif -%}
+        </div>
+      {%- endif -%}
+
+      <div id="price-{{ section.id }}" class="luxo-pdp__price" role="status">
+        {%- render 'price', product: product, use_variant: true, show_badges: true, price_class: 'price--large' -%}
+      </div>
+
+      {%- if product.description != blank -%}
+        <p class="luxo-pdp__summary">{{ product.description | strip_html | truncatewords: 32 }}</p>
+      {%- endif -%}
+
+      <div class="luxo-pdp__purchase">
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when '@app' -%}
+              <div class="luxo-pdp__app">{% render block %}</div>
+            {%- when 'variant_picker' -%}
+              {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
+            {%- when 'quantity_selector' -%}
+              <div class="product-form__input product-form__quantity" {{ block.shopify_attributes }}>
+                <label class="form__label" for="Quantity-{{ section.id }}">Cantidad</label>
+                <quantity-input class="quantity" data-url="{{ product.url }}" data-section="{{ section.id }}">
+                  <button class="quantity__button" name="minus" type="button" aria-label="Reducir cantidad">
+                    <span aria-hidden="true">−</span>
+                  </button>
+                  <input
+                    class="quantity__input"
+                    type="number"
+                    name="quantity"
+                    id="Quantity-{{ section.id }}"
+                    min="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
+                    step="{{ product.selected_or_first_available_variant.quantity_rule.increment }}"
+                    value="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
+                    form="{{ product_form_id }}"
+                  >
+                  <button class="quantity__button" name="plus" type="button" aria-label="Aumentar cantidad">
+                    <span aria-hidden="true">+</span>
+                  </button>
+                </quantity-input>
+              </div>
+            {%- when 'buy_buttons' -%}
+              {%- render 'buy-buttons',
+                block: block,
+                product: product,
+                product_form_id: product_form_id,
+                section_id: section.id,
+                show_pickup_availability: true
+              -%}
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
+
+      <div class="luxo-pdp__assurance" aria-label="Beneficios de compra">
+        <span><b aria-hidden="true">✓</b> Pago seguro</span>
+        <span><b aria-hidden="true">✓</b> Envío rastreable</span>
+        <span><b aria-hidden="true">✓</b> Ayuda con tu talla</span>
+      </div>
+
+      <div class="luxo-pdp__details">
+        {%- if product.description != blank -%}
+          <details open>
+            <summary>Descripción <span aria-hidden="true">+</span></summary>
+            <div class="rte">{{ product.description }}</div>
+          </details>
+        {%- endif -%}
+        <details>
+          <summary>Ajuste y cuidado <span aria-hidden="true">+</span></summary>
+          <div class="rte">{{ section.settings.fit_and_care }}</div>
+        </details>
+        <details>
+          <summary>Envíos y cambios <span aria-hidden="true">+</span></summary>
+          <div class="rte">{{ section.settings.shipping }}</div>
+        </details>
+      </div>
+    </section>
+  </div>
+</product-info>
+
+{% schema %}
+{
+  "name": "Luxo producto",
+  "settings": [
+    { "type": "checkbox", "id": "enable_sticky_info", "label": "Información fija", "default": true },
+    {
+      "type": "select",
+      "id": "media_size",
+      "label": "Tamaño de galería",
+      "options": [
+        { "value": "small", "label": "Pequeña" },
+        { "value": "medium", "label": "Media" },
+        { "value": "large", "label": "Grande" }
+      ],
+      "default": "large"
+    },
+    {
+      "type": "select",
+      "id": "gallery_layout",
+      "label": "Diseño de galería",
+      "options": [
+        { "value": "stacked", "label": "Apilada" },
+        { "value": "columns", "label": "Dos columnas" },
+        { "value": "thumbnail", "label": "Miniaturas" },
+        { "value": "thumbnail_slider", "label": "Carrusel de miniaturas" }
+      ],
+      "default": "columns"
+    },
+    {
+      "type": "select",
+      "id": "mobile_thumbnails",
+      "label": "Miniaturas en móvil",
+      "options": [
+        { "value": "show", "label": "Mostrar" },
+        { "value": "hide", "label": "Ocultar" },
+        { "value": "columns", "label": "Columnas" }
+      ],
+      "default": "hide"
+    },
+    { "type": "checkbox", "id": "hide_variants", "label": "Ocultar medios de otras variantes", "default": false },
+    { "type": "checkbox", "id": "enable_video_looping", "label": "Repetir videos", "default": false },
+    { "type": "checkbox", "id": "constrain_to_viewport", "label": "Limitar a la pantalla", "default": false },
+    {
+      "type": "select",
+      "id": "media_fit",
+      "label": "Ajuste de imagen",
+      "options": [
+        { "value": "contain", "label": "Contener" },
+        { "value": "cover", "label": "Cubrir" }
+      ],
+      "default": "contain"
+    },
+    {
+      "type": "select",
+      "id": "image_zoom",
+      "label": "Zoom de imagen",
+      "options": [
+        { "value": "lightbox", "label": "Abrir galería" },
+        { "value": "none", "label": "Ninguno" }
+      ],
+      "default": "lightbox"
+    },
+    {
+      "type": "richtext",
+      "id": "fit_and_care",
+      "label": "Ajuste y cuidado",
+      "default": "<p>Consulta la guía de tallas antes de elegir. Lava la prenda a mano con agua fría y déjala secar al aire.</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "shipping",
+      "label": "Envíos y cambios",
+      "default": "<p>Tu pedido incluye seguimiento. Si necesitas ayuda con un cambio, nuestro equipo te acompaña.</p>"
+    }
+  ],
+  "blocks": [
+    { "type": "@app" },
+    {
+      "type": "variant_picker",
+      "name": "Variantes",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "picker_type",
+          "label": "Tipo de selector",
+          "options": [
+            { "value": "dropdown", "label": "Menú desplegable" },
+            { "value": "button", "label": "Botones" }
+          ],
+          "default": "button"
+        },
+        {
+          "type": "select",
+          "id": "swatch_shape",
+          "label": "Forma de muestra",
+          "options": [
+            { "value": "circle", "label": "Círculo" },
+            { "value": "square", "label": "Cuadrado" },
+            { "value": "none", "label": "Ninguna" }
+          ],
+          "default": "circle"
+        }
+      ]
+    },
+    { "type": "quantity_selector", "name": "Cantidad", "limit": 1 },
+    {
+      "type": "buy_buttons",
+      "name": "Botones de compra",
+      "limit": 1,
+      "settings": [
+        { "type": "checkbox", "id": "show_dynamic_checkout", "label": "Mostrar pago dinámico", "default": false },
+        { "type": "checkbox", "id": "show_gift_card_recipient", "label": "Formulario para tarjeta de regalo", "default": true }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo producto",
+      "blocks": [
+        { "type": "variant_picker" },
+        { "type": "quantity_selector" },
+        { "type": "buy_buttons" }
+      ]
+    }
+  ]
+}
+{% endschema %}

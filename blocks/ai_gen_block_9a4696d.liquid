@@ -1,0 +1,560 @@
+{% doc %}
+  @prompt
+    Formulario de contacto , Mejorar diseño en pc hacerlo que no opcupe todo el tamaño en pantalla 
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-contact-form-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+    padding: {{ block.settings.form_padding }}px;
+    background-color: {{ block.settings.background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+  }
+
+  .ai-contact-form__heading-{{ ai_gen_id }} {
+    margin: 0 0 {{ block.settings.spacing }}px;
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.heading_size }}px;
+    text-align: {{ block.settings.text_alignment }};
+  }
+
+  .ai-contact-form__description-{{ ai_gen_id }} {
+    margin: 0 0 {{ block.settings.spacing }}px;
+    color: {{ block.settings.text_color }};
+    text-align: {{ block.settings.text_alignment }};
+  }
+
+  .ai-contact-form__fields-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.field_spacing }}px;
+  }
+
+  .ai-contact-form__field-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ai-contact-form__label-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .ai-contact-form__input-{{ ai_gen_id }},
+  .ai-contact-form__textarea-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid {{ block.settings.input_border_color }};
+    border-radius: {{ block.settings.input_border_radius }}px;
+    background-color: {{ block.settings.input_background_color }};
+    color: {{ block.settings.input_text_color }};
+    font-size: 14px;
+    font-family: inherit;
+  }
+
+  .ai-contact-form__input-{{ ai_gen_id }}::placeholder,
+  .ai-contact-form__textarea-{{ ai_gen_id }}::placeholder {
+    color: {{ block.settings.input_text_color | color_modify: 'alpha', 0.6 }};
+  }
+
+  .ai-contact-form__input-{{ ai_gen_id }}:focus,
+  .ai-contact-form__textarea-{{ ai_gen_id }}:focus {
+    outline: 2px solid {{ block.settings.button_color }};
+    outline-offset: 2px;
+  }
+
+  .ai-contact-form__textarea-{{ ai_gen_id }} {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .ai-contact-form__button-{{ ai_gen_id }} {
+    padding: 14px 32px;
+    background-color: {{ block.settings.button_color }};
+    color: {{ block.settings.button_text_color }};
+    border: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+  }
+
+  .ai-contact-form__button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_color }};
+  }
+
+  .ai-contact-form__message-{{ ai_gen_id }} {
+    margin-top: {{ block.settings.field_spacing }}px;
+    padding: 12px 16px;
+    border-radius: {{ block.settings.input_border_radius }}px;
+    font-size: 14px;
+  }
+
+  .ai-contact-form__message--success-{{ ai_gen_id }} {
+    background-color: {{ block.settings.success_bg_color }};
+    color: {{ block.settings.success_text_color }};
+  }
+
+  .ai-contact-form__message--error-{{ ai_gen_id }} {
+    background-color: {{ block.settings.error_bg_color }};
+    color: {{ block.settings.error_text_color }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-contact-form-{{ ai_gen_id }} {
+      padding: {{ block.settings.form_padding | times: 0.7 }}px;
+    }
+  }
+{% endstyle %}
+
+<contact-form-{{ ai_gen_id }} class="ai-contact-form-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.heading != blank %}
+    <h2 class="ai-contact-form__heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+  {% endif %}
+
+  {% if block.settings.description != blank %}
+    <div class="ai-contact-form__description-{{ ai_gen_id }}">{{ block.settings.description }}</div>
+  {% endif %}
+
+  {%- form 'contact' -%}
+    <div class="ai-contact-form__fields-{{ ai_gen_id }}">
+      <div class="ai-contact-form__field-{{ ai_gen_id }}">
+        <label for="ai-contact-name-{{ ai_gen_id }}" class="ai-contact-form__label-{{ ai_gen_id }}">
+          {{ block.settings.name_label }}{% if block.settings.name_required %} *{% endif %}
+        </label>
+        <input
+          type="text"
+          id="ai-contact-name-{{ ai_gen_id }}"
+          name="contact[{{ block.settings.name_label }}]"
+          class="ai-contact-form__input-{{ ai_gen_id }}"
+          placeholder="{{ block.settings.name_placeholder }}"
+          {% if block.settings.name_required %}required{% endif %}
+          {% if form.errors %}
+            aria-invalid="true"
+          {% endif %}
+        >
+      </div>
+
+      <div class="ai-contact-form__field-{{ ai_gen_id }}">
+        <label for="ai-contact-email-{{ ai_gen_id }}" class="ai-contact-form__label-{{ ai_gen_id }}">
+          {{ block.settings.email_label }} *
+        </label>
+        <input
+          type="email"
+          id="ai-contact-email-{{ ai_gen_id }}"
+          name="contact[email]"
+          class="ai-contact-form__input-{{ ai_gen_id }}"
+          placeholder="{{ block.settings.email_placeholder }}"
+          autocomplete="email"
+          required
+          {% if form.errors %}
+            aria-invalid="true"
+            aria-describedby="ai-contact-form-error-{{ ai_gen_id }}"
+          {% endif %}
+          {% if form.posted_successfully? %}
+            aria-describedby="ai-contact-form-success-{{ ai_gen_id }}"
+          {% endif %}
+        >
+      </div>
+
+      {% if block.settings.show_phone %}
+        <div class="ai-contact-form__field-{{ ai_gen_id }}">
+          <label for="ai-contact-phone-{{ ai_gen_id }}" class="ai-contact-form__label-{{ ai_gen_id }}">
+            {{ block.settings.phone_label }}{% if block.settings.phone_required %} *{% endif %}
+          </label>
+          <input
+            type="tel"
+            id="ai-contact-phone-{{ ai_gen_id }}"
+            name="contact[{{ block.settings.phone_label }}]"
+            class="ai-contact-form__input-{{ ai_gen_id }}"
+            placeholder="{{ block.settings.phone_placeholder }}"
+            autocomplete="tel"
+            {% if block.settings.phone_required %}required{% endif %}
+          >
+        </div>
+      {% endif %}
+
+      <div class="ai-contact-form__field-{{ ai_gen_id }}">
+        <label for="ai-contact-message-{{ ai_gen_id }}" class="ai-contact-form__label-{{ ai_gen_id }}">
+          {{ block.settings.message_label }} *
+        </label>
+        <textarea
+          id="ai-contact-message-{{ ai_gen_id }}"
+          name="contact[body]"
+          class="ai-contact-form__textarea-{{ ai_gen_id }}"
+          placeholder="{{ block.settings.message_placeholder }}"
+          required
+        ></textarea>
+      </div>
+
+      <button type="submit" class="ai-contact-form__button-{{ ai_gen_id }}">
+        {{ block.settings.button_text }}
+      </button>
+    </div>
+
+    {%- if form.posted_successfully? -%}
+      <div
+        id="ai-contact-form-success-{{ ai_gen_id }}"
+        class="ai-contact-form__message-{{ ai_gen_id }} ai-contact-form__message--success-{{ ai_gen_id }}"
+      >
+        {{ block.settings.success_message }}
+      </div>
+    {%- endif -%}
+
+    {%- if form.errors -%}
+      <div
+        id="ai-contact-form-error-{{ ai_gen_id }}"
+        class="ai-contact-form__message-{{ ai_gen_id }} ai-contact-form__message--error-{{ ai_gen_id }}"
+      >
+        {{ block.settings.error_message }}
+      </div>
+    {%- endif -%}
+  {%- endform -%}
+</contact-form-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ContactForm{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        const form = this.querySelector('form');
+        if (form) {
+          form.addEventListener('submit', this.handleSubmit.bind(this));
+        }
+      }
+
+      handleSubmit(event) {
+        const requiredFields = this.querySelectorAll('[required]');
+        let isValid = true;
+
+        requiredFields.forEach(field => {
+          if (!field.value.trim()) {
+            isValid = false;
+            field.setAttribute('aria-invalid', 'true');
+          } else {
+            field.removeAttribute('aria-invalid');
+          }
+        });
+
+        if (!isValid) {
+          event.preventDefault();
+        }
+      }
+    }
+
+    customElements.define('contact-form-{{ ai_gen_id }}', ContactForm{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Formulario de contacto",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenido"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Título",
+      "default": "Contáctanos"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Descripción",
+      "default": "<p>Completa el formulario y nos pondremos en contacto contigo pronto.</p>"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Alineación de texto",
+      "options": [
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Campos del formulario"
+    },
+    {
+      "type": "text",
+      "id": "name_label",
+      "label": "Etiqueta de nombre",
+      "default": "Nombre"
+    },
+    {
+      "type": "text",
+      "id": "name_placeholder",
+      "label": "Placeholder de nombre",
+      "default": "Tu nombre"
+    },
+    {
+      "type": "checkbox",
+      "id": "name_required",
+      "label": "Nombre requerido",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "email_label",
+      "label": "Etiqueta de correo",
+      "default": "Correo electrónico"
+    },
+    {
+      "type": "text",
+      "id": "email_placeholder",
+      "label": "Placeholder de correo",
+      "default": "tu@correo.com"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_phone",
+      "label": "Mostrar campo de teléfono",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "phone_label",
+      "label": "Etiqueta de teléfono",
+      "default": "Teléfono"
+    },
+    {
+      "type": "text",
+      "id": "phone_placeholder",
+      "label": "Placeholder de teléfono",
+      "default": "Tu número de teléfono"
+    },
+    {
+      "type": "checkbox",
+      "id": "phone_required",
+      "label": "Teléfono requerido",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "message_label",
+      "label": "Etiqueta de mensaje",
+      "default": "Mensaje"
+    },
+    {
+      "type": "text",
+      "id": "message_placeholder",
+      "label": "Placeholder de mensaje",
+      "default": "Escribe tu mensaje aquí..."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Texto del botón",
+      "default": "Enviar mensaje"
+    },
+    {
+      "type": "header",
+      "content": "Mensajes"
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Mensaje de éxito",
+      "default": "¡Gracias por contactarnos! Te responderemos pronto."
+    },
+    {
+      "type": "text",
+      "id": "error_message",
+      "label": "Mensaje de error",
+      "default": "Por favor, completa todos los campos requeridos."
+    },
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Ancho máximo en escritorio",
+      "min": 400,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "form_padding",
+      "label": "Relleno del formulario",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "spacing",
+      "label": "Espaciado de secciones",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "field_spacing",
+      "label": "Espaciado entre campos",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Tamaño del título",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Radio de borde del formulario",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "input_border_radius",
+      "label": "Radio de borde de campos",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Radio de borde del botón",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Fondo del formulario",
+      "default": "#f5f1ed"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color de texto",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "input_background_color",
+      "label": "Fondo de campos",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "input_text_color",
+      "label": "Texto de campos",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "input_border_color",
+      "label": "Borde de campos",
+      "default": "#d4d4d4"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Color del botón",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Texto del botón",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Color del botón al pasar",
+      "default": "#2c332f"
+    },
+    {
+      "type": "color",
+      "id": "success_bg_color",
+      "label": "Fondo de mensaje de éxito",
+      "default": "#d4edda"
+    },
+    {
+      "type": "color",
+      "id": "success_text_color",
+      "label": "Texto de mensaje de éxito",
+      "default": "#155724"
+    },
+    {
+      "type": "color",
+      "id": "error_bg_color",
+      "label": "Fondo de mensaje de error",
+      "default": "#f8d7da"
+    },
+    {
+      "type": "color",
+      "id": "error_text_color",
+      "label": "Texto de mensaje de error",
+      "default": "#721c24"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Formulario de contacto"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,128 @@
+{{ 'luxo-landing.css' | asset_url | stylesheet_tag }}
+
+<section
+  class="luxo-block"
+  style="
+    --lb-bg: {{ section.settings.bg_color }};
+    --lb-text: {{ section.settings.text_color }};
+    --lb-muted: {{ section.settings.muted_color }};
+    --lb-border: {{ section.settings.border_color }};
+    --lb-dark: {{ section.settings.dark_color }};
+    --lb-max: {{ section.settings.page_width }}px;
+  "
+>
+  <div class="lb-inner-header">
+    <div class="lb-wrap">
+      <div class="lb-header-row">
+        <div>
+          {% if section.settings.brand_name != blank %}
+            <div class="lb-brand">{{ section.settings.brand_name }}</div>
+          {% endif %}
+        </div>
+
+        <div class="lb-header-center">
+          {% if section.settings.header_micro_text != blank %}
+            <div class="lb-header-micro">{{ section.settings.header_micro_text }}</div>
+          {% endif %}
+        </div>
+
+        <div class="lb-header-right">
+          {% if section.settings.size_guide_label != blank and section.settings.size_guide_url != blank %}
+            <a class="lb-menu-link" href="{{ section.settings.size_guide_url }}">{{ section.settings.size_guide_label }}</a>
+          {% endif %}
+
+          {% if section.settings.header_cta_label != blank and section.settings.header_cta_url != blank %}
+            <a class="lb-btn lb-btn-primary" href="{{ section.settings.header_cta_url }}">{{ section.settings.header_cta_label }}</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxo - Header interno",
+  "settings": [
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Marca",
+      "default": "Luxo Boutique"
+    },
+    {
+      "type": "text",
+      "id": "header_micro_text",
+      "label": "Texto central",
+      "default": "Resultados reales en mujeres reales"
+    },
+    {
+      "type": "text",
+      "id": "size_guide_label",
+      "label": "Texto guía de tallas",
+      "default": "Guía de tallas"
+    },
+    {
+      "type": "url",
+      "id": "size_guide_url",
+      "label": "URL guía de tallas"
+    },
+    {
+      "type": "text",
+      "id": "header_cta_label",
+      "label": "Texto botón",
+      "default": "Hablar por WhatsApp"
+    },
+    {
+      "type": "url",
+      "id": "header_cta_url",
+      "label": "URL botón"
+    },
+    {
+      "type": "range",
+      "id": "page_width",
+      "label": "Ancho máximo",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1280
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color base",
+      "default": "#f7f4ef"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color texto",
+      "default": "#181511"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Color secundario",
+      "default": "#6f675d"
+    },
+    {
+      "type": "color",
+      "id": "dark_color",
+      "label": "Color botón",
+      "default": "#13110f"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Color borde",
+      "default": "#ddd5cb"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo - Header interno"
+    }
+  ]
+}
+{% endschema %}

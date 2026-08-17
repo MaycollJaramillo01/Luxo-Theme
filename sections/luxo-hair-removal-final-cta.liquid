@@ -1,0 +1,135 @@
+{{ 'luxo-hair-removal-campaign.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+  assign product_url = section.settings.primary_url
+  assign secondary_url = section.settings.secondary_url
+
+  if product_url == blank and section.settings.product != blank
+    assign product_url = section.settings.product.url
+  endif
+
+  if secondary_url == blank
+    assign secondary_url = product_url
+  endif
+%}
+
+<section
+  class="lxhr"
+  style="
+    --lxhr-dark: {{ section.settings.dark_color }};
+    --lxhr-max: {{ section.settings.page_width }}px;
+    --lxhr-space: {{ section.settings.section_spacing }}px;
+  "
+>
+  <div class="lxhr-final">
+    <div class="lxhr-wrap">
+      <div class="lxhr-section">
+        <div class="lxhr-final-inner">
+          {% if section.settings.eyebrow != blank %}
+            <div class="lxhr-eyebrow" style="color: rgba(255,255,255,0.62);">{{ section.settings.eyebrow }}</div>
+          {% endif %}
+
+          <h2 class="lxhr-final-title">{{ section.settings.title | newline_to_br }}</h2>
+
+          {% if section.settings.text != blank %}
+            <div class="lxhr-subtitle">{{ section.settings.text }}</div>
+          {% endif %}
+
+          <div class="lxhr-final-actions">
+            {% if section.settings.primary_label != blank and product_url != blank %}
+              <a class="lxhr-btn lxhr-btn-light" href="{{ product_url }}">{{ section.settings.primary_label }}</a>
+            {% endif %}
+
+            {% if section.settings.secondary_label != blank and secondary_url != blank %}
+              <a class="lxhr-btn" style="border-color: rgba(255,255,255,0.18); color:#fff;" href="{{ secondary_url }}">{{ section.settings.secondary_label }}</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxo Hair  Final CTA",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Producto"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Cierre de campaña"
+    },
+    {
+      "type": "textarea",
+      "id": "title",
+      "label": "Título",
+      "default": "Consigue tu pack de 5 cremas depiladoras\ny aprovecha la oferta actual"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Texto",
+      "default": "Usa este cierre para repetir la oferta, reforzar valor y empujar la compra con un CTA limpio."
+    },
+    {
+      "type": "text",
+      "id": "primary_label",
+      "label": "Botón principal",
+      "default": "Comprar ahora"
+    },
+    {
+      "type": "url",
+      "id": "primary_url",
+      "label": "URL botón principal"
+    },
+    {
+      "type": "text",
+      "id": "secondary_label",
+      "label": "Botón secundario",
+      "default": "Ver el producto"
+    },
+    {
+      "type": "url",
+      "id": "secondary_url",
+      "label": "URL botón secundario"
+    },
+    {
+      "type": "range",
+      "id": "page_width",
+      "label": "Ancho máximo",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1240
+    },
+    {
+      "type": "range",
+      "id": "section_spacing",
+      "label": "Espaciado",
+      "min": 40,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "default": 88
+    },
+    {
+      "type": "color",
+      "id": "dark_color",
+      "label": "Fondo oscuro",
+      "default": "#111111"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo Hair Removal Final CTA"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,38 @@
+<section class="luxo-editorial">
+  <div class="luxo-editorial__media">
+    {%- if section.settings.image != blank -%}
+      {{ section.settings.image | image_url: width: 2200 | image_tag:
+        widths: '720, 1080, 1440, 1800, 2200',
+        sizes: '100vw',
+        loading: 'lazy',
+        alt: section.settings.image_alt
+      }}
+    {%- else -%}
+      <img src="{{ 'luxo-campaign-hero.webp' | asset_url }}" width="1680" height="945" loading="lazy" alt="{{ section.settings.image_alt | escape }}">
+    {%- endif -%}
+  </div>
+  <div class="luxo-editorial__content">
+    {%- if section.settings.kicker != blank -%}<p class="luxo-kicker">{{ section.settings.kicker | escape }}</p>{%- endif -%}
+    <h2>{{ section.settings.heading }}</h2>
+    {%- if section.settings.copy != blank -%}<div class="luxo-editorial__copy">{{ section.settings.copy }}</div>{%- endif -%}
+    {%- if section.settings.link_label != blank -%}
+      <a class="luxo-button luxo-button--light" href="{{ section.settings.link | default: routes.all_products_collection_url }}">{{ section.settings.link_label | escape }}</a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxo — Campaña editorial",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Imagen" },
+    { "type": "text", "id": "image_alt", "label": "Descripción de imagen", "default": "Selección editorial de Luxo" },
+    { "type": "text", "id": "kicker", "label": "Antetítulo", "default": "DISEÑADO PARA LA VIDA REAL" },
+    { "type": "inline_richtext", "id": "heading", "label": "Título", "default": "Soporte que se siente. Confianza que se nota." },
+    { "type": "richtext", "id": "copy", "label": "Descripción", "default": "<p>Piezas elegidas para acompañar tu cuerpo sin pedirte que cambies quién eres.</p>" },
+    { "type": "text", "id": "link_label", "label": "Texto del enlace", "default": "EXPLORAR LA COLECCIÓN" },
+    { "type": "url", "id": "link", "label": "Enlace" }
+  ],
+  "presets": [{ "name": "Luxo — Campaña editorial" }]
+}
+{% endschema %}

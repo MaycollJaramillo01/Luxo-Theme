@@ -1,0 +1,603 @@
+{{ 'luxo-landing.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+  assign promo_collection = section.settings.promo_collection
+  assign use_collection_products = false
+
+  if promo_collection != blank and promo_collection.products_count > 0
+    assign use_collection_products = true
+  endif
+
+  assign resolved_products_title = section.settings.products_title
+  if section.settings.use_collection_title and promo_collection != blank and promo_collection.title != blank
+    assign resolved_products_title = promo_collection.title
+  endif
+
+  assign resolved_products_link = section.settings.products_link_url
+  if resolved_products_link == blank and promo_collection != blank
+    assign resolved_products_link = promo_collection.url
+  endif
+
+  assign collection_description = ''
+  if promo_collection != blank and promo_collection.description != blank
+    assign collection_description = promo_collection.description | strip_html | truncate: 220
+  endif
+
+  assign collection_cta_primary_href = section.settings.collection_cta_primary_url
+  if collection_cta_primary_href == blank
+    assign collection_cta_primary_href = resolved_products_link
+  endif
+
+  assign collection_cta_secondary_href = section.settings.collection_cta_secondary_url
+  if collection_cta_secondary_href == blank
+    assign collection_cta_secondary_href = section.settings.fallback_secondary_url
+  endif
+%}
+
+<section
+  id="luxo-products-{{ section.id }}"
+  class="luxo-block"
+  style="
+    --lb-bg: {{ section.settings.alt_bg_color }};
+    --lb-alt: {{ section.settings.alt_bg_color }};
+    --lb-surface: {{ section.settings.surface_color }};
+    --lb-text: {{ section.settings.text_color }};
+    --lb-muted: {{ section.settings.muted_color }};
+    --lb-accent: {{ section.settings.accent_color }};
+    --lb-dark: {{ section.settings.dark_color }};
+    --lb-border: {{ section.settings.border_color }};
+    --lb-max: {{ section.settings.page_width }}px;
+    --lb-radius: {{ section.settings.card_radius }}px;
+    --lb-section-space: {{ section.settings.section_spacing }}px;
+  "
+>
+  <div class="lb-section">
+    <div class="lb-wrap">
+      <div class="lb-row-head">
+        <div>
+          {% if section.settings.products_eyebrow != blank %}
+            <span class="lb-eyebrow">{{ section.settings.products_eyebrow }}</span>
+          {% endif %}
+          {% if resolved_products_title != blank %}
+            <h2 class="lb-title">{{ resolved_products_title }}</h2>
+          {% endif %}
+        </div>
+
+        {% if section.settings.products_link_label != blank and resolved_products_link != blank %}
+          <a class="lb-see-all" href="{{ resolved_products_link }}">{{ section.settings.products_link_label }}</a>
+        {% endif %}
+      </div>
+
+      {% if section.settings.show_collection_description and collection_description != blank %}
+        <div class="lb-collection-description">{{ collection_description }}</div>
+      {% endif %}
+
+      {% if use_collection_products %}
+        <div class="lb-products-wrap">
+          <div class="lb-products">
+            {% if section.settings.show_all_collection_products %}
+              {% for product in promo_collection.products %}
+                {% liquid
+                  assign badge_text = blank
+                  assign caption_text = product.type
+                  if caption_text == blank
+                    assign caption_text = section.settings.default_product_caption
+                  endif
+
+                  if product.available == false
+                    assign badge_text = 'Agotado'
+                  elsif product.compare_at_price > product.price and section.settings.show_sale_badge
+                    assign badge_text = 'Oferta'
+                  endif
+                %}
+
+                <div class="lb-product">
+                  <div class="lb-card-image">
+                    {% if badge_text != blank %}
+                      <div class="lb-badge">{{ badge_text }}</div>
+                    {% endif %}
+
+                    {% if product.featured_image != blank %}
+                      {{
+                        product.featured_image
+                        | image_url: width: 900
+                        | image_tag:
+                          loading: 'lazy',
+                          widths: '375, 550, 750, 900',
+                          sizes: '(max-width: 749px) 84vw, (max-width: 989px) 50vw, 25vw',
+                          alt: product.title | escape
+                      }}
+                    {% else %}
+                      <div class="lb-empty-image">Imagen de producto</div>
+                    {% endif %}
+                  </div>
+
+                  <div class="lb-product-meta">
+                    <div class="lb-product-info">
+                      <h3 class="lb-product-title">{{ product.title }}</h3>
+                      {% if caption_text != blank %}
+                        <div class="lb-caption">{{ caption_text }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div class="lb-price-wrap">
+                      {% if product.compare_at_price > product.price and section.settings.show_compare_price %}
+                        <div class="lb-compare-price">{{ product.compare_at_price | money }}</div>
+                      {% endif %}
+                      <div class="lb-price">{{ product.price | money }}</div>
+                    </div>
+                  </div>
+
+                  <div class="lb-product-footer">
+                    {% if section.settings.product_button_label != blank %}
+                      <a class="lb-btn lb-btn-primary" href="{{ product.url }}">{{ section.settings.product_button_label }}</a>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              {% for product in promo_collection.products limit: section.settings.collection_products_limit %}
+                {% liquid
+                  assign badge_text = blank
+                  assign caption_text = product.type
+                  if caption_text == blank
+                    assign caption_text = section.settings.default_product_caption
+                  endif
+
+                  if product.available == false
+                    assign badge_text = 'Agotado'
+                  elsif product.compare_at_price > product.price and section.settings.show_sale_badge
+                    assign badge_text = 'Oferta'
+                  endif
+                %}
+
+                <div class="lb-product">
+                  <div class="lb-card-image">
+                    {% if badge_text != blank %}
+                      <div class="lb-badge">{{ badge_text }}</div>
+                    {% endif %}
+
+                    {% if product.featured_image != blank %}
+                      {{
+                        product.featured_image
+                        | image_url: width: 900
+                        | image_tag:
+                          loading: 'lazy',
+                          widths: '375, 550, 750, 900',
+                          sizes: '(max-width: 749px) 84vw, (max-width: 989px) 50vw, 25vw',
+                          alt: product.title | escape
+                      }}
+                    {% else %}
+                      <div class="lb-empty-image">Imagen de producto</div>
+                    {% endif %}
+                  </div>
+
+                  <div class="lb-product-meta">
+                    <div class="lb-product-info">
+                      <h3 class="lb-product-title">{{ product.title }}</h3>
+                      {% if caption_text != blank %}
+                        <div class="lb-caption">{{ caption_text }}</div>
+                      {% endif %}
+                    </div>
+
+                    <div class="lb-price-wrap">
+                      {% if product.compare_at_price > product.price and section.settings.show_compare_price %}
+                        <div class="lb-compare-price">{{ product.compare_at_price | money }}</div>
+                      {% endif %}
+                      <div class="lb-price">{{ product.price | money }}</div>
+                    </div>
+                  </div>
+
+                  <div class="lb-product-footer">
+                    {% if section.settings.product_button_label != blank %}
+                      <a class="lb-btn lb-btn-primary" href="{{ product.url }}">{{ section.settings.product_button_label }}</a>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+      {% elsif section.blocks.size > 0 %}
+        <div class="lb-products-wrap">
+          <div class="lb-products">
+            {% for block in section.blocks %}
+              {% liquid
+                assign chosen_product = block.settings.product
+                assign card_title = block.settings.title
+                assign card_desc = block.settings.caption
+                assign card_url = block.settings.url
+                assign card_price = block.settings.price_text
+                assign card_image = block.settings.image
+                assign badge_text = block.settings.badge
+                assign compare_price = blank
+
+                if chosen_product != blank
+                  if card_title == blank
+                    assign card_title = chosen_product.title
+                  endif
+
+                  if card_url == blank
+                    assign card_url = chosen_product.url
+                  endif
+
+                  if card_price == blank
+                    assign card_price = chosen_product.price | money
+                  endif
+
+                  if chosen_product.compare_at_price > chosen_product.price
+                    assign compare_price = chosen_product.compare_at_price | money
+                  endif
+
+                  if card_desc == blank
+                    assign card_desc = chosen_product.type
+                  endif
+
+                  if card_desc == blank
+                    assign card_desc = section.settings.default_product_caption
+                  endif
+
+                  if card_image == blank and chosen_product.featured_image != blank
+                    assign card_image = chosen_product.featured_image
+                  endif
+
+                  if badge_text == blank
+                    if chosen_product.available == false
+                      assign badge_text = 'Agotado'
+                    elsif chosen_product.compare_at_price > chosen_product.price and section.settings.show_sale_badge
+                      assign badge_text = 'Oferta'
+                    endif
+                  endif
+                endif
+              %}
+
+              <div class="lb-product" {{ block.shopify_attributes }}>
+                <div class="lb-card-image">
+                  {% if badge_text != blank %}
+                    <div class="lb-badge">{{ badge_text }}</div>
+                  {% endif %}
+
+                  {% if card_image != blank %}
+                    {{
+                      card_image
+                      | image_url: width: 900
+                      | image_tag:
+                        loading: 'lazy',
+                        widths: '375, 550, 750, 900',
+                        sizes: '(max-width: 749px) 84vw, (max-width: 989px) 50vw, 25vw',
+                        alt: card_title | escape
+                    }}
+                  {% else %}
+                    <div class="lb-empty-image">Imagen de producto</div>
+                  {% endif %}
+                </div>
+
+                <div class="lb-product-meta">
+                  <div class="lb-product-info">
+                    {% if card_title != blank %}
+                      <h3 class="lb-product-title">{{ card_title }}</h3>
+                    {% endif %}
+                    {% if card_desc != blank %}
+                      <div class="lb-caption">{{ card_desc }}</div>
+                    {% endif %}
+                  </div>
+
+                  <div class="lb-price-wrap">
+                    {% if compare_price != blank and section.settings.show_compare_price %}
+                      <div class="lb-compare-price">{{ compare_price }}</div>
+                    {% endif %}
+                    {% if card_price != blank %}
+                      <div class="lb-price">{{ card_price }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="lb-product-footer">
+                  {% if block.settings.show_button and block.settings.button_label != blank and card_url != blank %}
+                    <a class="lb-btn lb-btn-primary" href="{{ card_url }}">{{ block.settings.button_label }}</a>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% else %}
+        <div class="lb-empty-products">{{ section.settings.empty_products_text }}</div>
+      {% endif %}
+
+      {% if section.settings.show_collection_cta %}
+        <div class="lb-collection-cta">
+          <div>
+            {% if section.settings.collection_cta_title != blank %}
+              <h3 class="lb-collection-cta-title">{{ section.settings.collection_cta_title }}</h3>
+            {% endif %}
+            {% if section.settings.collection_cta_text != blank %}
+              <div class="lb-collection-cta-text lb-rte">{{ section.settings.collection_cta_text }}</div>
+            {% endif %}
+          </div>
+
+          <div class="lb-collection-cta-actions">
+            {% if section.settings.collection_cta_primary_label != blank and collection_cta_primary_href != blank %}
+              <a class="lb-btn lb-btn-primary" href="{{ collection_cta_primary_href }}">{{ section.settings.collection_cta_primary_label }}</a>
+            {% endif %}
+
+            {% if section.settings.collection_cta_secondary_label != blank and collection_cta_secondary_href != blank %}
+              <a class="lb-btn lb-btn-secondary" href="{{ collection_cta_secondary_href }}">{{ section.settings.collection_cta_secondary_label }}</a>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxo - Productos",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "promo_collection",
+      "label": "Colección"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_all_collection_products",
+      "label": "Mostrar todos los productos",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "collection_products_limit",
+      "label": "Cantidad cuando no se muestran todos",
+      "min": 4,
+      "max": 24,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "use_collection_title",
+      "label": "Usar título de colección",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_description",
+      "label": "Mostrar descripción corta",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sale_badge",
+      "label": "Mostrar badge oferta",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_compare_price",
+      "label": "Mostrar precio anterior",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "products_eyebrow",
+      "label": "Eyebrow",
+      "default": "Cada cuerpo es diferente. Encuentra la faja perfecta para lograr el resultado que buscas."
+    },
+    {
+      "type": "text",
+      "id": "products_title",
+      "label": "Título",
+      "default": "ELIGE TU FAJA IDEAL SEGÚN TU NECESIDAD"
+    },
+    {
+      "type": "text",
+      "id": "products_link_label",
+      "label": "Texto ver todo",
+      "default": "Ver todas"
+    },
+    {
+      "type": "url",
+      "id": "products_link_url",
+      "label": "URL ver todo"
+    },
+    {
+      "type": "text",
+      "id": "default_product_caption",
+      "label": "Texto pequeño por defecto",
+      "default": "Disponible ahora"
+    },
+    {
+      "type": "text",
+      "id": "product_button_label",
+      "label": "Texto botón producto",
+      "default": "Comprar ahora"
+    },
+    {
+      "type": "text",
+      "id": "empty_products_text",
+      "label": "Texto si no hay productos",
+      "default": "Selecciona una colección o agrega tarjetas manuales."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_cta",
+      "label": "Mostrar CTA inferior",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "collection_cta_title",
+      "label": "Título CTA inferior",
+      "default": "ÚLTIMAS UNIDADES CON 50% OFF"
+    },
+    {
+      "type": "richtext",
+      "id": "collection_cta_text",
+      "label": "Texto CTA inferior",
+      "default": "<p>Esta oferta es temporal y está por terminar. Aprovecha ahora antes de que suba el precio.</p>"
+    },
+    {
+      "type": "text",
+      "id": "collection_cta_primary_label",
+      "label": "Botón principal CTA",
+      "default": "ORDENAR AHORA"
+    },
+    {
+      "type": "url",
+      "id": "collection_cta_primary_url",
+      "label": "URL botón principal CTA"
+    },
+    {
+      "type": "text",
+      "id": "collection_cta_secondary_label",
+      "label": "Botón secundario CTA",
+      "default": "Hablar por WhatsApp"
+    },
+    {
+      "type": "url",
+      "id": "collection_cta_secondary_url",
+      "label": "URL botón secundario CTA"
+    },
+    {
+      "type": "url",
+      "id": "fallback_secondary_url",
+      "label": "URL fallback botón secundario"
+    },
+    {
+      "type": "range",
+      "id": "page_width",
+      "label": "Ancho máximo",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1280
+    },
+    {
+      "type": "range",
+      "id": "section_spacing",
+      "label": "Espaciado",
+      "min": 40,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Radio",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "color",
+      "id": "alt_bg_color",
+      "label": "Fondo sección",
+      "default": "#ece6de"
+    },
+    {
+      "type": "color",
+      "id": "surface_color",
+      "label": "Tarjetas",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Texto",
+      "default": "#181511"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Texto secundario",
+      "default": "#6f675d"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Acento",
+      "default": "#b89057"
+    },
+    {
+      "type": "color",
+      "id": "dark_color",
+      "label": "Color oscuro",
+      "default": "#13110f"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Bordes",
+      "default": "#ddd5cb"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product_card",
+      "name": "Tarjeta manual",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Producto"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Imagen manual"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Badge"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título manual"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Texto pequeño",
+          "default": "Control y ajuste"
+        },
+        {
+          "type": "text",
+          "id": "price_text",
+          "label": "Precio manual"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "URL"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_button",
+          "label": "Mostrar botón",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Texto botón",
+          "default": "Ver opciones"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo - Productos"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,220 @@
+{% comment %}
+  BLOQUE PRODUCTO DINÁMICO - VERSIÓN FINAL 2026
+  ✅ Variantes reales + precio dinámico
+  ✅ Funciona en TODOS los productos
+  ✅ Liquid válido + SCHEMA agregado
+{% endcomment %}
+
+<script src="https://cdn.tailwindcss.com" defer></script>
+<script>
+  tailwind.config = { content: [] }
+</script>
+
+<style>
+  .product-media { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+  .product-media:hover { transform: scale(1.03); }
+  .option-btn { transition: all 0.2s ease; }
+  .option-btn-active { border-color: #000 !important; background-color: #000; color: white; }
+</style>
+
+<section class="product-dynamic-layout bg-white py-12">
+  <div class="max-w-[1280px] mx-auto px-6 lg:px-10">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+
+      <!-- ====================== GALERÍA DINÁMICA ====================== -->
+      <div class="lg:col-span-7">
+        <div class="grid grid-cols-2 gap-5 auto-rows-fr">
+          {% for media in product.media %}
+            {% assign idx = forloop.index %}
+            {% assign loading = 'eager' %}
+            {% if idx > 3 %}
+              {% assign loading = 'lazy' %}
+            {% endif %}
+
+            <div class="relative overflow-hidden rounded-3xl shadow-sm
+                        {% if idx == 1 or idx == 4 or idx == 7 %}col-span-2{% endif %}
+                        {% if idx == 5 %}lg:col-span-2{% endif %}">
+
+              {% if media.media_type == 'image' %}
+                {{
+                  media 
+                  | image_url: width: 1400 
+                  | image_tag: 
+                    class: 'product-media w-full h-full object-cover',
+                    alt: media.alt | default: product.title,
+                    loading: loading
+                }}
+              {% elsif media.media_type == 'video' or media.media_type == 'external_video' %}
+                {{ media | video_tag: autoplay: false, controls: true, loop: true, class: 'w-full h-full object-cover' }}
+              {% endif %}
+
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- ====================== INFORMACIÓN DERECHA ====================== -->
+      <div class="lg:col-span-5 lg:sticky lg:top-10 h-fit space-y-8">
+
+        <div>
+          <p class="text-xs uppercase tracking-widest text-gray-500">{{ product.vendor }}</p>
+          <h1 class="text-4xl lg:text-5xl font-semibold leading-tight mt-1">{{ product.title }}</h1>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <span id="product-price" class="text-4xl font-bold">{{ product.selected_or_first_available_variant.price | money }}</span>
+          {% if product.selected_or_first_available_variant.compare_at_price %}
+            <span id="compare-price" class="text-xl text-gray-400 line-through">{{ product.selected_or_first_available_variant.compare_at_price | money }}</span>
+          {% endif %}
+        </div>
+
+        {%- form 'product', product, id: 'product-form', class: 'space-y-8' -%}
+
+          <input type="hidden" name="id" id="variant-id" value="{{ product.selected_or_first_available_variant.id }}">
+
+          <!-- OPCIÓN 1 -->
+          {% if product.options[0] %}
+            <div>
+              <p class="font-medium text-sm mb-4">{{ product.options[0].name }}</p>
+              <div class="flex flex-wrap gap-3" id="option-group-0">
+                {% for value in product.options[0].values %}
+                  <button type="button"
+                          data-value="{{ value }}"
+                          data-index="0"
+                          class="option-btn border border-gray-300 px-6 py-3 rounded-2xl text-sm font-medium">
+                    {{ value }}
+                  </button>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+
+          <!-- OPCIÓN 2 -->
+          {% if product.options[1] %}
+            <div>
+              <p class="font-medium text-sm mb-4">{{ product.options[1].name }}</p>
+              <div class="grid grid-cols-7 gap-2 text-center text-sm" id="option-group-1">
+                {% for value in product.options[1].values %}
+                  <button type="button"
+                          data-value="{{ value }}"
+                          data-index="1"
+                          class="option-btn border border-gray-300 py-3 rounded-2xl font-medium">
+                    {{ value }}
+                  </button>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+
+          <!-- CANTIDAD + ADD TO BAG -->
+          <div class="flex gap-4">
+            <div class="flex-1 border border-gray-300 rounded-3xl flex items-center">
+              <button type="button" onclick="changeQty(-1)" class="w-12 h-12 text-3xl font-light flex items-center justify-center">-</button>
+              <input id="quantity" name="quantity" type="number" value="1" min="1" class="flex-1 text-center text-2xl font-medium focus:outline-none bg-transparent">
+              <button type="button" onclick="changeQty(1)" class="w-12 h-12 text-3xl font-light flex items-center justify-center">+</button>
+            </div>
+            
+            <button type="submit" id="add-button" 
+                    class="flex-1 bg-black hover:bg-gray-900 text-white font-semibold text-lg py-4 rounded-3xl transition-all">
+              ADD TO BAG
+            </button>
+          </div>
+
+        {%- endform -%}
+
+        {% if product.description != blank %}
+          <div class="pt-8 border-t prose text-sm leading-relaxed">
+            {{ product.description }}
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const product = {{ product | json }};
+  let selectedOptions = {};
+
+  function updateVariant() {
+    const variant = product.variants.find(v => {
+      return (!selectedOptions[0] || v.option1 === selectedOptions[0]) &&
+             (!selectedOptions[1] || v.option2 === selectedOptions[1]);
+    });
+
+    if (variant) {
+      document.getElementById('variant-id').value = variant.id;
+
+      const priceEl = document.getElementById('product-price');
+      priceEl.textContent = new Intl.NumberFormat('{{ request.locale.iso_code }}', {
+        style: 'currency',
+        currency: '{{ shop.currency }}'
+      }).format(variant.price / 100);
+
+      const compareEl = document.getElementById('compare-price');
+      if (variant.compare_at_price && variant.compare_at_price > variant.price) {
+        compareEl.textContent = new Intl.NumberFormat('{{ request.locale.iso_code }}', {
+          style: 'currency',
+          currency: '{{ shop.currency }}'
+        }).format(variant.compare_at_price / 100);
+        compareEl.style.display = 'inline';
+      } else if (compareEl) {
+        compareEl.style.display = 'none';
+      }
+
+      const btn = document.getElementById('add-button');
+      if (variant.available) {
+        btn.disabled = false;
+        btn.textContent = 'ADD TO BAG';
+      } else {
+        btn.disabled = true;
+        btn.textContent = 'AGOTADO';
+      }
+    }
+  }
+
+  function changeQty(amount) {
+    const qtyInput = document.getElementById('quantity');
+    let qty = parseInt(qtyInput.value) || 1;
+    qtyInput.value = Math.max(1, qty + amount);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const defaultVariant = product.selected_or_first_available_variant;
+
+    if (defaultVariant.option1) {
+      selectedOptions[0] = defaultVariant.option1;
+      const btn0 = document.querySelector(`#option-group-0 [data-value="${defaultVariant.option1}"]`);
+      if (btn0) btn0.classList.add('option-btn-active');
+    }
+    if (defaultVariant.option2) {
+      selectedOptions[1] = defaultVariant.option2;
+      const btn1 = document.querySelector(`#option-group-1 [data-value="${defaultVariant.option2}"]`);
+      if (btn1) btn1.classList.add('option-btn-active');
+    }
+
+    document.querySelectorAll('.option-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const index = parseInt(btn.dataset.index);
+        const group = btn.parentElement;
+        group.querySelectorAll('.option-btn').forEach(b => b.classList.remove('option-btn-active'));
+        btn.classList.add('option-btn-active');
+
+        selectedOptions[index] = btn.dataset.value;
+        updateVariant();
+      });
+    });
+
+    updateVariant();
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Producto Dinámico",
+  "tag": "section",
+  "class": "product-dynamic-layout",
+  "settings": []
+}
+{% endschema %}

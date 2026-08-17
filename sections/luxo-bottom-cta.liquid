@@ -1,0 +1,73 @@
+<section id="luxo-bottom-{{ section.id }}" style="
+  --lb-dark: {{ section.settings.dark_color }};
+  --lb-border: {{ section.settings.border_color }};
+  --lb-muted: {{ section.settings.muted_color }};
+">
+  <style>
+    #luxo-bottom-{{ section.id }} * { box-sizing: border-box; font-family: sans-serif; }
+    #luxo-bottom-{{ section.id }} .lb-wrap { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+    #luxo-bottom-{{ section.id }} .lb-dark-cta { background: var(--lb-dark); color: #fff; text-align: center; padding: 86px 24px; }
+    #luxo-bottom-{{ section.id }} .lb-dark-title { font-family: Georgia, serif; font-size: clamp(34px, 5vw, 64px); margin: 0 0 16px; color: #fff;}
+    #luxo-bottom-{{ section.id }} .lb-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 13px 22px; font-size: 11px; font-weight: bold; letter-spacing: .16em; text-transform: uppercase; border-radius: 10px; text-decoration: none; margin: 10px;}
+    #luxo-bottom-{{ section.id }} .lb-btn-light { background: #fff; color: var(--lb-dark); }
+    #luxo-bottom-{{ section.id }} .lb-inner-footer { background: rgba(255,255,255,.42); border-top: 1px solid var(--lb-border); padding: 20px 0; }
+    #luxo-bottom-{{ section.id }} .lb-footer-row { display: flex; justify-content: space-between; flex-wrap: wrap; align-items: center; }
+    #luxo-bottom-{{ section.id }} .lb-mobile-sticky { display: none; }
+    @media (max-width: 749px) {
+      #luxo-bottom-{{ section.id }} .lb-mobile-sticky { display: block; position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; padding: 15px; border-top: 1px solid var(--lb-border); z-index: 50; text-align:center; }
+      #luxo-bottom-{{ section.id }} .lb-mobile-sticky .lb-btn { width: 100%; background: var(--lb-dark); color: #fff; margin:0; }
+      #luxo-bottom-{{ section.id }} .lb-dark-cta { padding-bottom: 120px; } /* Espacio para el sticky */
+    }
+  </style>
+
+  <div class="lb-dark-cta">
+    <div class="lb-wrap">
+      <h2 class="lb-dark-title">{{ section.settings.final_title | newline_to_br }}</h2>
+      <div style="color: rgba(255,255,255,.76); margin-bottom: 20px;">{{ section.settings.final_text }}</div>
+      <a href="{{ section.settings.final_primary_url }}" class="lb-btn lb-btn-light">{{ section.settings.final_primary_label }}</a>
+    </div>
+  </div>
+
+  {% if section.settings.show_inner_footer %}
+    <div class="lb-inner-footer">
+      <div class="lb-wrap lb-footer-row">
+        <div>
+          <div style="font-family: Georgia, serif; font-size: 18px;">{{ section.settings.footer_brand_name }}</div>
+          <div style="font-size: 10px; color: var(--lb-muted); margin-top: 5px;">{{ section.settings.footer_copy }}</div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if section.settings.show_sticky_mobile_cta %}
+    <style>
+      /* la barra fija tapa el final del footer si no se reserva el espacio */
+      @media (max-width: 749px) { body { padding-bottom: 78px; } }
+    </style>
+    <div class="lb-mobile-sticky">
+      <a href="{{ section.settings.sticky_mobile_url }}" class="lb-btn">{{ section.settings.sticky_mobile_label }}</a>
+    </div>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Luxo - Footer & CTA",
+  "settings": [
+    { "type": "textarea", "id": "final_title", "label": "Título CTA", "default": "No necesitas esperar" },
+    { "type": "richtext", "id": "final_text", "label": "Texto CTA" },
+    { "type": "text", "id": "final_primary_label", "label": "Botón principal", "default": "QUIERO MI FAJA" },
+    { "type": "url", "id": "final_primary_url", "label": "URL principal" },
+    { "type": "checkbox", "id": "show_inner_footer", "label": "Mostrar footer interno", "default": true },
+    { "type": "text", "id": "footer_brand_name", "label": "Marca footer", "default": "Luxo Boutique" },
+    { "type": "text", "id": "footer_copy", "label": "Texto legal" },
+    { "type": "checkbox", "id": "show_sticky_mobile_cta", "label": "Mostrar CTA Sticky (Móvil)", "default": true },
+    { "type": "text", "id": "sticky_mobile_label", "label": "Texto botón sticky", "default": "COMPRAR AHORA" },
+    { "type": "url", "id": "sticky_mobile_url", "label": "URL botón sticky" },
+    { "type": "color", "id": "dark_color", "label": "Color oscuro fondo", "default": "#13110f" },
+    { "type": "color", "id": "border_color", "label": "Color bordes", "default": "#ddd5cb" },
+    { "type": "color", "id": "muted_color", "label": "Texto secundario", "default": "#6f675d" }
+  ],
+  "presets": [{"name": "Luxo - Footer & CTA"}]
+}
+{% endschema %}

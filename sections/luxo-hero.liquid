@@ -1,0 +1,381 @@
+{{ 'luxo-landing.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+  assign fallback_anchor = section.settings.fallback_anchor
+  if fallback_anchor == blank
+    assign fallback_anchor = '#'
+  endif
+
+  assign hero_primary_href = section.settings.hero_primary_url
+  if hero_primary_href == blank
+    assign hero_primary_href = fallback_anchor
+  endif
+
+  assign hero_secondary_href = section.settings.hero_secondary_url
+  if hero_secondary_href == blank
+    assign hero_secondary_href = fallback_anchor
+  endif
+
+  assign sticky_mobile_href = section.settings.sticky_mobile_url
+  if sticky_mobile_href == blank
+    assign sticky_mobile_href = hero_primary_href
+  endif
+%}
+
+<style>
+  /* Reorganización visual para móvil: Imagen arriba, texto abajo */
+  @media screen and (max-width: 768px) {
+    #luxo-hero-{{ section.id }} .lb-hero-grid {
+      display: flex;
+      flex-direction: column;
+    }
+    #luxo-hero-{{ section.id }} .lb-hero-media {
+      order: 1;
+      margin-bottom: 24px; /* Separación entre la imagen y el texto */
+    }
+    #luxo-hero-{{ section.id }} .lb-hero-content {
+      order: 2;
+    }
+  }
+</style>
+
+<section
+  id="luxo-hero-{{ section.id }}"
+  class="luxo-block {% if section.settings.show_sticky_mobile_cta %}has-mobile-sticky{% endif %}"
+  style="
+    --lb-bg: {{ section.settings.bg_color }};
+    --lb-surface: {{ section.settings.surface_color }};
+    --lb-text: {{ section.settings.text_color }};
+    --lb-muted: {{ section.settings.muted_color }};
+    --lb-accent: {{ section.settings.accent_color }};
+    --lb-dark: {{ section.settings.dark_color }};
+    --lb-border: {{ section.settings.border_color }};
+    --lb-max: {{ section.settings.page_width }}px;
+    --lb-radius: {{ section.settings.card_radius }}px;
+    --lb-outer-top: {{ section.settings.padding_top }}px;
+    --lb-outer-bottom: {{ section.settings.padding_bottom }}px;
+  "
+>
+  <div class="lb-wrap">
+    <div class="lb-hero">
+      <div class="lb-hero-grid">
+        <div class="lb-hero-content">
+          {% if section.settings.hero_badge_text != blank %}
+            <span class="lb-eyebrow">{{ section.settings.hero_badge_text }}</span>
+          {% endif %}
+
+          <h1 class="lb-hero-title">
+            {% if section.settings.hero_heading_top != blank %}{{ section.settings.hero_heading_top }}<br>{% endif %}
+            {% if section.settings.hero_heading_accent != blank %}<span class="lb-accent">{{ section.settings.hero_heading_accent }}</span>{% endif %}
+            {% if section.settings.hero_heading_after_accent != blank %} {{ section.settings.hero_heading_after_accent }}{% endif %}
+            {% if section.settings.hero_heading_bottom != blank %}<br>{{ section.settings.hero_heading_bottom }}{% endif %}
+          </h1>
+
+          {% if section.settings.hero_text != blank %}
+            <div class="lb-copy lb-rte">{{ section.settings.hero_text }}</div>
+          {% endif %}
+
+          <div class="lb-hero-actions">
+            {% if section.settings.hero_primary_label != blank %}
+              <a class="lb-btn lb-btn-primary" href="{{ hero_primary_href }}">{{ section.settings.hero_primary_label }}</a>
+            {% endif %}
+
+            {% if section.settings.hero_secondary_label != blank %}
+              <a class="lb-btn lb-btn-secondary" href="{{ hero_secondary_href }}">{{ section.settings.hero_secondary_label }}</a>
+            {% endif %}
+          </div>
+
+          {% if section.settings.hero_support_text != blank %}
+            <div class="lb-hero-support">{{ section.settings.hero_support_text }}</div>
+          {% endif %}
+
+          {% if section.settings.hero_micro_1 != blank or section.settings.hero_micro_2 != blank or section.settings.hero_micro_3 != blank %}
+            <div class="lb-micro-list">
+              {% if section.settings.hero_micro_1 != blank %}
+                <div class="lb-micro-item">{{ section.settings.hero_micro_1 }}</div>
+              {% endif %}
+              {% if section.settings.hero_micro_2 != blank %}
+                <div class="lb-micro-item">{{ section.settings.hero_micro_2 }}</div>
+              {% endif %}
+              {% if section.settings.hero_micro_3 != blank %}
+                <div class="lb-micro-item">{{ section.settings.hero_micro_3 }}</div>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="lb-hero-media">
+          <div class="lb-hero-image-shell">
+            {% if section.settings.hero_image != blank %}
+              {{
+                section.settings.hero_image
+                | image_url: width: 1600
+                | image_tag:
+                  loading: 'eager',
+                  widths: '375, 550, 750, 1100, 1400, 1600',
+                  sizes: '(max-width: 749px) 100vw, (max-width: 989px) 100vw, 50vw',
+                  alt: section.settings.hero_image_alt | escape
+              }}
+            {% else %}
+              <div class="lb-empty-image">Imagen principal</div>
+            {% endif %}
+          </div>
+
+          {% if section.settings.show_hero_float_card %}
+            <div class="lb-float-card">
+              {% if section.settings.hero_float_title != blank %}
+                <p class="lb-float-card-title">{{ section.settings.hero_float_title }}</p>
+              {% endif %}
+              {% if section.settings.hero_float_text != blank %}
+                <div class="lb-float-card-copy">{{ section.settings.hero_float_text }}</div>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if section.settings.show_sticky_mobile_cta and section.settings.sticky_mobile_label != blank %}
+    <div class="lb-mobile-sticky">
+      <div class="lb-mobile-sticky-inner">
+        <div class="lb-mobile-sticky-note">{{ section.settings.sticky_mobile_note }}</div>
+        <a class="lb-btn lb-btn-primary" href="{{ sticky_mobile_href }}">{{ section.settings.sticky_mobile_label }}</a>
+      </div>
+    </div>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Luxo - Hero",
+  "settings": [
+    {
+      "type": "text",
+      "id": "fallback_anchor",
+      "label": "Anchor o URL fallback",
+      "default": "#"
+    },
+    {
+      "type": "text",
+      "id": "hero_badge_text",
+      "label": "Badge superior",
+      "default": "Oferta por tiempo limitado o hasta agotar existencias"
+    },
+    {
+      "type": "text",
+      "id": "hero_heading_top",
+      "label": "Línea superior",
+      "default": "50% OFF HOY -"
+    },
+    {
+      "type": "text",
+      "id": "hero_heading_accent",
+      "label": "Palabra destacada",
+      "default": "MOLDEA TU FIGURA"
+    },
+    {
+      "type": "text",
+      "id": "hero_heading_after_accent",
+      "label": "Texto después de destacada"
+    },
+    {
+      "type": "text",
+      "id": "hero_heading_bottom",
+      "label": "Línea inferior",
+      "default": "AL INSTANTE"
+    },
+    {
+      "type": "richtext",
+      "id": "hero_text",
+      "label": "Texto",
+      "default": "<p>Fajas colombianas de alta compresión que reducen cintura, estilizan tu silueta y te hacen ver increíble desde el primer uso.</p>"
+    },
+    {
+      "type": "text",
+      "id": "hero_primary_label",
+      "label": "Botón principal",
+      "default": "QUIERO MI FAJA CON DESCUENTO"
+    },
+    {
+      "type": "url",
+      "id": "hero_primary_url",
+      "label": "URL botón principal"
+    },
+    {
+      "type": "text",
+      "id": "hero_secondary_label",
+      "label": "Botón secundario",
+      "default": "Asesoría por WhatsApp"
+    },
+    {
+      "type": "url",
+      "id": "hero_secondary_url",
+      "label": "URL botón secundario"
+    },
+    {
+      "type": "text",
+      "id": "hero_support_text",
+      "label": "Texto bajo botones",
+      "default": "Compra segura • Atención por WhatsApp"
+    },
+    {
+      "type": "text",
+      "id": "hero_micro_1",
+      "label": "Micro beneficio 1",
+      "default": "Efecto inmediato"
+    },
+    {
+      "type": "text",
+      "id": "hero_micro_2",
+      "label": "Micro beneficio 2",
+      "default": "Alta compresión"
+    },
+    {
+      "type": "text",
+      "id": "hero_micro_3",
+      "label": "Micro beneficio 3",
+      "default": "No se marca"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Imagen"
+    },
+    {
+      "type": "text",
+      "id": "hero_image_alt",
+      "label": "Alt imagen",
+      "default": "Mujer usando faja colombiana Luxo"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hero_float_card",
+      "label": "Mostrar tarjeta flotante",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "hero_float_title",
+      "label": "Título tarjeta flotante",
+      "default": "Resultados"
+    },
+    {
+      "type": "text",
+      "id": "hero_float_text",
+      "label": "Texto tarjeta flotante",
+      "default": "Desde la primera postura"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sticky_mobile_cta",
+      "label": "Mostrar sticky mobile",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "sticky_mobile_note",
+      "label": "Texto sticky mobile",
+      "default": "Oferta de tiempo limitado"
+    },
+    {
+      "type": "text",
+      "id": "sticky_mobile_label",
+      "label": "Botón sticky mobile",
+      "default": "QUIERO MI FAJA CON DESCUENTO"
+    },
+    {
+      "type": "url",
+      "id": "sticky_mobile_url",
+      "label": "URL sticky mobile"
+    },
+    {
+      "type": "range",
+      "id": "page_width",
+      "label": "Ancho máximo",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1280
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Radio",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding superior",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding inferior",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fondo",
+      "default": "#f7f4ef"
+    },
+    {
+      "type": "color",
+      "id": "surface_color",
+      "label": "Superficie",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Texto",
+      "default": "#181511"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Texto secundario",
+      "default": "#6f675d"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Acento",
+      "default": "#b89057"
+    },
+    {
+      "type": "color",
+      "id": "dark_color",
+      "label": "Color oscuro",
+      "default": "#13110f"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Bordes",
+      "default": "#ddd5cb"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo - Hero"
+    }
+  ]
+}
+{% endschema %}

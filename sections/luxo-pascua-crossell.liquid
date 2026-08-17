@@ -1,0 +1,302 @@
+{% comment %}
+  File: sections/luxo-pascua-crossell.liquid
+  Versión: Campaña Pascua Minimalista - Slider Cross-Sell
+  - Carrusel horizontal con scroll-snap (optimizado para móvil y touch).
+  - Estilo editorial, ideal para "Completa el look" o "Tú lo pediste".
+{% endcomment %}
+
+<section class="lux-crossell luxe--{{ section.id }}">
+  <style>
+    .luxe--{{ section.id }} {
+      --lux-bg: {{ section.settings.bg_color }};
+      --lux-text: {{ section.settings.text_color }};
+      --lux-pt: {{ section.settings.padding_top }}px;
+      --lux-pb: {{ section.settings.padding_bottom }}px;
+    }
+
+    .lux-crossell {
+      background-color: var(--lux-bg);
+      color: var(--lux-text);
+      padding-top: var(--lux-pt);
+      padding-bottom: var(--lux-pb);
+      font-family: inherit;
+      overflow: hidden;
+    }
+
+    .lux-crossell__header {
+      text-align: {{ section.settings.text_alignment }};
+      padding: 0 24px 40px;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    .lux-crossell__title {
+      font-size: clamp(24px, 3.5vw, 40px);
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      margin: 0;
+      text-transform: uppercase;
+      color: var(--lux-text);
+    }
+
+    .lux-crossell__subtitle {
+      font-size: 14px;
+      font-weight: 300;
+      opacity: 0.7;
+      margin: 12px 0 0 0;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Slider Container */
+    .lux-crossell__track-wrap {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .lux-crossell__track {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none; /* Oculta scrollbar en Firefox */
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 24px; /* Espacio visual inferior */
+    }
+
+    .lux-crossell__track::-webkit-scrollbar {
+      display: none; /* Oculta scrollbar en Chrome/Safari */
+    }
+
+    .lux-crossell__item {
+      flex: 0 0 calc(25% - 12px); /* 4 items en desktop */
+      min-width: 280px;
+      scroll-snap-align: start;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .lux-crossell__media {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      background-color: #EFEFEF;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .lux-crossell__img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s ease;
+    }
+
+    .lux-crossell__info {
+      padding: 16px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .lux-crossell__name {
+      font-size: 13px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--lux-text);
+      line-height: 1.3;
+      margin: 0;
+    }
+
+    .lux-crossell__price {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--lux-text);
+      opacity: 0.7;
+      white-space: nowrap;
+    }
+
+    @media (hover: hover) {
+      .lux-crossell__item:hover .lux-crossell__img {
+        transform: scale(1.04);
+      }
+      .lux-crossell__item:hover .lux-crossell__name {
+        opacity: 0.6;
+      }
+    }
+
+    /* MOBILE RESPONSIVE */
+    @media (max-width: 860px) {
+      .lux-crossell__track {
+        gap: 12px;
+      }
+      
+      .lux-crossell__item {
+        /* En móvil mostramos 1 item y medio o 2 para invitar al scroll */
+        flex: 0 0 calc(60% - 12px); 
+        min-width: 220px;
+      }
+      
+      .lux-crossell__header {
+        padding: 0 20px 32px;
+      }
+
+      .lux-crossell__track-wrap {
+        padding: 0 0 0 20px; /* Deja el borde derecho abierto para sugerir scroll */
+      }
+      
+      /* Asegura que el último item tenga padding derecho en móvil */
+      .lux-crossell__item:last-child {
+        margin-right: 20px;
+      }
+    }
+  </style>
+
+  <div class="lux-crossell__header">
+    {% if section.settings.title != blank %}
+      <h2 class="lux-crossell__title">{{ section.settings.title }}</h2>
+    {% endif %}
+    {% if section.settings.subtitle != blank %}
+      <p class="lux-crossell__subtitle">{{ section.settings.subtitle }}</p>
+    {% endif %}
+  </div>
+
+  <div class="lux-crossell__track-wrap">
+    <div class="lux-crossell__track">
+      {% assign cross_col = section.settings.collection %}
+      
+      {% if cross_col != blank %}
+        {% for product in cross_col.products limit: section.settings.product_limit %}
+          <a href="{{ product.url }}" class="lux-crossell__item">
+            <div class="lux-crossell__media">
+              {% if product.featured_image %}
+                {{ product.featured_image | image_url: width: 600 | image_tag: 
+                   loading: 'lazy', 
+                   class: 'lux-crossell__img',
+                   alt: product.title }}
+              {% else %}
+                {{ 'product-1' | placeholder_svg_tag: 'lux-crossell__img placeholder-svg' }}
+              {% endif %}
+            </div>
+            <div class="lux-crossell__info">
+              <h3 class="lux-crossell__name">{{ product.title }}</h3>
+              <span class="lux-crossell__price">{{ product.price | money }}</span>
+            </div>
+          </a>
+        {% endfor %}
+      {% else %}
+        {% for i in (1..5) %}
+          <div class="lux-crossell__item">
+            <div class="lux-crossell__media">
+              {{ 'product-' | append: i | placeholder_svg_tag: 'lux-crossell__img placeholder-svg' }}
+            </div>
+            <div class="lux-crossell__info">
+              <h3 class="lux-crossell__name">Producto Esencial {{ i }}</h3>
+              <span class="lux-crossell__price">$0.00</span>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Cross-Sell Slider",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Textos de la sección"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título Principal",
+      "default": "Completa el look"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtítulo",
+      "default": "Llévate esto porque tú lo pediste"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Alineación del texto",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Productos"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Colección Cross-sell"
+    },
+    {
+      "type": "range",
+      "id": "product_limit",
+      "label": "Límite de productos a mostrar",
+      "min": 4,
+      "max": 12,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Paleta Minimalista"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fondo sección",
+      "default": "#FAF9F6"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color texto",
+      "default": "#111111"
+    },
+    {
+      "type": "header",
+      "content": "Espaciado"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding superior",
+      "min": 20,
+      "max": 120,
+      "step": 5,
+      "default": 80,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding inferior",
+      "min": 20,
+      "max": 120,
+      "step": 5,
+      "default": 80,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Minimal Cross-Sell Slider"
+    }
+  ]
+}
+{% endschema %}

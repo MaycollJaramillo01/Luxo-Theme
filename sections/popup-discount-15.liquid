@@ -1,0 +1,730 @@
+{% liquid
+  assign popup_id = 'popup-discount-' | append: section.id
+  assign popup_image_url = ''
+  if section.settings.popup_image != blank
+    assign popup_image_url = section.settings.popup_image | image_url: width: 2200
+  endif
+%}
+
+<div
+  id="{{ popup_id }}"
+  class="md-popup"
+  data-popup-root
+  data-delay="{{ section.settings.delay_seconds | times: 1000 }}"
+  data-hide-days="{{ section.settings.hide_days }}"
+  data-storage-key="{{ popup_id }}"
+  aria-hidden="true"
+>
+  <div class="md-popup__overlay" data-popup-close></div>
+
+  <div class="md-popup__dialog" role="dialog" aria-modal="true" aria-labelledby="{{ popup_id }}-title">
+    <button type="button" class="md-popup__close" aria-label="Cerrar" data-popup-close>
+      <span>&times;</span>
+    </button>
+
+    <div class="md-popup__inner">
+      <div class="md-popup__content">
+        <!-- STEP 1 -->
+        <div class="md-popup__step is-active" data-step="1">
+          {% if section.settings.step1_eyebrow != blank %}
+            <p class="md-popup__eyebrow">{{ section.settings.step1_eyebrow }}</p>
+          {% endif %}
+          {% assign title1_parts = section.settings.step1_title | split: '%' %}
+          <h2 id="{{ popup_id }}-title" class="md-popup__title">
+            {% if title1_parts.size > 1 %}
+              <span class="md-popup__title-main">{{ title1_parts[0] | strip }}</span
+              ><span class="md-popup__title-percent">%</span
+              ><span class="md-popup__title-main">{{ title1_parts[1] | strip }}</span>
+            {% else %}
+              <span class="md-popup__title-main">{{ section.settings.step1_title }}</span>
+            {% endif %}
+          </h2>
+
+          {% if section.settings.step1_text != blank %}
+            <div class="md-popup__text">{{ section.settings.step1_text }}</div>
+          {% endif %}
+
+          <div class="md-popup__options">
+            <button
+              type="button"
+              class="md-popup__option"
+              data-preference="women"
+              data-preference-label="{{ section.settings.label_women | escape }}"
+            >
+              {{ section.settings.label_women }}
+            </button>
+
+            <button
+              type="button"
+              class="md-popup__option"
+              data-preference="men"
+              data-preference-label="{{ section.settings.label_men | escape }}"
+            >
+              {{ section.settings.label_men }}
+            </button>
+
+            <button
+              type="button"
+              class="md-popup__option"
+              data-preference="both"
+              data-preference-label="{{ section.settings.label_both | escape }}"
+            >
+              {{ section.settings.label_both }}
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="md-popup__step" data-step="2">
+          {% form 'customer', id: 'PopupDiscountForm', class: 'md-popup__form' %}
+            <input type="hidden" name="contact[tags]" value="newsletter,popup-15-off" data-tags-input>
+            <input type="hidden" name="contact[accepts_marketing]" value="true">
+
+            <div
+              class="md-popup__form-state"
+              data-form-success="{% if form.posted_successfully? %}true{% else %}false{% endif %}"
+              data-form-error="{% if form.errors %}true{% else %}false{% endif %}"
+            ></div>
+
+            {% if form.posted_successfully? %}
+              {% if section.settings.success_eyebrow != blank %}
+                <p class="md-popup__eyebrow">{{ section.settings.success_eyebrow }}</p>
+              {% endif %}
+
+              <h2 class="md-popup__title">{{ section.settings.success_title }}</h2>
+
+              {% if section.settings.success_text != blank %}
+                <div class="md-popup__text">{{ section.settings.success_text }}</div>
+              {% endif %}
+            {% else %}
+              {% if section.settings.step2_eyebrow != blank %}
+                <p class="md-popup__eyebrow">{{ section.settings.step2_eyebrow }}</p>
+              {% endif %}
+
+              {% assign title2_parts = section.settings.step2_title | split: '%' %}
+              <h2 class="md-popup__title">
+                {% if title2_parts.size > 1 %}
+                  <span class="md-popup__title-main">{{ title2_parts[0] | strip }}</span
+                  ><span class="md-popup__title-percent">%</span
+                  ><span class="md-popup__title-main">{{ title2_parts[1] | strip }}</span>
+                {% else %}
+                  <span class="md-popup__title-main">{{ section.settings.step2_title }}</span>
+                {% endif %}
+              </h2>
+              {% if section.settings.step2_text != blank %}
+                <div class="md-popup__text">
+                  {{ section.settings.step2_text }}
+                  <strong data-selected-label></strong>
+                </div>
+              {% endif %}
+
+              <div class="md-popup__field">
+                <input
+                  type="email"
+                  name="contact[email]"
+                  class="md-popup__input"
+                  value="{{ form.email | escape }}"
+                  placeholder="{{ section.settings.email_placeholder | escape }}"
+                  autocorrect="off"
+                  autocapitalize="off"
+                  autocomplete="email"
+                  required
+                >
+              </div>
+
+              <button type="submit" class="md-popup__submit">
+                {{ section.settings.submit_label }}
+              </button>
+
+              {% if form.errors %}
+                <div class="md-popup__message md-popup__message--error">
+                  {{ form.errors | default_errors }}
+                </div>
+              {% endif %}
+
+              {% if section.settings.legal_text != blank %}
+                <p class="md-popup__legal">{{ section.settings.legal_text }}</p>
+              {% endif %}
+            {% endif %}
+          {% endform %}
+        </div>
+      </div>
+
+      <div class="md-popup__media">
+        {% if popup_image_url != blank %}
+          <img
+            src="{{ popup_image_url }}"
+            alt="{{ section.settings.image_alt | escape }}"
+            class="md-popup__image"
+            width="1100"
+            height="1400"
+            loading="eager"
+          >
+        {% else %}
+          <div class="md-popup__media-placeholder"></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  #{{ popup_id }} {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: none;
+  }
+
+  #{{ popup_id }}.is-open {
+    display: block;
+  }
+
+  #{{ popup_id }} .md-popup__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+  }
+
+  #{{ popup_id }} .md-popup__dialog {
+    position: relative;
+    width: min(980px, calc(100vw - 24px));
+    min-height: 560px;
+    margin: 4vh auto;
+    background: #efefed;
+    border-radius: 32px;
+    overflow: hidden;
+    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.24);
+  }
+
+  #{{ popup_id }} .md-popup__inner {
+    display: grid;
+    grid-template-columns: 42% 58%;
+    min-height: 560px;
+  }
+
+  #{{ popup_id }} .md-popup__content {
+    padding: 44px 36px 34px 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #efefed;
+  }
+
+  #{{ popup_id }} .md-popup__step {
+    display: none;
+    width: 100%;
+    max-width: 360px;
+  }
+
+  #{{ popup_id }} .md-popup__step.is-active {
+    display: block;
+  }
+
+  #{{ popup_id }} .md-popup__eyebrow {
+    margin: 0 0 10px;
+    font-size: 14px;
+    line-height: 1.2;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #1d1d1d;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 500;
+  }
+
+  /* Forzamos serif segura aquí para eliminar el DEMO del símbolo % */
+ #{{ popup_id }} .md-popup__title {
+  margin: 0 0 24px;
+  color: #111111;
+  font-size: clamp(58px, 6vw, 84px);
+  line-height: 0.92;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+#{{ popup_id }} .md-popup__title-main {
+  font-family: var(--font-heading-family), Georgia, "Times New Roman", serif !important;
+  font-weight: 600 !important;
+  font-style: normal !important;
+}
+
+#{{ popup_id }} .md-popup__title-percent {
+  font-family: Georgia, "Times New Roman", serif !important;
+  font-weight: 700 !important;
+  font-style: normal !important;
+  display: inline-block;
+  margin: 0 0.02em;
+  transform: translateY(-0.02em);
+}
+
+  #{{ popup_id }} .md-popup__text {
+    margin: 0 0 24px;
+    color: #2a2a2a;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    line-height: 1.45;
+  }
+
+  #{{ popup_id }} .md-popup__text strong {
+    font-weight: 700;
+  }
+
+  #{{ popup_id }} .md-popup__options {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 8px;
+  }
+
+  #{{ popup_id }} .md-popup__option,
+  #{{ popup_id }} .md-popup__submit {
+    width: 100%;
+    min-height: 60px;
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+
+  #{{ popup_id }} .md-popup__option {
+    background: linear-gradient(90deg, #1f232b 0%, #20252f 100%);
+    color: #ffffff;
+  }
+
+  #{{ popup_id }} .md-popup__submit {
+    background: #8adfd6;
+    color: #111111;
+    margin-top: 14px;
+  }
+
+  #{{ popup_id }} .md-popup__option:hover,
+  #{{ popup_id }} .md-popup__submit:hover {
+    transform: translateY(-1px);
+    opacity: 0.98;
+  }
+
+  #{{ popup_id }} .md-popup__field {
+    margin-bottom: 12px;
+  }
+
+  #{{ popup_id }} .md-popup__input {
+    width: 100%;
+    min-height: 54px;
+    padding: 0 16px;
+    border: 2px solid #232323;
+    border-radius: 4px;
+    background: #ffffff;
+    color: #111111;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    box-sizing: border-box;
+  }
+
+  #{{ popup_id }} .md-popup__input:focus {
+    outline: none;
+    border-color: #111111;
+    box-shadow: none;
+  }
+
+  #{{ popup_id }} .md-popup__legal {
+    margin-top: 16px;
+    color: #5f5f5f;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    line-height: 1.45;
+  }
+
+  #{{ popup_id }} .md-popup__message--error {
+    margin-top: 12px;
+    color: #b42318;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  #{{ popup_id }} .md-popup__message--error ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+
+  #{{ popup_id }} .md-popup__media {
+    position: relative;
+    min-height: 560px;
+    background: #e7e5e0;
+    overflow: hidden;
+  }
+
+  #{{ popup_id }} .md-popup__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 560px;
+    object-fit: cover;
+    object-position: center center;
+  }
+
+  #{{ popup_id }} .md-popup__media-placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 560px;
+    background: linear-gradient(180deg, #ebe9e4 0%, #ddd8d1 100%);
+  }
+
+  #{{ popup_id }} .md-popup__close {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    z-index: 5;
+    width: 38px;
+    height: 38px;
+    border: 0;
+    background: transparent;
+    color: #222222;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  #{{ popup_id }} .md-popup__close span {
+    display: block;
+    font-size: 34px;
+    line-height: 1;
+  }
+
+  body.md-popup-open {
+    overflow: hidden !important;
+  }
+
+  @media screen and (max-width: 989px) {
+    #{{ popup_id }} .md-popup__dialog {
+      width: min(760px, calc(100vw - 20px));
+      min-height: auto;
+    }
+
+    #{{ popup_id }} .md-popup__inner {
+      grid-template-columns: 1fr;
+    }
+
+    #{{ popup_id }} .md-popup__media {
+      order: -1;
+      min-height: 300px;
+    }
+
+    #{{ popup_id }} .md-popup__image,
+    #{{ popup_id }} .md-popup__media-placeholder {
+      min-height: 300px;
+    }
+
+    #{{ popup_id }} .md-popup__content {
+      padding: 26px 22px 26px;
+    }
+
+    #{{ popup_id }} .md-popup__step {
+      max-width: 100%;
+    }
+
+    #{{ popup_id }} .md-popup__title {
+      font-size: clamp(46px, 12vw, 68px);
+    }
+  }
+
+  @media screen and (max-width: 640px) {
+    #{{ popup_id }} .md-popup__dialog {
+      width: calc(100vw - 16px);
+      margin: 2vh auto;
+      border-radius: 22px;
+    }
+
+    #{{ popup_id }} .md-popup__media {
+      min-height: 220px;
+    }
+
+    #{{ popup_id }} .md-popup__image,
+    #{{ popup_id }} .md-popup__media-placeholder {
+      min-height: 220px;
+    }
+
+    #{{ popup_id }} .md-popup__content {
+      padding: 22px 18px 20px;
+    }
+
+    #{{ popup_id }} .md-popup__title {
+      font-size: clamp(42px, 14vw, 58px);
+      margin-bottom: 18px;
+    }
+
+    #{{ popup_id }} .md-popup__text {
+      font-size: 15px;
+      margin-bottom: 18px;
+    }
+
+    #{{ popup_id }} .md-popup__option,
+    #{{ popup_id }} .md-popup__submit {
+      min-height: 54px;
+      font-size: 15px;
+    }
+
+    #{{ popup_id }} .md-popup__input {
+      min-height: 50px;
+      font-size: 14px;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    var root = document.getElementById('{{ popup_id }}');
+    if (!root) return;
+
+    var delay = parseInt(root.getAttribute('data-delay') || '2000', 10);
+    var hideDays = parseInt(root.getAttribute('data-hide-days') || '7', 10);
+    var storageKey = root.getAttribute('data-storage-key') || '{{ popup_id }}';
+
+    var dismissKey = storageKey + '-dismiss-until';
+    var prefKey = storageKey + '-preference';
+    var prefLabelKey = storageKey + '-preference-label';
+
+    var closeButtons = root.querySelectorAll('[data-popup-close]');
+    var step1 = root.querySelector('[data-step="1"]');
+    var step2 = root.querySelector('[data-step="2"]');
+    var optionButtons = root.querySelectorAll('[data-preference]');
+    var tagsInput = root.querySelector('[data-tags-input]');
+    var selectedLabel = root.querySelector('[data-selected-label]');
+    var formState = root.querySelector('.md-popup__form-state');
+
+    function setDismissWindow() {
+      var expiresAt = Date.now() + hideDays * 24 * 60 * 60 * 1000;
+      localStorage.setItem(dismissKey, String(expiresAt));
+    }
+
+    function isDismissed() {
+      var raw = localStorage.getItem(dismissKey);
+      if (!raw) return false;
+      return Date.now() < parseInt(raw, 10);
+    }
+
+    function openPopup(forceOpen) {
+      if (!forceOpen && isDismissed()) return;
+      root.classList.add('is-open');
+      root.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('md-popup-open');
+    }
+
+    function closePopup(remember) {
+      root.classList.remove('is-open');
+      root.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('md-popup-open');
+      if (remember) setDismissWindow();
+    }
+
+    function showStep(stepNumber) {
+      if (step1) step1.classList.toggle('is-active', stepNumber === 1);
+      if (step2) step2.classList.toggle('is-active', stepNumber === 2);
+    }
+
+    function setPreference(value, label) {
+      localStorage.setItem(prefKey, value);
+      localStorage.setItem(prefLabelKey, label);
+
+      if (selectedLabel) {
+        selectedLabel.textContent = label ? ' ' + label : '';
+      }
+
+      if (tagsInput) {
+        tagsInput.value = 'newsletter,popup-15-off,popup-pref-' + value;
+      }
+    }
+
+    function restorePreference() {
+      var storedValue = localStorage.getItem(prefKey);
+      var storedLabel = localStorage.getItem(prefLabelKey);
+
+      if (storedValue && tagsInput) {
+        tagsInput.value = 'newsletter,popup-15-off,popup-pref-' + storedValue;
+      }
+
+      if (storedLabel && selectedLabel) {
+        selectedLabel.textContent = ' ' + storedLabel;
+      }
+    }
+
+    optionButtons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        var value = this.getAttribute('data-preference');
+        var label = this.getAttribute('data-preference-label') || '';
+        setPreference(value, label);
+        showStep(2);
+      });
+    });
+
+    closeButtons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        closePopup(true);
+      });
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && root.classList.contains('is-open')) {
+        closePopup(true);
+      }
+    });
+
+    restorePreference();
+
+    var formSuccess = formState && formState.getAttribute('data-form-success') === 'true';
+    var formError = formState && formState.getAttribute('data-form-error') === 'true';
+
+    if (formSuccess) {
+      showStep(2);
+      openPopup(true);
+      setDismissWindow();
+      return;
+    }
+
+    if (formError) {
+      showStep(2);
+      openPopup(true);
+      return;
+    }
+
+    if (!isDismissed()) {
+      window.setTimeout(function () {
+        openPopup(false);
+      }, delay);
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Popup discount 15%",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "popup_image",
+      "label": "Imagen del popup"
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Alt de la imagen",
+      "default": "Promotional popup image"
+    },
+    {
+      "type": "range",
+      "id": "delay_seconds",
+      "label": "Retraso antes de abrir (segundos)",
+      "min": 0,
+      "max": 15,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "hide_days",
+      "label": "Ocultar por días al cerrar o enviar",
+      "min": 1,
+      "max": 30,
+      "step": 1,
+      "default": 7
+    },
+    {
+      "type": "text",
+      "id": "step1_eyebrow",
+      "label": "Paso 1 · Eyebrow",
+      "default": "YOU'VE GOT"
+    },
+    {
+      "type": "text",
+      "id": "step1_title",
+      "label": "Paso 1 · Título",
+      "default": "15% OFF"
+    },
+    {
+      "type": "textarea",
+      "id": "step1_text",
+      "label": "Paso 1 · Texto",
+      "default": "To claim your discount, tell us:\nWhat's your preference?"
+    },
+    {
+      "type": "text",
+      "id": "label_women",
+      "label": "Botón 1",
+      "default": "Women"
+    },
+    {
+      "type": "text",
+      "id": "label_men",
+      "label": "Botón 2",
+      "default": "Men"
+    },
+    {
+      "type": "text",
+      "id": "label_both",
+      "label": "Botón 3",
+      "default": "Both"
+    },
+    {
+      "type": "text",
+      "id": "step2_eyebrow",
+      "label": "Paso 2 · Eyebrow",
+      "default": "SIGN UP TO UNLOCK"
+    },
+    {
+      "type": "text",
+      "id": "step2_title",
+      "label": "Paso 2 · Título",
+      "default": "15% OFF"
+    },
+    {
+      "type": "textarea",
+      "id": "step2_text",
+      "label": "Paso 2 · Texto",
+      "default": "Enter your email address to receive your discount code for:"
+    },
+    {
+      "type": "text",
+      "id": "email_placeholder",
+      "label": "Placeholder email",
+      "default": "Enter your email address"
+    },
+    {
+      "type": "text",
+      "id": "submit_label",
+      "label": "Texto botón enviar",
+      "default": "CLAIM DISCOUNT"
+    },
+    {
+      "type": "textarea",
+      "id": "legal_text",
+      "label": "Texto legal",
+      "default": "The discount will apply for purchases made on our store. By entering your email, you agree to receive marketing emails and accept the privacy policy."
+    },
+    {
+      "type": "text",
+      "id": "success_eyebrow",
+      "label": "Éxito · Eyebrow",
+      "default": "DONE"
+    },
+    {
+      "type": "text",
+      "id": "success_title",
+      "label": "Éxito · Título",
+      "default": "CHECK YOUR EMAIL"
+    },
+    {
+      "type": "textarea",
+      "id": "success_text",
+      "label": "Éxito · Texto",
+      "default": "Your 15% discount code is on its way."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Popup discount 15%"
+    }
+  ]
+}
+{% endschema %}

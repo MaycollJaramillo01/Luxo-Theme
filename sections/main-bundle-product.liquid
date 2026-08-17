@@ -1,0 +1,841 @@
+{%- assign bundle_items = product.metafields.custom.bundle_related_products.value -%}
+{%- assign items_count = bundle_items.size | default: 0 -%}
+
+{%- comment -%}
+  Columnas efectivas = mínimo entre la cantidad real de productos y el máximo
+  configurado en el editor. Nunca menos de 1 ni más de 5.
+{%- endcomment -%}
+{%- assign effective_cols = items_count | at_most: section.settings.columns_desktop | at_least: 1 -%}
+
+{%- comment -%}
+  En móvil: si hay 1 solo producto, siempre 1 columna. Si hay 2, usar la
+  configuración del editor. Si hay 3+, usar la configuración del editor.
+{%- endcomment -%}
+{%- assign cols_mobile = section.settings.columns_mobile -%}
+{%- if items_count == 1 -%}
+  {%- assign cols_mobile = "1" -%}
+{%- endif -%}
+
+{%- comment -%}
+  Clase modificadora para adaptar el diseño según cantidad de productos.
+  5 o más productos usan la misma clase "many" para mantener tarjetas compactas.
+{%- endcomment -%}
+{%- if items_count == 1 -%}
+  {%- assign count_mod = "count-1" -%}
+{%- elsif items_count == 2 -%}
+  {%- assign count_mod = "count-2" -%}
+{%- elsif items_count == 3 -%}
+  {%- assign count_mod = "count-3" -%}
+{%- elsif items_count == 4 -%}
+  {%- assign count_mod = "count-4" -%}
+{%- else -%}
+  {%- assign count_mod = "count-many" -%}
+{%- endif -%}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  /* ── Tokens ─────────────────────────────────────────────────────── */
+  #BundleSection-{{ section.id }} {
+    --bundle-radius-card:   1.8rem;
+    --bundle-radius-btn:    10rem;
+    --bundle-transition:    0.38s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --bundle-card-bg:       #ffffff;
+    --bundle-shadow-rest:   0 0.2rem 1.2rem rgba(0,0,0,0.06);
+    --bundle-shadow-hover:  0 1.2rem 4rem rgba(0,0,0,0.13);
+    --bundle-img-bg:        #f5f5f7;
+    --bundle-text-primary:  #1d1d1f;
+    --bundle-text-secondary:#6e6e73;
+    --bundle-text-muted:    #aeaeb2;
+    --bundle-divider:       rgba(0,0,0,0.08);
+    --bundle-accent:        #0071e3;
+    --bundle-accent-hover:  #0077ed;
+    --bundle-sale-color:    #bf4800;
+  }
+
+  /* ── Section ────────────────────────────────────────────────────── */
+  .bundle-section { width: 100%; }
+
+  .bundle-section__divider {
+    border: none;
+    border-top: 0.1rem solid var(--bundle-divider);
+    margin: 0 0 5.6rem;
+  }
+
+  /* ── Header ─────────────────────────────────────────────────────── */
+  .bundle-section__header {
+    text-align: center;
+    margin-bottom: 5.6rem;
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .bundle-section__heading {
+    margin: 0 0 1.6rem;
+    font-size: clamp(2.8rem, 5vw, 4.8rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.07;
+    color: var(--bundle-text-primary);
+  }
+
+  .bundle-section__subheading {
+    font-size: clamp(1.5rem, 2vw, 1.9rem);
+    font-weight: 400;
+    line-height: 1.55;
+    color: var(--bundle-text-secondary);
+  }
+
+  .bundle-section__subheading p { margin: 0; }
+
+  /* ── Grid base ──────────────────────────────────────────────────── */
+  .bundle-products-grid {
+    display: grid;
+    gap: var(--bundle-gap, 2rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    grid-template-columns: repeat(var(--bundle-cols-mobile), 1fr);
+  }
+
+  @media screen and (min-width: 750px) {
+    .bundle-products-grid {
+      grid-template-columns: repeat(var(--bundle-cols-desktop), 1fr);
+    }
+  }
+
+  /* ── '+' connector ──────────────────────────────────────────────── */
+  @media screen and (min-width: 750px) {
+    .bundle-products-grid--connectors .bundle-product-card-wrapper {
+      position: relative;
+    }
+
+    .bundle-products-grid--connectors .bundle-product-card-wrapper:not(:last-child)::after {
+      content: '+';
+      position: absolute;
+      right: -1.2rem;
+      top: 38%;
+      transform: translateY(-50%);
+      font-size: 2rem;
+      font-weight: 300;
+      color: var(--bundle-text-muted);
+      pointer-events: none;
+      z-index: 2;
+    }
+  }
+
+  /* ── Card base ──────────────────────────────────────────────────── */
+  .bundle-product-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-radius: var(--bundle-radius-card);
+    background: var(--bundle-card-bg);
+    box-shadow: var(--bundle-shadow-rest);
+    overflow: hidden;
+    transition: box-shadow var(--bundle-transition), transform var(--bundle-transition);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .bundle-product-card:hover {
+    box-shadow: var(--bundle-shadow-hover);
+    transform: translateY(-0.4rem) scale(1.005);
+  }
+
+  /* ── Image link ─────────────────────────────────────────────────── */
+  .bundle-product-card__media-link {
+    display: block;
+    text-decoration: none;
+    background: var(--bundle-img-bg);
+    overflow: hidden;
+    border-radius: var(--bundle-radius-card) var(--bundle-radius-card) 0 0;
+  }
+
+  .bundle-product-card__image-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: var(--bundle-img-ratio, 100%);
+    overflow: hidden;
+  }
+
+  .bundle-product-card__image-wrapper img,
+  .bundle-product-card__image-wrapper svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 8%;
+    transition: transform var(--bundle-transition);
+  }
+
+  .bundle-product-card:hover .bundle-product-card__image-wrapper img {
+    transform: scale(1.04);
+  }
+
+  /* ── Info ───────────────────────────────────────────────────────── */
+  .bundle-product-card__info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bundle-info-gap, 0.6rem);
+    padding: var(--bundle-info-padding, 1.8rem 2rem 1.2rem);
+    flex: 1;
+  }
+
+  .bundle-product-card__title {
+    font-size: var(--bundle-title-size, 1.5rem);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--bundle-text-primary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .bundle-product-card__title:hover {
+    color: var(--bundle-accent);
+  }
+
+  /* ── Price ──────────────────────────────────────────────────────── */
+  .bundle-product-card__price {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: var(--bundle-price-size, 1.4rem);
+    color: var(--bundle-text-secondary);
+  }
+
+  .bundle-product-card__price .price-item--regular-compare {
+    text-decoration: line-through;
+    color: var(--bundle-text-muted);
+    font-size: 0.9em;
+  }
+
+  .bundle-product-card__price .price-item--sale {
+    color: var(--bundle-sale-color);
+    font-weight: 600;
+  }
+
+  /* ── Description ────────────────────────────────────────────────── */
+  .bundle-product-card__description {
+    font-size: 1.25rem;
+    line-height: 1.5;
+    color: var(--bundle-text-secondary);
+    flex: 1;
+    margin: 0.2rem 0 0;
+  }
+
+  /* ── Button ─────────────────────────────────────────────────────── */
+  .bundle-product-card__actions {
+    padding: var(--bundle-btn-padding, 0 2rem 2rem);
+  }
+
+  .bundle-product-card__button {
+    display: block;
+    width: 100%;
+    padding: var(--bundle-btn-size, 1rem 2rem);
+    border-radius: var(--bundle-radius-btn);
+    font-size: var(--bundle-btn-font, 1.3rem);
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: background-color 0.22s ease, color 0.22s ease,
+                border-color 0.22s ease, transform 0.18s ease;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .bundle-product-card__button:active { transform: scale(0.97); }
+
+  .bundle-product-card__button--outline {
+    border: 0.15rem solid rgba(0,0,0,0.22);
+    background: transparent;
+    color: var(--bundle-text-primary);
+  }
+
+  .bundle-product-card__button--outline:hover {
+    border-color: var(--bundle-accent);
+    color: var(--bundle-accent);
+    background: rgba(0, 113, 227, 0.05);
+  }
+
+  .bundle-product-card__button--filled {
+    border: 0.15rem solid var(--bundle-accent);
+    background: var(--bundle-accent);
+    color: #ffffff;
+  }
+
+  .bundle-product-card__button--filled:hover {
+    background: var(--bundle-accent-hover);
+    border-color: var(--bundle-accent-hover);
+  }
+
+  /* ── Savings banner ─────────────────────────────────────────────── */
+  .bundle-section__savings {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.9rem;
+    margin-top: 4.8rem;
+    padding: 1.6rem 2.4rem;
+    border-radius: 1.4rem;
+    background: #f5f5f7;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--bundle-text-primary);
+    letter-spacing: -0.01em;
+    text-align: center;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .bundle-section__savings-icon {
+    width: 1.8rem;
+    height: 1.8rem;
+    fill: var(--bundle-accent);
+    flex-shrink: 0;
+  }
+
+  /* ── Empty state ────────────────────────────────────────────────── */
+  .bundle-section__empty-state {
+    padding: 5.6rem 2rem;
+    border: 0.15rem dashed var(--bundle-divider);
+    border-radius: var(--bundle-radius-card);
+    text-align: center;
+    color: var(--bundle-text-secondary);
+    font-size: 1.5rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .bundle-section__empty-state code {
+    background: #f5f5f7;
+    color: var(--bundle-text-primary);
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.5rem;
+    font-size: 1.25rem;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     ADAPTACIONES POR CANTIDAD DE PRODUCTOS
+     ════════════════════════════════════════════════════════════════ */
+
+  /* ── 1 producto: tarjeta centrada, grande, horizontal (CSS Grid) ── */
+  .bundle-products-grid.count-1 {
+    max-width: 72rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @media screen and (min-width: 750px) {
+    .count-1 .bundle-product-card {
+      /* Grid: columna imagen | columna contenido (info + botón apilados) */
+      display: grid;
+      grid-template-columns: 46% 1fr;
+      grid-template-rows: 1fr auto;
+      box-shadow: var(--bundle-shadow-hover);
+    }
+
+    .count-1 .bundle-product-card__media-link {
+      grid-column: 1;
+      grid-row: 1 / span 2;   /* ocupa AMBAS filas */
+      border-radius: var(--bundle-radius-card) 0 0 var(--bundle-radius-card);
+    }
+
+    .count-1 .bundle-product-card__image-wrapper {
+      padding-bottom: 0;
+      height: 100%;
+      min-height: 28rem;
+    }
+
+    .count-1 .bundle-product-card__info {
+      grid-column: 2;
+      grid-row: 1;
+      align-self: end;
+      padding: 3.2rem 3.2rem 1.6rem;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+
+    .count-1 .bundle-product-card__title {
+      --bundle-title-size: 2rem;
+    }
+
+    .count-1 .bundle-product-card__price {
+      --bundle-price-size: 1.6rem;
+    }
+
+    .count-1 .bundle-product-card__actions {
+      grid-column: 2;
+      grid-row: 2;
+      padding: 0 3.2rem 3.2rem;
+    }
+
+    .count-1 .bundle-product-card__button {
+      font-size: 1.4rem;
+      padding: 1.1rem 2.4rem;
+    }
+  }
+
+  /* ── 2 productos: tarjetas horizontales en escritorio (CSS Grid) ── */
+  @media screen and (min-width: 750px) {
+    .bundle-products-grid.count-2 {
+      gap: 2.4rem;
+    }
+
+    .count-2 .bundle-product-card {
+      display: grid;
+      grid-template-columns: 44% 1fr;
+      grid-template-rows: 1fr auto;
+    }
+
+    .count-2 .bundle-product-card__media-link {
+      grid-column: 1;
+      grid-row: 1 / span 2;   /* ocupa AMBAS filas */
+      border-radius: var(--bundle-radius-card) 0 0 var(--bundle-radius-card);
+    }
+
+    .count-2 .bundle-product-card__image-wrapper {
+      padding-bottom: 0;
+      height: 100%;
+      min-height: 22rem;
+    }
+
+    .count-2 .bundle-product-card__info {
+      grid-column: 2;
+      grid-row: 1;
+      align-self: end;
+      padding: 2.4rem 2.4rem 1.2rem;
+      gap: 0.8rem;
+    }
+
+    .count-2 .bundle-product-card__title {
+      --bundle-title-size: 1.7rem;
+    }
+
+    .count-2 .bundle-product-card__actions {
+      grid-column: 2;
+      grid-row: 2;
+      padding: 0 2.4rem 2.4rem;
+    }
+  }
+
+  /* ── 3 productos: diseño estándar (base), ligeramente más espacioso */
+  .bundle-products-grid.count-3 {
+    --bundle-gap: 2rem;
+  }
+
+  /* ── 4 productos: imagen 4:3, tarjetas ligeramente compactas ───── */
+  .bundle-products-grid.count-4 {
+    --bundle-gap: 1.6rem;
+  }
+
+  .count-4 .bundle-product-card {
+    --bundle-img-ratio: 75%;
+  }
+
+  .count-4 .bundle-product-card__info {
+    --bundle-info-padding: 1.4rem 1.6rem 0.8rem;
+    --bundle-info-gap: 0.5rem;
+  }
+
+  .count-4 .bundle-product-card__title {
+    --bundle-title-size: 1.35rem;
+  }
+
+  .count-4 .bundle-product-card__price {
+    --bundle-price-size: 1.25rem;
+  }
+
+  .count-4 .bundle-product-card__actions {
+    --bundle-btn-padding: 0 1.6rem 1.6rem;
+    --bundle-btn-size: 0.85rem 1.6rem;
+    --bundle-btn-font: 1.2rem;
+  }
+
+  /* ── 5+ productos: imagen cuadrada reducida, tarjetas compactas ── */
+  .bundle-products-grid.count-many {
+    --bundle-gap: 1.2rem;
+  }
+
+  .count-many .bundle-product-card {
+    --bundle-img-ratio: 80%;
+    border-radius: 1.2rem;
+  }
+
+  .count-many .bundle-product-card__info {
+    --bundle-info-padding: 1.2rem 1.4rem 0.6rem;
+    --bundle-info-gap: 0.4rem;
+  }
+
+  .count-many .bundle-product-card__title {
+    --bundle-title-size: 1.25rem;
+  }
+
+  .count-many .bundle-product-card__price {
+    --bundle-price-size: 1.15rem;
+  }
+
+  .count-many .bundle-product-card__actions {
+    --bundle-btn-padding: 0 1.4rem 1.4rem;
+    --bundle-btn-size: 0.75rem 1.2rem;
+    --bundle-btn-font: 1.15rem;
+  }
+
+  .count-many .bundle-product-card__button {
+    border-radius: 0.8rem;
+  }
+
+  /* ── Responsive global ──────────────────────────────────────────── */
+  @media screen and (max-width: 749px) {
+    .bundle-section__header {
+      margin-bottom: 3.2rem;
+    }
+
+    /* En móvil: todas las tarjetas en columna vertical,
+       reseteando cualquier grid de escritorio */
+    .count-1 .bundle-product-card,
+    .count-2 .bundle-product-card {
+      display: flex;
+      flex-direction: column;
+      grid-template-columns: unset;
+      grid-template-rows: unset;
+    }
+
+    .count-1 .bundle-product-card__media-link,
+    .count-2 .bundle-product-card__media-link {
+      grid-column: unset;
+      grid-row: unset;
+      width: 100%;
+      border-radius: var(--bundle-radius-card) var(--bundle-radius-card) 0 0;
+    }
+
+    .count-1 .bundle-product-card__image-wrapper,
+    .count-2 .bundle-product-card__image-wrapper {
+      padding-bottom: 75%;
+      height: auto;
+      min-height: unset;
+    }
+
+    .count-1 .bundle-product-card__info,
+    .count-2 .bundle-product-card__info {
+      grid-column: unset;
+      grid-row: unset;
+      padding: 2rem 2rem 1.2rem;
+    }
+
+    .count-1 .bundle-product-card__actions,
+    .count-2 .bundle-product-card__actions {
+      grid-column: unset;
+      grid-row: unset;
+      padding: 0 2rem 2rem;
+    }
+  }
+{%- endstyle -%}
+
+<div
+  id="BundleSection-{{ section.id }}"
+  class="bundle-section section-{{ section.id }}-padding gradient color-{{ section.settings.color_scheme }}"
+>
+  <div class="page-width">
+
+    {%- if section.settings.show_divider -%}
+      <hr class="bundle-section__divider">
+    {%- endif -%}
+
+    {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+      <div class="bundle-section__header{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+        {%- if section.settings.heading != blank -%}
+          <{{ section.settings.heading_tag }} class="bundle-section__heading">
+            {{- section.settings.heading | escape -}}
+          </{{ section.settings.heading_tag }}>
+        {%- endif -%}
+        {%- if section.settings.subheading != blank -%}
+          <div class="bundle-section__subheading rte">
+            {{- section.settings.subheading -}}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if bundle_items != blank and bundle_items.size > 0 -%}
+
+      {%- assign img_sizes = "(min-width: 990px) calc((100vw - 13rem) / " | append: effective_cols | append: "), (min-width: 750px) calc((100vw - 10rem) / 2), calc((100vw - 3rem) / " | append: cols_mobile | append: ")" -%}
+
+      <ul
+        class="bundle-products-grid {{ count_mod }}{% if section.settings.show_connectors %} bundle-products-grid--connectors{% endif %}"
+        role="list"
+        style="--bundle-cols-mobile: {{ cols_mobile }}; --bundle-cols-desktop: {{ effective_cols }};"
+      >
+        {%- for bundle_product in bundle_items -%}
+          <li class="bundle-product-card-wrapper{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+            <div class="bundle-product-card">
+
+              <a
+                href="{{ bundle_product.url }}"
+                class="bundle-product-card__media-link"
+                aria-label="{{ bundle_product.title | escape }}"
+                tabindex="-1"
+              >
+                <div class="bundle-product-card__image-wrapper">
+                  {%- if bundle_product.featured_image -%}
+                    {%- assign img_alt = bundle_product.featured_image.alt | default: bundle_product.title | escape -%}
+                    {{
+                      bundle_product.featured_image
+                      | image_url: width: 800
+                      | image_tag:
+                        loading: "lazy",
+                        class: "bundle-product-card__image",
+                        alt: img_alt,
+                        widths: "200, 300, 400, 600, 800",
+                        sizes: img_sizes
+                    }}
+                  {%- else -%}
+                    {{ "product-1" | placeholder_svg_tag: "bundle-product-card__image placeholder" }}
+                  {%- endif -%}
+                </div>
+              </a>
+
+              <div class="bundle-product-card__info">
+                <a href="{{ bundle_product.url }}" class="bundle-product-card__title">
+                  {{- bundle_product.title -}}
+                </a>
+
+                {%- if section.settings.show_price -%}
+                  <div class="bundle-product-card__price">
+                    {%- if bundle_product.compare_at_price > bundle_product.price -%}
+                      <s class="price-item price-item--regular-compare">
+                        {{- bundle_product.compare_at_price | money -}}
+                      </s>
+                      <span class="price-item price-item--sale">
+                        {{- bundle_product.price | money -}}
+                      </span>
+                    {%- else -%}
+                      <span class="price-item price-item--regular">
+                        {{- bundle_product.price | money -}}
+                      </span>
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+
+                {%- if section.settings.show_description -%}
+                  <p class="bundle-product-card__description">
+                    {{- bundle_product.description | strip_html | truncate: 130 -}}
+                  </p>
+                {%- endif -%}
+              </div>
+
+              {%- if section.settings.show_button -%}
+                <div class="bundle-product-card__actions">
+                  <a
+                    href="{{ bundle_product.url }}"
+                    class="bundle-product-card__button bundle-product-card__button--{{ section.settings.button_style }}"
+                  >
+                    {{- section.settings.button_label -}}
+                  </a>
+                </div>
+              {%- endif -%}
+
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      {%- if section.settings.savings_text != blank -%}
+        <div class="bundle-section__savings{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+          <svg class="bundle-section__savings-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+          </svg>
+          {{- section.settings.savings_text | escape -}}
+        </div>
+      {%- endif -%}
+
+    {%- else -%}
+      {%- if request.design_mode -%}
+        <div class="bundle-section__empty-state">
+          <p>
+            Este producto no tiene productos relacionados configurados.<br>
+            Asigna el metafield <code>custom.bundle_related_products</code> desde el admin de Shopify.
+          </p>
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Bundle - Contenido",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Encabezado de la sección"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título",
+      "default": "Lo que incluye este bundle."
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Etiqueta HTML del título",
+      "info": "Usa H2 si ya hay un H1 en la página (SEO).",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "p", "label": "Párrafo" }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Subtítulo",
+      "default": "<p>Cada producto del bundle, pensado para complementarse perfectamente.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Grilla de productos"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Máximo de columnas en escritorio",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4,
+      "info": "Las columnas se ajustan solas según cuántos productos tenga el bundle. Este valor es el máximo permitido."
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columnas en móvil",
+      "options": [
+        { "value": "1", "label": "1 columna" },
+        { "value": "2", "label": "2 columnas" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_connectors",
+      "label": "Mostrar '+' entre productos",
+      "default": false,
+      "info": "Solo visible en escritorio."
+    },
+    {
+      "type": "header",
+      "content": "Información del producto"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Mostrar precio",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Mostrar descripción corta",
+      "default": false,
+      "info": "Muestra los primeros 130 caracteres de la descripción."
+    },
+    {
+      "type": "header",
+      "content": "Botón por producto"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_button",
+      "label": "Mostrar botón",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Texto del botón",
+      "default": "Ver producto"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Estilo del botón",
+      "options": [
+        { "value": "outline", "label": "Contorno" },
+        { "value": "filled", "label": "Relleno" }
+      ],
+      "default": "outline"
+    },
+    {
+      "type": "header",
+      "content": "Banner de ahorro"
+    },
+    {
+      "type": "text",
+      "id": "savings_text",
+      "label": "Mensaje de ahorro",
+      "placeholder": "Ej: Ahorra un 20% al llevar el bundle completo.",
+      "info": "Deja en blanco para ocultar."
+    },
+    {
+      "type": "header",
+      "content": "Estilo y espaciado"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Mostrar línea divisora al inicio",
+      "default": false
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Esquema de color",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Espaciado superior",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Espaciado inferior",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bundle - Contenido"
+    }
+  ]
+}
+{% endschema %}

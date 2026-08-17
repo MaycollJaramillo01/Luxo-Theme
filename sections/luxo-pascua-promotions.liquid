@@ -1,0 +1,472 @@
+{% comment %}
+  File: sections/luxo-pascua-promotions.liquid
+  Versión: Campaña Pascua Minimalista (CORREGIDA - Main Collection en Settings)
+  - Diseño limpio, neutro y editorial.
+  - Conexión principal (grid de productos) controlada desde los ajustes generales.
+  - Conexión de cruce (cross-sell) con el copy solicitado.
+  - Filtro añadido para controlar la cantidad de productos a mostrar.
+  - Imagen de cross-sell ahora es clickeable hacia la colección.
+  - AÑADIDO: Muestra precio de comparación (tachado) si el producto está en oferta.
+{% endcomment %}
+
+<section class="lux-pascua-promo luxe--{{ section.id }}">
+  <style>
+    .luxe--{{ section.id }} {
+      --lux-bg: {{ section.settings.bg }};
+      --lux-text: {{ section.settings.text_color }};
+      --lux-gap: {{ section.settings.gap }}px;
+      --lux-pt: {{ section.settings.padding_top }}px;
+      --lux-pb: {{ section.settings.padding_bottom }}px;
+      
+      --lux-border-width: {{ section.settings.border_width }}px;
+      --lux-border-color: {{ section.settings.border_color }};
+      --lux-border-radius: {{ section.settings.border_radius }}px;
+    }
+
+    .lux-pascua-promo {
+      background: var(--lux-bg);
+      padding-top: var(--lux-pt);
+      padding-bottom: var(--lux-pb);
+      color: var(--lux-text);
+      font-family: inherit;
+    }
+
+    .lux-pascua-promo__inner--full { 
+      max-width: 100%; 
+      padding: 0 20px; 
+    }
+
+    /* Header campaña */
+    .lux-pascua-promo__header {
+      padding: 0 0 48px;
+      text-align: center;
+    }
+
+    .lux-pascua-promo__title {
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      margin: 0;
+      color: var(--lux-text);
+      text-transform: uppercase;
+    }
+
+    .lux-pascua-promo__subtitle {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--lux-text);
+      opacity: 0.7;
+      max-width: 500px;
+      margin: 12px auto 0;
+      line-height: 1.5;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Grid principal de productos */
+    .lux-pascua-promo__grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--lux-gap);
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    .lux-pascua-promo__card {
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .lux-pascua-promo__media-wrap {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      overflow: hidden;
+      position: relative;
+      border: var(--lux-border-width) solid var(--lux-border-color);
+      border-radius: var(--lux-border-radius);
+      box-sizing: border-box;
+      background-color: #EFEFEF;
+    }
+
+    .lux-pascua-promo__badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--lux-bg);
+      color: var(--lux-text);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      padding: 6px 12px;
+      text-transform: uppercase;
+      z-index: 3;
+      white-space: nowrap;
+      border: 1px solid var(--lux-text);
+    }
+
+    .lux-pascua-promo__media {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.8s ease;
+    }
+
+    .lux-pascua-promo__img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .lux-pascua-promo__label {
+      padding: 16px 0;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .lux-pascua-promo__label-text {
+      font-size: 13px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      line-height: 1.2;
+      color: var(--lux-text);
+    }
+
+    /* Precios */
+    .lux-pascua-promo__price-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .lux-pascua-promo__price {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--lux-text);
+      opacity: 0.7;
+    }
+
+    .lux-pascua-promo__price--sale {
+      opacity: 1;
+      font-weight: 600;
+    }
+
+    .lux-pascua-promo__compare {
+      font-size: 13px;
+      color: var(--lux-text);
+      opacity: 0.4;
+      text-decoration: line-through;
+    }
+
+    @media (hover: hover) {
+      .lux-pascua-promo__card:hover .lux-pascua-promo__media {
+        transform: scale(1.04);
+      }
+    }
+
+    /* CROSS-SELL */
+    .lux-pascua-promo__cross-sell {
+      margin-top: 100px;
+      border-top: 1px solid rgba(0,0,0,0.05);
+      padding-top: 80px;
+    }
+
+    .lux-pascua-promo__cross-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5vw;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .lux-pascua-promo__cross-media {
+      display: block; /* Para que el tag <a> se comporte correctamente */
+      aspect-ratio: 3 / 4;
+      overflow: hidden;
+      border-radius: var(--lux-border-radius);
+      background-color: #EFEFEF;
+      text-decoration: none;
+    }
+
+    .lux-pascua-promo__cross-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s ease;
+    }
+
+    @media (hover: hover) {
+      .lux-pascua-promo__cross-media:hover .lux-pascua-promo__cross-img {
+        transform: scale(1.04);
+      }
+    }
+
+    .lux-pascua-promo__cross-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .lux-pascua-promo__cross-title {
+      font-size: clamp(24px, 3vw, 40px);
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      color: var(--lux-text);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .lux-pascua-promo__cross-subtitle {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--lux-text);
+      opacity: 0.8;
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    .lux-pascua-promo__cross-why {
+      font-size: 16px;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--lux-text);
+      margin-bottom: 40px;
+      line-height: 1.5;
+      border-left: 1px solid var(--lux-text);
+      padding-left: 16px;
+    }
+
+    .lux-pascua-promo__cross-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--lux-text);
+      color: var(--lux-bg);
+      padding: 16px 32px;
+      font-weight: 500;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      align-self: flex-start;
+      border: 1px solid var(--lux-text);
+    }
+
+    .lux-pascua-promo__cross-cta:hover {
+      background: transparent;
+      color: var(--lux-text);
+    }
+
+    /* MOBILE */
+    @media (max-width: 860px) {
+      .lux-pascua-promo__grid { 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 12px;
+      }
+      
+      .lux-pascua-promo__header {
+        padding: 0 0 32px;
+      }
+
+      .lux-pascua-promo__cross-sell {
+        margin-top: 60px;
+        padding-top: 60px;
+      }
+
+      .lux-pascua-promo__cross-inner {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+
+      .lux-pascua-promo__cross-content {
+        padding: 0;
+        text-align: center;
+        align-items: center;
+      }
+      
+      .lux-pascua-promo__cross-why {
+        border-left: none;
+        padding-left: 0;
+      }
+    }
+  </style>
+
+  <div class="lux-pascua-promo__inner {% if section.settings.full_bleed %}lux-pascua-promo__inner--full{% else %}page-width{% endif %}">
+    
+    {% if section.settings.heading != blank %}
+      <header class="lux-pascua-promo__header">
+        <h2 class="lux-pascua-promo__title">{{ section.settings.heading }}</h2>
+        {% if section.settings.subtitle != blank %}
+          <p class="lux-pascua-promo__subtitle">{{ section.settings.subtitle }}</p>
+        {% endif %}
+      </header>
+    {% endif %}
+
+    <div class="lux-pascua-promo__grid">
+      {% assign main_col = section.settings.main_collection %}
+      {% assign limit = section.settings.products_to_show %}
+      
+      {% if main_col != blank %}
+        {% for product in main_col.products limit: limit %}
+          <a class="lux-pascua-promo__card" href="{{ product.url }}">
+            <div class="lux-pascua-promo__media-wrap">
+              {% if section.settings.badge_text != blank %}
+                <span class="lux-pascua-promo__badge">{{ section.settings.badge_text }}</span>
+              {% endif %}
+              
+              <div class="lux-pascua-promo__media">
+                {% if product.featured_image %}
+                  {{ product.featured_image | image_url: width: 800 | image_tag: 
+                     loading: 'lazy', 
+                     class: 'lux-pascua-promo__img',
+                     alt: product.title }}
+                {% else %}
+                  {{ 'product-1' | placeholder_svg_tag: 'lux-pascua-promo__img placeholder-svg' }}
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="lux-pascua-promo__label">
+              <span class="lux-pascua-promo__label-text">{{ product.title }}</span>
+              <div class="lux-pascua-promo__price-group">
+                {% if product.compare_at_price > product.price %}
+                  <span class="lux-pascua-promo__price lux-pascua-promo__price--sale">{{ product.price | money }}</span>
+                  <s class="lux-pascua-promo__compare">{{ product.compare_at_price | money }}</s>
+                {% else %}
+                  <span class="lux-pascua-promo__price">{{ product.price | money }}</span>
+                {% endif %}
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+      {% else %}
+        {% for i in (1..limit) %}
+          <div class="lux-pascua-promo__card">
+            <div class="lux-pascua-promo__media-wrap">
+              {{ 'product-' | append: i | placeholder_svg_tag: 'lux-pascua-promo__img placeholder-svg' }}
+            </div>
+            <div class="lux-pascua-promo__label">
+              <span class="lux-pascua-promo__label-text">Producto de Ejemplo</span>
+              <div class="lux-pascua-promo__price-group">
+                <span class="lux-pascua-promo__price">$0.00</span>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+
+    {% assign cs = section.settings.cross_sell_collection %}
+    {% if cs != blank %}
+      <div class="lux-pascua-promo__cross-sell">
+        <div class="lux-pascua-promo__cross-inner">
+          
+          <a href="{{ cs.url }}" class="lux-pascua-promo__cross-media">
+            {% if cs.featured_image %}
+              {{ cs.featured_image | image_url: width: 1200 | image_tag: 
+                 loading: 'lazy', 
+                 class: 'lux-pascua-promo__cross-img',
+                 alt: cs.title }}
+            {% else %}
+              {{ 'collection-2' | placeholder_svg_tag: 'lux-pascua-promo__cross-img placeholder-svg' }}
+            {% endif %}
+          </a>
+
+          <div class="lux-pascua-promo__cross-content">
+            <h3 class="lux-pascua-promo__cross-title">
+              {{ section.settings.cross_sell_heading }}
+            </h3>
+            <p class="lux-pascua-promo__cross-subtitle">
+              {{ section.settings.cross_sell_subtitle }}
+            </p>
+            
+            {% if section.settings.cross_sell_why != blank %}
+              <div class="lux-pascua-promo__cross-why">
+                "{{ section.settings.cross_sell_why }}"
+              </div>
+            {% endif %}
+
+            <a href="{{ cs.url }}" class="lux-pascua-promo__cross-cta">
+              Comprar Colección
+            </a>
+          </div>
+          
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Minimal Pascua Promo",
+  "settings": [
+    { "type": "checkbox", "id": "full_bleed", "label": "Ancho completo", "default": false },
+    { "type": "text", "id": "heading", "label": "Título principal", "default": "The Easter Edit" },
+    { "type": "text", "id": "subtitle", "label": "Subtítulo", "default": "Tonos neutros. Siluetas esenciales." },
+    
+    { 
+      "type": "header",
+      "content": "Colección Principal (Grid Superior)"
+    },
+    { "type": "collection", "id": "main_collection", "label": "Colección Principal (Pascua)" },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Cantidad de productos a mostrar",
+      "min": 2,
+      "max": 16,
+      "step": 1,
+      "default": 4
+    },
+
+    { 
+      "type": "header",
+      "content": "Paleta Minimalista"
+    },
+    { "type": "color", "id": "bg", "label": "Fondo sección", "default": "#FAF9F6" },
+    { "type": "color", "id": "text_color", "label": "Color texto y botones", "default": "#111111" },
+    
+    { 
+      "type": "header",
+      "content": "Espaciado y Layout"
+    },
+    { "type": "range", "id": "gap", "label": "Espaciado entre imágenes", "min": 0, "max": 40, "step": 2, "default": 16, "unit": "px" },
+    { "type": "range", "id": "padding_top", "label": "Padding superior", "min": 20, "max": 120, "step": 1, "default": 80, "unit": "px" },
+    { "type": "range", "id": "padding_bottom", "label": "Padding inferior", "min": 20, "max": 120, "step": 1, "default": 80, "unit": "px" },
+
+    { 
+      "type": "header",
+      "content": "Bordes y Estilos (Skims Style = 0px)"
+    },
+    { "type": "range", "id": "border_width", "label": "Grosor del borde", "min": 0, "max": 5, "step": 1, "default": 0, "unit": "px" },
+    { "type": "color", "id": "border_color", "label": "Color del borde", "default": "#E5E5E5" },
+    { "type": "range", "id": "border_radius", "label": "Redondeo esquinas", "min": 0, "max": 24, "step": 1, "default": 0, "unit": "px" },
+
+    { 
+      "type": "header",
+      "content": "Etiquetas"
+    },
+    { "type": "text", "id": "badge_text", "label": "Texto del badge (opcional)", "default": "PASCUA" },
+
+    { 
+      "type": "header",
+      "content": "Conexión de cruce (Cross-sell)"
+    },
+    { "type": "collection", "id": "cross_sell_collection", "label": "Colección para cross-sell" },
+    { "type": "text", "id": "cross_sell_heading", "label": "Título cross-sell", "default": "The Core Collection" },
+    { "type": "textarea", "id": "cross_sell_subtitle", "label": "Subtítulo cross-sell", "default": "Básicos diseñados para complementar tu rutina diaria." },
+    { "type": "textarea", "id": "cross_sell_why", "label": "Texto de conexión personal", "default": "Llévate esto porque tú lo pediste. Es exactamente lo que estabas buscando para esta Pascua." }
+  ],
+  "presets": [
+    { "name": "Minimal Pascua Promo" }
+  ]
+}
+{% endschema %}

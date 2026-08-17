@@ -1,0 +1,99 @@
+{{ 'luxo-landing.css' | asset_url | stylesheet_tag }}
+
+<section
+  class="luxo-block"
+  style="
+    --lb-bg: {{ section.settings.bg_color }};
+    --lb-text: {{ section.settings.text_color }};
+    --lb-muted: {{ section.settings.muted_color }};
+    --lb-border: {{ section.settings.border_color }};
+    --lb-max: {{ section.settings.page_width }}px;
+  "
+>
+  <div class="lb-inner-footer">
+    <div class="lb-wrap">
+      <div class="lb-footer-row">
+        <div>
+          {% if section.settings.brand_name != blank %}
+            <div class="lb-brand">{{ section.settings.brand_name }}</div>
+          {% endif %}
+          {% if section.settings.copy != blank %}
+            <div class="lb-footer-copy">{{ section.settings.copy }}</div>
+          {% endif %}
+        </div>
+
+        {% if section.settings.footer_menu != blank %}
+          <div class="lb-footer-links">
+            {% for link in section.settings.footer_menu.links %}
+              <a class="lb-footer-link" href="{{ link.url }}">{{ link.title }}</a>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxo - Footer interno",
+  "settings": [
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Marca",
+      "default": "Luxo Boutique"
+    },
+    {
+      "type": "text",
+      "id": "copy",
+      "label": "Texto footer",
+      "default": "© 2026 Luxo Boutique. Todos los derechos reservados."
+    },
+    {
+      "type": "link_list",
+      "id": "footer_menu",
+      "label": "Menú footer"
+    },
+    {
+      "type": "range",
+      "id": "page_width",
+      "label": "Ancho máximo",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1280
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fondo",
+      "default": "#f7f4ef"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Texto",
+      "default": "#181511"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Texto secundario",
+      "default": "#6f675d"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Borde",
+      "default": "#ddd5cb"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo - Footer interno"
+    }
+  ]
+}
+{% endschema %}

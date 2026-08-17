@@ -1,0 +1,46 @@
+<section class="luxo-product-promises">
+  <div class="luxo-product-promises__inner luxo-container">
+    <div class="luxo-product-promises__lead">
+      <p class="luxo-kicker">{{ section.settings.kicker | escape }}</p>
+      <h2>{{ section.settings.heading }}</h2>
+    </div>
+    {%- for block in section.blocks -%}
+      <div class="luxo-product-promise" {{ block.shopify_attributes }}>
+        <span class="luxo-product-promise__number">{{ forloop.index | prepend: '0' }}</span>
+        <strong>{{ block.settings.title | escape }}</strong>
+        <p>{{ block.settings.text | escape }}</p>
+      </div>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxo — Apoyo de producto",
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Antetítulo", "default": "Compra informada" },
+    { "type": "inline_richtext", "id": "heading", "label": "Título", "default": "Estamos contigo antes y después." }
+  ],
+  "blocks": [
+    {
+      "type": "promise",
+      "name": "Promesa",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Título", "default": "Talla correcta" },
+        { "type": "text", "id": "text", "label": "Texto", "default": "Escríbenos si necesitas ayuda para elegir." }
+      ]
+    }
+  ],
+  "max_blocks": 3,
+  "presets": [
+    {
+      "name": "Luxo — Apoyo de producto",
+      "blocks": [
+        { "type": "promise", "settings": { "title": "Talla correcta", "text": "Escríbenos si necesitas ayuda para elegir." } },
+        { "type": "promise", "settings": { "title": "Compra protegida", "text": "Tus datos y tu pago viajan protegidos." } },
+        { "type": "promise", "settings": { "title": "Seguimiento real", "text": "Recibe actualizaciones de tu pedido." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

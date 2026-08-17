@@ -1,0 +1,383 @@
+{% comment %}
+  File: sections/luxo-pascua-manifesto.liquid
+  Versión: Campaña Pascua Minimalista - Texto Editorial + Fondo Temático
+  - Diseño limpio, centrado y tipográfico.
+  - Ideal para contar la historia de la campaña o dar un mensaje fuerte.
+  - Botón configurado por defecto hacia /collections/promociones
+  - Carrusel infinito (Marquee) añadido al final de la sección.
+  - NUEVO: Opción de Imagen de fondo con control de opacidad (Overlay) para legibilidad.
+  - ACTUALIZACIÓN: Fondo de huevos de pascua detallado por defecto y carrusel rosado.
+{% endcomment %}
+
+<section class="lux-manifesto luxe--{{ section.id }}">
+  <style>
+    .luxe--{{ section.id }} {
+      --lux-bg: {{ section.settings.bg_color }};
+      --lux-text: {{ section.settings.text_color }};
+      --lux-pt: {{ section.settings.padding_top }}px;
+      --lux-pb: {{ section.settings.padding_bottom }}px;
+      --lux-alignment: {{ section.settings.text_alignment }};
+      --lux-overlay: {{ section.settings.bg_overlay_opacity | divided_by: 100.0 }};
+      --lux-marquee-bg: {{ section.settings.marquee_bg_color }};
+      --lux-marquee-text: {{ section.settings.marquee_text_color }};
+    }
+
+    .lux-manifesto {
+      position: relative;
+      background-color: var(--lux-bg);
+      
+      {% if section.settings.bg_image != blank %}
+        background-image: url('{{ section.settings.bg_image | image_url: width: 2000 }}');
+        background-size: cover;
+      {% else %}
+        /* Patrón de huevos de Pascua detallado por defecto si no hay imagen */
+        background-image: url("data:image/svg+xml,%3Csvg height='200px' width='200px' version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 512 512' xml:space='preserve' fill='%23000000'%3E%3Cg id='SVGRepo_bgCarrier' stroke-width='0'%3E%3C/g%3E%3Cg id='SVGRepo_tracerCarrier' stroke-linecap='round' stroke-linejoin='round'%3E%3C/g%3E%3Cg id='SVGRepo_iconCarrier'%3E %3Cpath style='fill:%23F285B9;' d='M405.374,87.872C365.953,31.207,312.905,0,255.999,0S146.046,31.207,106.625,87.872 C68.58,142.563,47.627,214.958,47.627,291.721C47.627,413.183,141.102,512,255.999,512s208.372-98.817,208.372-220.279 C464.372,214.958,443.419,142.563,405.374,87.872z'%3E%3C/path%3E %3Cpath style='fill:%23EE5DA2;' d='M255.999,512c114.898,0,208.372-98.817,208.372-220.279c0-76.763-20.953-149.157-58.998-203.849 C365.953,31.207,312.905,0,255.999,0'%3E%3C/path%3E %3Cg%3E %3Cpath style='fill:%23FFC170;' d='M446.452,381.023c10.637-25.256,16.916-52.998,17.8-82.158H47.749 c0.883,29.16,7.162,56.902,17.8,82.158H446.452z'%3E%3C/path%3E %3Cpath style='fill:%23FFC170;' d='M456.32,210.753c-6.814-33.388-17.852-64.792-32.722-92.874H88.399 c-14.869,28.083-25.907,59.486-32.72,92.874H456.32z'%3E%3C/path%3E %3C/g%3E %3Cg%3E %3Cpath style='fill:%23FF9811;' d='M456.32,210.753c-6.814-33.388-17.852-64.792-32.722-92.874H255.999v92.874H456.32z'%3E%3C/path%3E %3Cpath style='fill:%23FF9811;' d='M446.452,381.023c10.637-25.256,16.916-52.998,17.8-82.158H255.999v82.158H446.452z'%3E%3C/path%3E %3C/g%3E %3Cg%3E %3Cpath style='fill:%23FFF8DA;' d='M47.627,291.721c0,7.434,0.355,14.781,1.039,22.028h414.666c0.683-7.247,1.039-14.594,1.039-22.028 c0-4.582-0.08-9.146-0.227-13.693H47.855C47.707,282.575,47.627,287.139,47.627,291.721z'%3E%3C/path%3E %3Cpath style='fill:%23FFF8DA;' d='M412.242,98.233H99.757c-7.125,11.275-13.557,23.222-19.287,35.721h351.058 C425.798,121.455,419.367,109.507,412.242,98.233z'%3E%3C/path%3E %3Cpath style='fill:%23FFF8DA;' d='M77.391,213.73c9.123,0,12.749,2.61,19.331,7.35c8.254,5.943,19.558,14.082,40.204,14.082 c20.644,0,31.949-8.14,40.203-14.082c6.582-4.739,10.208-7.35,19.33-7.35c9.126,0,12.751,2.611,19.335,7.35 c8.255,5.943,19.561,14.082,40.206,14.082s31.95-8.138,40.206-14.082c6.583-4.739,10.21-7.35,19.335-7.35 c9.122,0,12.748,2.61,19.329,7.35c8.254,5.943,19.558,14.082,40.202,14.082c20.644,0,31.949-8.14,40.203-14.082 c6.581-4.739,10.208-7.35,19.329-7.35c9.123,0,12.749,2.61,19.331,7.35c1.525,1.099,3.158,2.273,4.932,3.457 c-2.578-15.467-6.042-30.557-10.361-45.146c-4.11-0.866-8.709-1.381-13.901-1.381c-20.644,0-31.949,8.14-40.203,14.082 c-6.581,4.739-10.208,7.35-19.329,7.35c-9.121,0-12.748-2.61-19.329-7.35c-8.254-5.943-19.558-14.082-40.202-14.082 c-20.646,0-31.951,8.138-40.206,14.082c-6.583,4.739-10.21,7.35-19.335,7.35s-12.751-2.611-19.335-7.35 c-8.255-5.943-19.561-14.082-40.206-14.082c-20.643,0-31.949,8.14-40.202,14.082c-6.582,4.739-10.208,7.35-19.33,7.35 c-9.123,0-12.749-2.61-19.331-7.35c-8.254-5.943-19.558-14.082-40.203-14.082c-5.188,0-9.785,0.516-13.894,1.38 c-4.319,14.588-7.784,29.678-10.361,45.144c1.772-1.182,3.402-2.355,4.926-3.452C64.644,216.34,68.269,213.73,77.391,213.73z'%3E%3C/path%3E %3Cpath style='fill:%23FFF8DA;' d='M394.398,370.696c-6.581,4.739-10.208,7.35-19.329,7.35s-12.748-2.61-19.329-7.35 c-8.254-5.943-19.558-14.082-40.202-14.082c-20.646,0-31.951,8.138-40.206,14.082c-6.583,4.739-10.21,7.35-19.335,7.35 c-9.124,0-12.751-2.611-19.335-7.35c-8.255-5.943-19.561-14.082-40.206-14.082c-20.643,0-31.949,8.14-40.202,14.082 c-6.582,4.739-10.208,7.35-19.33,7.35c-9.123,0-12.749-2.61-19.331-7.35c-8.254-5.943-19.558-14.082-40.203-14.082 c-7.76,0-14.199,1.15-19.652,2.902c3.552,11.582,7.984,22.747,13.22,33.406c1.85-0.383,3.93-0.587,6.432-0.587 c9.123,0,12.749,2.61,19.331,7.35c8.254,5.943,19.558,14.082,40.204,14.082c20.644,0,31.949-8.14,40.203-14.082 c6.582-4.739,10.208-7.35,19.33-7.35c9.126,0,12.751,2.611,19.335,7.35c8.255,5.943,19.561,14.082,40.206,14.082 s31.95-8.138,40.206-14.082c6.583-4.739,10.21-7.35,19.335-7.35c9.122,0,12.748,2.61,19.329,7.35 c8.254,5.943,19.558,14.082,40.202,14.082c20.644,0,31.949-8.14,40.203-14.082c6.581-4.739,10.208-7.35,19.329-7.35 c2.505,0,4.588,0.204,6.439,0.588c5.237-10.658,9.668-21.823,13.22-33.405c-5.456-1.752-11.896-2.903-19.66-2.903 C413.956,356.614,402.653,364.754,394.398,370.696z'%3E%3C/path%3E %3C/g%3E %3Cg%3E %3Cpath style='fill:%23FFD6A0;' d='M255.998,235.163c20.646,0,31.95-8.138,40.206-14.082c6.583-4.739,10.21-7.35,19.335-7.35 c9.122,0,12.748,2.61,19.329,7.35c8.254,5.943,19.558,14.082,40.202,14.082c20.644,0,31.949-8.14,40.203-14.082 c6.581-4.739,10.208-7.35,19.329-7.35c9.123,0,12.749,2.61,19.331,7.35c1.525,1.099,3.158,2.273,4.932,3.457 c-2.578-15.467-6.042-30.557-10.361-45.146c-4.11-0.866-8.709-1.381-13.901-1.381c-20.644,0-31.949,8.14-40.203,14.082 c-6.581,4.739-10.208,7.35-19.329,7.35s-12.748-2.61-19.329-7.35c-8.254-5.943-19.558-14.082-40.202-14.082 c-20.646,0-31.951,8.138-40.206,14.082c-6.583,4.739-10.21,7.35-19.335,7.35'%3E%3C/path%3E %3Cpath style='fill:%23FFD6A0;' d='M255.998,413.767c20.646,0,31.95-8.138,40.206-14.082c6.583-4.739,10.21-7.35,19.335-7.35 c9.122,0,12.748,2.61,19.329,7.35c8.254,5.943,19.558,14.082,40.202,14.082c20.644,0,31.949-8.14,40.203-14.082 c6.581-4.739,10.208-7.35,19.329-7.35c2.505,0,4.588,0.204,6.439,0.588c5.237-10.658,9.668-21.823,13.22-33.405 c-5.456-1.752-11.896-2.903-19.66-2.903c-20.644,0-31.949,8.14-40.203,14.082c-6.581,4.739-10.208,7.35-19.329,7.35 s-12.748-2.61-19.329-7.35c-8.254-5.943-19.558-14.082-40.202-14.082c-20.646,0-31.951,8.138-40.206,14.082 c-6.583,4.739-10.21,7.35-19.335,7.35'%3E%3C/path%3E %3Cpath style='fill:%23FFD6A0;' d='M464.372,291.721c0-4.582-0.08-9.146-0.227-13.693H255.999v35.721h207.333 C464.017,306.502,464.372,299.154,464.372,291.721z'%3E%3C/path%3E %3Cpath style='fill:%23FFD6A0;' d='M431.528,133.953c-5.731-12.499-12.162-24.446-19.287-35.721H255.999v35.721H431.528z'%3E%3C/path%3E %3C/g%3E %3C/g%3E%3C/svg%3E");
+        background-size: 200px 200px;
+      {% endif %}
+      
+      background-position: center;
+      background-repeat: {% if section.settings.bg_image != blank %}no-repeat{% else %}repeat{% endif %};
+      color: var(--lux-text);
+      padding-top: var(--lux-pt);
+      /* El padding bottom se ajusta si hay carrusel para no tener doble espacio */
+      padding-bottom: {% if section.settings.show_marquee %}0{% else %}var(--lux-pb){% endif %};
+      font-family: inherit;
+      display: block;
+    }
+
+    /* Capa superpuesta para asegurar que el texto se lea sobre la imagen de Pascua */
+    .lux-manifesto::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--lux-bg);
+      opacity: var(--lux-overlay);
+      z-index: 1;
+    }
+
+    .lux-manifesto__inner {
+      position: relative;
+      z-index: 2;
+      max-width: {{ section.settings.max_width }}px;
+      width: 100%;
+      padding: 0 24px;
+      margin: 0 auto;
+      text-align: var(--lux-alignment);
+      display: flex;
+      flex-direction: column;
+      align-items: {% if section.settings.text_alignment == 'center' %}center{% elsif section.settings.text_alignment == 'right' %}flex-end{% else %}flex-start{% endif %};
+      {% if section.settings.show_marquee %}
+        padding-bottom: var(--lux-pb);
+      {% endif %}
+    }
+
+    .lux-manifesto__kicker {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      opacity: 0.7;
+    }
+
+    .lux-manifesto__title {
+      font-size: clamp(32px, 5vw, 64px);
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      line-height: 1.1;
+      margin: 0 0 32px 0;
+      color: var(--lux-text);
+      text-transform: uppercase;
+    }
+
+    .lux-manifesto__text {
+      font-size: clamp(16px, 2vw, 20px);
+      font-weight: 300;
+      line-height: 1.6;
+      opacity: 0.85;
+      margin: 0;
+    }
+
+    .lux-manifesto__text p {
+      margin: 0 0 16px 0;
+    }
+
+    .lux-manifesto__text p:last-child {
+      margin: 0;
+    }
+
+    .lux-manifesto__cta {
+      margin-top: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      color: var(--lux-text);
+      padding: 16px 32px;
+      font-weight: 500;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1px solid var(--lux-text);
+      transition: all 0.3s ease;
+    }
+
+    .lux-manifesto__cta:hover {
+      background: var(--lux-text);
+      color: var(--lux-bg);
+    }
+
+    /* CARRUSEL INFINITO (MARQUEE) */
+    .lux-manifesto__marquee {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      overflow: hidden;
+      background-color: var(--lux-marquee-bg); 
+      color: var(--lux-marquee-text);
+      padding: 16px 0;
+      display: flex;
+      white-space: nowrap;
+      border-top: 1px solid var(--lux-marquee-text);
+    }
+
+    .lux-marquee__track {
+      display: inline-flex;
+      animation: luxMarquee {{ section.settings.marquee_speed }}s linear infinite;
+    }
+
+    .lux-marquee__text {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding-right: 40px; 
+    }
+
+    @keyframes luxMarquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* MOBILE RESPONSIVE */
+    @media (max-width: 768px) {
+      .luxe--{{ section.id }} {
+        --lux-pt: {{ section.settings.padding_top | divided_by: 1.5 }}px;
+        --lux-pb: {{ section.settings.padding_bottom | divided_by: 1.5 }}px;
+      }
+      
+      .lux-manifesto__title {
+        margin-bottom: 24px;
+      }
+      
+      .lux-manifesto__cta {
+        margin-top: 32px;
+        width: 100%;
+      }
+    }
+  </style>
+
+  <div class="lux-manifesto__inner">
+    {% if section.settings.kicker != blank %}
+      <div class="lux-manifesto__kicker">{{ section.settings.kicker }}</div>
+    {% endif %}
+
+    {% if section.settings.title != blank %}
+      <h2 class="lux-manifesto__title">{{ section.settings.title }}</h2>
+    {% endif %}
+
+    {% if section.settings.text != blank %}
+      <div class="lux-manifesto__text">
+        {{ section.settings.text }}
+      </div>
+    {% endif %}
+
+    {% if section.settings.btn_text != blank %}
+      {% assign button_url = section.settings.btn_link | default: 'https://www.luxoboutique.com/collections/promociones' %}
+      <a href="{{ button_url }}" class="lux-manifesto__cta">
+        {{ section.settings.btn_text }}
+      </a>
+    {% endif %}
+  </div>
+
+  {% if section.settings.show_marquee and section.settings.marquee_text != blank %}
+    <div class="lux-manifesto__marquee">
+      <div class="lux-marquee__track">
+        {% for i in (1..10) %}
+          <span class="lux-marquee__text">{{ section.settings.marquee_text }} &nbsp; •</span>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Pascua Manifesto",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenido Editorial"
+    },
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Antetítulo (Texto pequeño)",
+      "default": "LA CAMPAÑA DE PASCUA"
+    },
+    {
+      "type": "textarea",
+      "id": "title",
+      "label": "Título Principal",
+      "default": "REDEFINE TUS BÁSICOS ESTA TEMPORADA."
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Cuerpo de texto",
+      "default": "<p>Una colección pensada para la comodidad sin sacrificar la elegancia. Diseñada con tonos neutros que se adaptan a ti, celebrando la simplicidad y el estilo puro en esta Pascua.</p>"
+    },
+    {
+      "type": "text",
+      "id": "btn_text",
+      "label": "Texto del botón (opcional)",
+      "default": "VER PROMOCIONES"
+    },
+    {
+      "type": "url",
+      "id": "btn_link",
+      "label": "Enlace del botón",
+      "info": "Por defecto dirige a Promociones si se deja en blanco."
+    },
+    {
+      "type": "header",
+      "content": "Carrusel de Promociones (Marquee)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_marquee",
+      "label": "Mostrar carrusel inferior",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "marquee_text",
+      "label": "Texto del carrusel",
+      "default": "APROVECHA NUESTRAS PROMOCIONES DE EASTER"
+    },
+    {
+      "type": "color",
+      "id": "marquee_bg_color",
+      "label": "Color de fondo del carrusel",
+      "default": "#FFD1DC",
+      "info": "Rosa pastel por defecto para temática de Pascua."
+    },
+    {
+      "type": "color",
+      "id": "marquee_text_color",
+      "label": "Color de texto del carrusel",
+      "default": "#111111"
+    },
+    {
+      "type": "range",
+      "id": "marquee_speed",
+      "label": "Velocidad de animación",
+      "min": 10,
+      "max": 60,
+      "step": 2,
+      "default": 30,
+      "unit": "s"
+    },
+    {
+      "type": "header",
+      "content": "Fondo y Diseño"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Imagen de fondo (Pascua)",
+      "info": "Si se deja en blanco, se mostrará un patrón de huevos de Pascua por defecto."
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo / Filtro",
+      "default": "#FAF9F6",
+      "info": "Sirve como color base o como capa superpuesta si hay una imagen/patrón."
+    },
+    {
+      "type": "range",
+      "id": "bg_overlay_opacity",
+      "label": "Opacidad del filtro sobre la imagen",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 80,
+      "unit": "%",
+      "info": "Aumenta este valor si el texto no se lee bien sobre el fondo de Pascua."
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#111111"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Alineación del texto",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Ancho máximo del texto",
+      "min": 600,
+      "max": 1200,
+      "step": 50,
+      "default": 800,
+      "unit": "px",
+      "info": "Mantenlo entre 600 y 800 para que se vea más editorial."
+    },
+    {
+      "type": "header",
+      "content": "Espaciado"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding superior",
+      "min": 20,
+      "max": 150,
+      "step": 5,
+      "default": 100,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding inferior",
+      "min": 20,
+      "max": 150,
+      "step": 5,
+      "default": 100,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Minimal Pascua Manifesto",
+      "category": "Texto"
+    }
+  ]
+}
+{% endschema %}

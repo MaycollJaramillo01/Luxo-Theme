@@ -1,0 +1,304 @@
+{% comment %}
+  File: sections/luxo-collections.liquid
+  Luxo – Collections Grid (4 desktop / 2 mobile) – dynamic blocks
+{% endcomment %}
+
+<section class="luxo-collections luxe--{{ section.id }}">
+  <style>
+    .luxe--{{ section.id }} {
+      --lux-cream: #f5eede;
+      --lux-black: #1f1d20;
+      --lux-taupe: #7b746a;
+      --lux-beige: #d6c9b6;
+
+      --lux-bg: {{ section.settings.bg }};
+      --lux-pt: {{ section.settings.padding_top }}px;
+      --lux-pb: {{ section.settings.padding_bottom }}px;
+    }
+  </style>
+
+  <div class="luxo-collections__inner {% if section.settings.full_bleed %}luxo-collections__inner--full{% else %}page-width{% endif %}">
+    {% if section.settings.heading != blank %}
+      <header class="luxo-collections__header">
+        <h2 class="luxo-collections__title">{{ section.settings.heading }}</h2>
+
+        {% assign sub = section.settings.subheading | strip %}
+        {% if sub != blank and sub != "-" %}
+          <p class="luxo-collections__sub">{{ section.settings.subheading }}</p>
+        {% endif %}
+      </header>
+    {% endif %}
+
+    <div class="luxo-collections__grid" role="list">
+      {% for block in section.blocks %}
+        {% assign c = block.settings.collection %}
+        {% if c != blank %}
+          <a class="luxo-collections__card" href="{{ c.url }}" role="listitem" {{ block.shopify_attributes }}>
+            <div class="luxo-collections__media">
+              {% if c.featured_image %}
+                {{ c.featured_image
+                  | image_url: width: 1200
+                  | image_tag:
+                    widths: '400,800,1200',
+                    sizes: '(min-width: 990px) 25vw, 50vw',
+                    loading: 'lazy',
+                    alt: c.title
+                }}
+              {% else %}
+                {% assign first_product = c.products.first %}
+                {% if first_product and first_product.featured_image %}
+                  {{ first_product.featured_image
+                    | image_url: width: 1200
+                    | image_tag:
+                      widths: '400,800,1200',
+                      sizes: '(min-width: 990px) 25vw, 50vw',
+                      loading: 'lazy',
+                      alt: c.title
+                  }}
+                {% else %}
+                  <div class="luxo-collections__placeholder" aria-hidden="true"></div>
+                {% endif %}
+              {% endif %}
+            </div>
+
+            <div class="luxo-collections__label">
+              <span class="luxo-collections__label-text">
+                {% assign lbl = block.settings.label | strip %}
+                {% if lbl != blank and lbl != "-" %}
+                  {{ block.settings.label }}
+                {% else %}
+                  {{ c.title }}
+                {% endif %}
+              </span>
+              <span class="luxo-collections__arrow" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </span>
+            </div>
+          </a>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+/* ============================
+   LUXO – Collections Grid (4/2)
+============================ */
+.luxo-collections {
+  background: var(--lux-bg, #f5eede);
+  padding-top: var(--lux-pt, 40px);
+  padding-bottom: var(--lux-pb, 40px);
+}
+
+.luxo-collections__inner {
+  margin: 0 auto;
+}
+
+.luxo-collections__inner--full {
+  max-width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Header */
+.luxo-collections__header {
+  padding: 0 20px 24px;
+  text-align: center; /* Centrado para coincidir con el diseño */
+}
+
+.luxo-collections__title {
+  margin: 0;
+  font-size: clamp(32px, 4vw, 58px);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  font-weight: 900; /* Extra bold */
+  color: var(--lux-black, #1f1d20);
+}
+
+.luxo-collections__sub {
+  margin: 12px auto 0;
+  max-width: 70ch;
+  color: rgba(31, 29, 32, .78);
+  font-size: 16px;
+  letter-spacing: 0.02em;
+}
+
+/* Grid layout */
+.luxo-collections__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid rgba(123, 116, 106, .28);
+  border-bottom: 1px solid rgba(123, 116, 106, .28);
+}
+
+/* Card */
+.luxo-collections__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  border-right: 1px solid rgba(123, 116, 106, .28);
+  background: var(--lux-cream, #f5eede);
+  overflow: hidden;
+  transition: background 300ms ease;
+}
+
+.luxo-collections__card:last-child {
+  border-right: 0;
+}
+
+/* Media (image) */
+.luxo-collections__media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4; /* Proporción retrato para moda */
+  overflow: hidden;
+  background: var(--lux-beige, #d6c9b6);
+}
+
+.luxo-collections__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transform: scale(1.02);
+  transition: transform 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 500ms ease;
+}
+
+/* Label bar */
+.luxo-collections__label {
+  display: flex;
+  align-items: center; /* Centra la flecha con textos de múltiples líneas */
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  background: #ffffff;
+  flex-grow: 1; /* Rellena el espacio si las imágenes difieren un poco */
+}
+
+.luxo-collections__label-text {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  line-height: 1.4;
+  color: var(--lux-black, #1f1d20);
+  flex: 1; /* Permite que el texto ocupe el espacio y empuje la flecha */
+}
+
+.luxo-collections__arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--lux-black, #1f1d20);
+  transform: translateX(0);
+  transition: transform 300ms ease;
+}
+
+/* Hover Effects */
+@media (hover: hover) and (pointer: fine) {
+  .luxo-collections__card:hover .luxo-collections__media img {
+    transform: scale(1.06);
+    filter: brightness(0.95);
+  }
+  .luxo-collections__card:hover .luxo-collections__arrow {
+    transform: translateX(6px);
+  }
+}
+
+/* Mobile: 2 columnas (2x2) */
+@media (max-width: 749px) {
+  .luxo-collections__header { padding: 0 16px 20px; }
+  
+  .luxo-collections__title {
+      font-size: clamp(28px, 8vw, 36px);
+  }
+
+  .luxo-collections__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-left: 0;
+    border-right: 0;
+  }
+
+  .luxo-collections__card {
+    border-right: 1px solid rgba(123, 116, 106, .28);
+    border-bottom: 1px solid rgba(123, 116, 106, .28);
+  }
+  
+  .luxo-collections__card:nth-child(2n) {
+    border-right: 0;
+  }
+  
+  .luxo-collections__card:nth-last-child(-n+2) {
+      border-bottom: 0; /* Quita el borde inferior de la última fila en móvil */
+  }
+
+  .luxo-collections__media {
+    aspect-ratio: 4 / 5; 
+  }
+
+  .luxo-collections__label {
+    padding: 16px 14px;
+    gap: 8px;
+  }
+  
+  .luxo-collections__label-text {
+      font-size: 10px;
+  }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Luxo Colecciones",
+  "settings": [
+    { "type": "checkbox", "id": "full_bleed", "label": "Ancho completo (Full width)", "default": true },
+    { "type": "text", "id": "heading", "label": "Título", "default": "Encuentra tu ajuste" },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subtítulo (opcional) — usa '-' para ocultar",
+      "default": "-"
+    },
+    { "type": "range", "id": "padding_top", "label": "Espaciado superior", "min": 0, "max": 120, "step": 4, "default": 40 },
+    { "type": "range", "id": "padding_bottom", "label": "Espaciado inferior", "min": 0, "max": 120, "step": 4, "default": 40 },
+    { "type": "color", "id": "bg", "label": "Color de fondo", "default": "#ffffff" }
+  ],
+  "blocks": [
+    {
+      "type": "collection_card",
+      "name": "Colección",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Seleccionar colección" },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Etiqueta personalizada (opcional)",
+          "info": "Si se deja en blanco, usará el nombre de la colección."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "Luxo Colecciones",
+      "blocks": [
+        { "type": "collection_card" },
+        { "type": "collection_card" },
+        { "type": "collection_card" },
+        { "type": "collection_card" }
+      ]
+    }
+  ]
+}
+{% endschema %}

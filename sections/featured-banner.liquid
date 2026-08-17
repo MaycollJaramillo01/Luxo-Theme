@@ -1,0 +1,343 @@
+{% comment %}
+  Section: Luxo Featured Items - Minimal
+  Corregido:
+  - Lee correctamente el producto seleccionado
+  - Evita fallbacks demo
+  - Evita glitches visuales causados por la fuente TheSeasons DEMO
+  - Desactiva ligaduras y sustituciones en títulos
+{% endcomment %}
+
+<section class="lux-featured-minimal luxe--{{ section.id }}">
+  <div class="page-width">
+    {%- if section.settings.title != blank -%}
+      <div class="lux-featured__header">
+        <h2 class="lux-featured__main-title">{{ section.settings.title }}</h2>
+      </div>
+    {%- endif -%}
+
+    <div class="lux-featured__grid">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign product_obj = block.settings.product
+          assign featured_img = block.settings.image | default: product_obj.featured_image
+          assign final_heading = ''
+          assign final_url = '#'
+
+          if block.settings.heading != blank
+            assign final_heading = block.settings.heading
+          elsif product_obj != blank and product_obj.title != blank
+            assign final_heading = product_obj.title
+          endif
+
+          if product_obj != blank and product_obj.url != blank
+            assign final_url = product_obj.url
+          endif
+        -%}
+
+        <div class="lux-featured__item" {{ block.shopify_attributes }}>
+          <div class="lux-featured__media">
+            {%- if featured_img != blank -%}
+              <img
+                src="{{ featured_img | image_url: width: 1200 }}"
+                alt="{% if featured_img.alt != blank %}{{ featured_img.alt | escape }}{% elsif final_heading != blank %}{{ final_heading | escape }}{% else %}Producto{% endif %}"
+                width="1200"
+                height="1200"
+                loading="lazy"
+                class="lux-featured__image"
+              >
+            {%- else -%}
+              {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- endif -%}
+          </div>
+
+          <div class="lux-featured__content">
+            {%- if block.settings.eyebrow != blank -%}
+              <p class="lux-featured__eyebrow">{{ block.settings.eyebrow | upcase }}</p>
+            {%- endif -%}
+
+            {%- if final_heading != blank -%}
+              <h3 class="lux-featured__heading">{{ final_heading | escape }}</h3>
+            {%- endif -%}
+
+            {%- if block.settings.button_label != blank and product_obj != blank -%}
+              <a href="{{ final_url }}" class="lux-featured__btn">
+                {{ block.settings.button_label }}
+              </a>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.bottom_text != blank -%}
+      <div class="lux-featured__footer">
+        <p class="lux-featured__brand-text">{{ section.settings.bottom_text }}</p>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<style>
+.luxe--{{ section.id }} {
+  padding-top: {{ section.settings.padding_top }}px;
+  padding-bottom: {{ section.settings.padding_bottom }}px;
+  background-color: {{ section.settings.bg_color }};
+}
+
+.lux-featured__header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.lux-featured__main-title {
+  font-family: var(--font-heading-family, serif);
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: {{ section.settings.title_color }};
+  margin: 0;
+}
+
+.lux-featured__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: {{ section.settings.grid_gap }}px;
+}
+
+.lux-featured__item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.lux-featured__media {
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  margin-bottom: 1.8rem;
+  background: #f5f5f5;
+}
+
+.lux-featured__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.1s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.lux-featured__item:hover .lux-featured__image {
+  transform: scale(1.06);
+}
+
+.lux-featured__content {
+  text-align: center;
+  padding: 0 1rem;
+}
+
+.lux-featured__eyebrow {
+  font-family: "Poppins", sans-serif !important;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.125em;
+  color: {{ section.settings.accent_color }};
+  margin: 0 0 0.8rem 0;
+  text-transform: uppercase;
+}
+
+/* FIX CLAVE:
+   No usar la fuente DEMO aquí porque inserta glifos raros en números/textos.
+   Además se desactivan ligaduras y sustituciones tipográficas. */
+.lux-featured__heading {
+  font-family: "Poppins", sans-serif !important;
+  font-size: clamp(21px, 3.5vw, 29px);
+  line-height: 1.25;
+  font-weight: 500 !important;
+  color: #1a1a1a;
+  margin: 0 0 1.5rem 0;
+  word-break: break-word;
+  letter-spacing: 0 !important;
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "clig" 0, "dlig" 0, "hlig" 0, "calt" 0, "salt" 0, "ss01" 0, "ss02" 0, "ss03" 0;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.lux-featured__btn {
+  display: inline-block;
+  font-family: "Poppins", sans-serif !important;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: #000;
+  text-decoration: none;
+  padding: 12px 32px;
+  border: 1px solid #000;
+  border-radius: 50px;
+  transition: all 0.35s ease;
+}
+
+.lux-featured__btn:hover {
+  background: #000;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.lux-featured__footer {
+  margin-top: 6rem;
+  text-align: center;
+}
+
+.lux-featured__brand-text {
+  font-family: var(--font-heading-family, serif);
+  font-size: clamp(19px, 3vw, 24px);
+  line-height: 1.4;
+  font-style: italic;
+  color: #333;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.placeholder-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: #f2f2f2;
+}
+
+@media (max-width: 768px) {
+  .lux-featured__grid {
+    grid-template-columns: 1fr;
+    gap: {{ section.settings.grid_gap | times: 0.7 | round: 0 }}px;
+  }
+
+  .lux-featured__media {
+    margin-bottom: 1.4rem;
+  }
+
+  .lux-featured__content {
+    padding: 0 0.5rem;
+  }
+
+  .lux-featured__heading {
+    font-size: clamp(20px, 6vw, 26px);
+  }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Luxo Featured Items",
+  "tag": "section",
+  "class": "section",
+  "max_blocks": 2,
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título de sección",
+      "default": "Featured Items"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "textarea",
+      "id": "bottom_text",
+      "label": "Texto inferior (marca)",
+      "default": "Luxo Todo para mujer en un Solo Lugar"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Color del eyebrow",
+      "default": "#9a7e5e"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 20,
+      "max": 160,
+      "step": 4,
+      "label": "Padding superior",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 20,
+      "max": 160,
+      "step": 4,
+      "label": "Padding inferior",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 20,
+      "max": 80,
+      "step": 4,
+      "label": "Espacio entre columnas",
+      "default": 48
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Producto Destacado",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Producto"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Imagen personalizada",
+          "info": "Sobrescribe la imagen del producto"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Texto superior (eyebrow)",
+          "default": "The Shaper Short"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Título personalizado",
+          "info": "Deja vacío para usar el nombre real del producto"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Texto del botón",
+          "default": "TRY IT FOR YOURSELF"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo Featured Items Minimal",
+      "blocks": [
+        {
+          "type": "item"
+        },
+        {
+          "type": "item"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,509 @@
+{% comment %}
+  Sección: Luxo Carrusel Independiente (V5 - Descuento Visual Dinámico)
+{% endcomment %}
+
+<section class="lux-pure-carousel" id="LuxCarousel-{{ section.id }}" data-infinite="{{ section.settings.infinite_loop }}">
+  <div class="lux-pure-carousel__header">
+    <h2 class="lux-pure-carousel__title">{{ section.settings.title }}</h2>
+  </div>
+
+  <div class="lux-pure-carousel__wrapper">
+    {%- if section.settings.show_arrows -%}
+      <button class="lux-carousel-btn lux-carousel-btn--prev" aria-label="Anterior">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+    {%- endif -%}
+
+    <div class="lux-pure-carousel__track" id="LuxTrack-{{ section.id }}">
+      {%- assign collection = section.settings.collection -%}
+      {%- assign global_discount = section.settings.global_discount -%}
+
+      {%- if collection != blank and collection.products_count > 0 -%}
+        {%- for product in collection.products limit: section.settings.limit -%}
+          <a href="{{ product.url }}" class="lux-pure-card">
+            <div class="lux-pure-card__media">
+              {%- if product.featured_image -%}
+                <img 
+                  src="{{ product.featured_image | image_url: width: 800 }}" 
+                  alt="{{ product.featured_image.alt | escape | default: product.title }}"
+                  width="800"
+                  height="1000"
+                  loading="lazy">
+              {%- else -%}
+                {{ 'product-1' | placeholder_svg_tag: 'lux-placeholder' }}
+              {%- endif -%}
+            </div>
+            <div class="lux-pure-card__info">
+              <h3 class="lux-pure-card__title">{{ product.title }}</h3>
+              
+              <p class="lux-pure-card__price">
+                {%- if global_discount > 0 -%}
+                  {% comment %} LÓGICA MATEMÁTICA PARA EL DESCUENTO VISUAL {% endcomment %}
+                  {%- assign discount_multiplier = 100 | minus: global_discount | divided_by: 100.0 -%}
+                  {%- assign sale_price = product.price | times: discount_multiplier -%}
+                  
+                  <span class="lux-price--sale">{{ sale_price | money }}</span>
+                  <s class="lux-price--compare">{{ product.price | money }}</s>
+
+                {%- elsif product.compare_at_price > product.price -%}
+                  {% comment %} LÓGICA ORIGINAL SI HAY PRECIO DE COMPARACIÓN MANUAL {% endcomment %}
+                  <span class="lux-price--sale">{{ product.price | money }}</span>
+                  <s class="lux-price--compare">{{ product.compare_at_price | money }}</s>
+                  
+                {%- else -%}
+                  <span class="lux-price--regular">{{ product.price | money }}</span>
+                {%- endif -%}
+              </p>
+
+            </div>
+          </a>
+        {%- endfor -%}
+      {%- else -%}
+        {%- for i in (1..6) -%}
+          <div class="lux-pure-card">
+            <div class="lux-pure-card__media">
+              {{ 'product-' | append: i | placeholder_svg_tag: 'lux-placeholder' }}
+            </div>
+            <div class="lux-pure-card__info">
+              <h3 class="lux-pure-card__title">Ejemplo de Producto {{ i }}</h3>
+              <p class="lux-pure-card__price">
+                {%- if global_discount > 0 -%}
+                  <span class="lux-price--sale">Venta Activa</span>
+                  <s class="lux-price--compare">Original</s>
+                {%- else -%}
+                  <span class="lux-price--regular">$55.00</span>
+                {%- endif -%}
+              </p>
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.show_arrows -%}
+      <button class="lux-carousel-btn lux-carousel-btn--next" aria-label="Siguiente">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    {%- endif -%}
+  </div>
+</section>
+
+<style>
+  /* =============================================
+     CONFIGURACIÓN DE FUENTES (CORREGIDO)
+  ============================================= */
+  {% if section.settings.title_font == 'theme' %}
+    #LuxCarousel-{{ section.id }} .lux-pure-carousel__title { 
+      font-family: var(--font-heading-family) !important; 
+    }
+    #LuxCarousel-{{ section.id }} .lux-pure-card__title, 
+    #LuxCarousel-{{ section.id }} .lux-pure-card__price { 
+      font-family: var(--font-body-family) !important; 
+    }
+  {% elsif section.settings.title_font == 'serif' %}
+    #LuxCarousel-{{ section.id }} .lux-pure-carousel__title { 
+      font-family: Georgia, "Times New Roman", serif !important; 
+    }
+    #LuxCarousel-{{ section.id }} .lux-pure-card__title, 
+    #LuxCarousel-{{ section.id }} .lux-pure-card__price { 
+      font-family: system-ui, sans-serif !important; 
+    }
+  {% else %}
+    #LuxCarousel-{{ section.id }} .lux-pure-carousel__title,
+    #LuxCarousel-{{ section.id }} .lux-pure-card__title, 
+    #LuxCarousel-{{ section.id }} .lux-pure-card__price { 
+      font-family: system-ui, sans-serif !important; 
+    }
+  {% endif %}
+
+  /* =============================================
+     ESTILOS PRINCIPALES DE LA SECCIÓN
+  ============================================= */
+  #LuxCarousel-{{ section.id }} {
+    background-color: {{ section.settings.bg_color }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .lux-pure-carousel__header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 0 20px;
+  }
+
+  .lux-pure-carousel__title {
+    font-size: clamp(28px, 4vw, {{ section.settings.title_size }}px);
+    font-weight: {{ section.settings.title_weight }};
+    font-style: {{ section.settings.title_style }};
+    color: {{ section.settings.text_color }};
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  .lux-pure-carousel__wrapper {
+    position: relative;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  .lux-pure-carousel__track {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 20px;
+  }
+
+  .lux-pure-carousel__track::-webkit-scrollbar { display: none; }
+  .lux-pure-carousel__track { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .lux-pure-card {
+    flex: 0 0 calc((100% - (20px * ({{ section.settings.items_desktop }} - 1))) / {{ section.settings.items_desktop }});
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    min-width: 0;
+  }
+
+  .lux-pure-card__media {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    background-color: {{ section.settings.card_img_bg }};
+    overflow: hidden;
+    margin-bottom: 15px;
+  }
+
+  .lux-pure-card__media img,
+  .lux-placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+  }
+
+  .lux-pure-card:hover .lux-pure-card__media img {
+    transform: scale(1.05);
+  }
+
+  .lux-pure-card__info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+    width: 100%;
+  }
+
+  .lux-pure-card__title {
+    font-size: {{ section.settings.product_title_size }}px;
+    font-weight: {{ section.settings.product_title_weight }};
+    font-style: {{ section.settings.product_title_style }};
+    color: {{ section.settings.text_color }};
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ESTILOS DE PRECIO Y DESCUENTO */
+  .lux-pure-card__price {
+    font-size: calc({{ section.settings.product_title_size }}px + 1px);
+    font-weight: 700;
+    color: {{ section.settings.text_color }};
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .lux-price--sale {
+    color: #c02b2b;
+  }
+
+  .lux-price--compare {
+    color: {{ section.settings.text_color }};
+    opacity: 0.6;
+    font-size: 0.85em;
+    font-weight: 400;
+    text-decoration: line-through;
+  }
+
+  /* BOTONES DE NAVEGACIÓN */
+  .lux-carousel-btn {
+    position: absolute;
+    top: calc(50% - 40px);
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    color: {{ section.settings.text_color }};
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  }
+
+  .lux-carousel-btn:hover {
+    background: #ffffff;
+    transform: translateY(-50%) scale(1.05);
+  }
+  .lux-carousel-btn--prev { left: 10px; }
+  .lux-carousel-btn--next { right: 10px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 1024px) {
+    .lux-pure-card { flex: 0 0 calc((100% - 40px) / 3); }
+  }
+
+  @media (max-width: 768px) {
+    .lux-pure-carousel__wrapper { padding: 0 10px; }
+    .lux-pure-card { flex: 0 0 calc(50% - 10px); }
+    .lux-carousel-btn { width: 36px; height: 36px; top: calc(50% - 30px); }
+    .lux-carousel-btn--prev { left: 5px; }
+    .lux-carousel-btn--next { right: 5px; }
+  }
+</style>
+
+<script>
+  function initLuxCarousel(sectionId) {
+    const section = document.querySelector(`#LuxCarousel-${sectionId}`);
+    if (!section) return;
+
+    const track = section.querySelector('.lux-pure-carousel__track');
+    const btnNext = section.querySelector('.lux-carousel-btn--next');
+    const btnPrev = section.querySelector('.lux-carousel-btn--prev');
+    const isInfinite = section.dataset.infinite === 'true';
+
+    if (!track || !btnNext || !btnPrev) return;
+
+    const moveCarousel = (direction) => {
+      const firstCard = track.querySelector('.lux-pure-card');
+      if (!firstCard) return;
+      const cardWidth = firstCard.offsetWidth + 20;
+      const maxScroll = track.scrollWidth - track.clientWidth;
+
+      if (direction === 'next') {
+        if (isInfinite && track.scrollLeft >= maxScroll - 10) {
+          track.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          track.scrollBy({ left: cardWidth * 2, behavior: 'smooth' });
+        }
+      } else {
+        if (isInfinite && track.scrollLeft <= 10) {
+          track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' });
+        } else {
+          track.scrollBy({ left: -(cardWidth * 2), behavior: 'smooth' });
+        }
+      }
+    };
+
+    btnNext.addEventListener('click', () => moveCarousel('next'));
+    btnPrev.addEventListener('click', () => moveCarousel('prev'));
+  }
+
+  document.addEventListener('DOMContentLoaded', () => initLuxCarousel('{{ section.id }}'));
+  document.addEventListener('shopify:section:load', (e) => {
+    if (e.detail.sectionId === '{{ section.id }}') initLuxCarousel('{{ section.id }}');
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Luxo Carrusel Puro",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Configuración General"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Top picks for you"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Colección a mostrar"
+    },
+    {
+      "type": "range",
+      "id": "global_discount",
+      "label": "Descuento visual a la colección (%)",
+      "info": "Aplica un descuento matemático solo visual a este carrusel (0 para desactivar).",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "label": "Límite total de productos",
+      "min": 4,
+      "max": 20,
+      "step": 1,
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "items_desktop",
+      "label": "Productos por fila (Tamaño de tarjetas)",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Mostrar flechas de navegación",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "infinite_loop",
+      "label": "Activar loop infinito",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Estilos de Texto"
+    },
+    {
+      "type": "select",
+      "id": "title_font",
+      "label": "Familia Tipográfica",
+      "options": [
+        { "value": "theme", "label": "Usar fuentes del Tema" },
+        { "value": "serif", "label": "Elegante (Serif)" },
+        { "value": "sans", "label": "Moderna (Sans-serif)" }
+      ],
+      "default": "theme"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Tamaño del título principal",
+      "min": 24,
+      "max": 60,
+      "step": 2,
+      "default": 42
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Grosor del título principal",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "600", "label": "Semi Negrita" },
+        { "value": "700", "label": "Negrita (Bold)" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "select",
+      "id": "title_style",
+      "label": "Estilo del título principal",
+      "options": [
+        { "value": "normal", "label": "Normal" },
+        { "value": "italic", "label": "Cursiva (Italic)" }
+      ],
+      "default": "normal"
+    },
+    {
+      "type": "range",
+      "id": "product_title_size",
+      "label": "Tamaño del texto de productos",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "product_title_weight",
+      "label": "Grosor del texto de productos",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "600", "label": "Semi Negrita" },
+        { "value": "700", "label": "Negrita (Bold)" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "select",
+      "id": "product_title_style",
+      "label": "Estilo del texto de productos",
+      "options": [
+        { "value": "normal", "label": "Normal" },
+        { "value": "italic", "label": "Cursiva (Italic)" }
+      ],
+      "default": "normal"
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fondo de la sección",
+      "default": "#fcfaf8"
+    },
+    {
+      "type": "color",
+      "id": "card_img_bg",
+      "label": "Fondo detrás de la imagen",
+      "default": "#f2eee8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "header",
+      "content": "Espaciado"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding Superior",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding Inferior",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo Carrusel Puro"
+    }
+  ]
+}
+{% endschema %}

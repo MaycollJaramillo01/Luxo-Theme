@@ -1,0 +1,740 @@
+{% comment %} Luxo — Collection Product Grid (Apple-clean) {% endcomment %}
+{%- assign sid = 'LuxGrid-' | append: section.id -%}
+
+{%- assign col = section.settings.collection -%}
+{%- if col == blank -%}{%- assign col = collection -%}{%- endif -%}
+
+<section
+  id="{{ sid }}"
+  class="lg"
+  style="
+    --lg-bg:      {{ section.settings.bg_color }};
+    --lg-surface: {{ section.settings.card_bg }};
+    --lg-text:    {{ section.settings.text_color }};
+    --lg-muted:   {{ section.settings.muted_color }};
+    --lg-accent:  {{ section.settings.accent_color }};
+    --lg-sale:    {{ section.settings.sale_color }};
+    --lg-radius:  {{ section.settings.card_radius }}px;
+    --lg-cols-d:  {{ section.settings.columns_desktop }};
+    --lg-cols-m:  {{ section.settings.columns_mobile }};
+    --lg-gap:     {{ section.settings.gap }}px;
+    --lg-pt:      {{ section.settings.padding_top }}px;
+    --lg-pb:      {{ section.settings.padding_bottom }}px;
+    --lg-max-w:   {{ section.settings.container_width }}px;
+  "
+>
+  <div class="lg__wrap">
+
+    {%- if section.settings.title != blank or section.settings.subtitle != blank -%}
+    <header class="lg__header">
+      {%- if section.settings.eyebrow != blank -%}
+      <p class="lg__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      {%- if section.settings.title != blank -%}
+      <h2 class="lg__title">{{ section.settings.title }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subtitle != blank -%}
+      <p class="lg__subtitle">{{ section.settings.subtitle }}</p>
+      {%- endif -%}
+    </header>
+    {%- endif -%}
+
+    {%- if col != blank and col.products_count > 0 -%}
+
+      {%- if section.settings.show_collection_head -%}
+      <div class="lg__col-head">
+        <div>
+          <h3 class="lg__col-title">{{ col.title }}</h3>
+          {%- if section.settings.show_description and col.description != blank -%}
+          <p class="lg__col-desc">{{ col.description | strip_html | truncate: 140 }}</p>
+          {%- endif -%}
+        </div>
+        {%- if section.settings.show_view_all -%}
+        <a class="lg__viewall" href="{{ col.url }}">
+          {{ section.settings.view_all_label | default: 'Ver colección' }}
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        {%- endif -%}
+      </div>
+      {%- endif -%}
+
+      <ul class="lg__grid" role="list">
+        {%- for product in col.products limit: section.settings.max_products -%}
+          {%- liquid
+            assign fallback = product.selected_or_first_available_variant
+            if fallback == blank
+              assign fallback = product.first_available_variant
+            endif
+            if fallback == blank
+              assign fallback = product.variants.first
+            endif
+            assign cv = fallback
+
+            assign has_variants = false
+            unless product.has_only_default_variant
+              assign has_variants = true
+            endunless
+
+            assign cv_available = false
+            if cv != blank
+              assign cv_available = cv.available
+            elsif product.available
+              assign cv_available = true
+            endif
+
+            assign price_raw = cv.price | default: product.price_min
+            assign compare_raw = blank
+            if cv.compare_at_price != blank and cv.compare_at_price > price_raw
+              assign compare_raw = cv.compare_at_price
+            elsif product.compare_at_price_max != blank and product.compare_at_price_max > price_raw
+              assign compare_raw = product.compare_at_price_max
+            endif
+
+            assign price_text   = price_raw | money
+            assign compare_text = ''
+            if compare_raw != blank
+              assign compare_text = compare_raw | money
+            endif
+
+            if section.settings.global_discount > 0
+              assign disc_mult   = 100 | minus: section.settings.global_discount | divided_by: 100.0
+              assign sale_price  = price_raw | times: disc_mult
+              assign price_text   = sale_price | money
+              assign compare_text = price_raw | money
+            endif
+
+            assign cv_img = blank
+            if cv.featured_media != blank
+              assign cv_img = cv.featured_media.preview_image
+            elsif cv.image != blank
+              assign cv_img = cv.image
+            elsif product.featured_media != blank
+              assign cv_img = product.featured_media.preview_image
+            endif
+
+            assign variant_url = product.url
+            if cv != blank
+              assign variant_url = product.url | append: '?variant=' | append: cv.id
+            endif
+
+            assign color_pos = 0
+            assign size_pos  = 0
+            for opt in product.options_with_values
+              assign oname = opt.name | downcase
+              if oname contains 'color' or oname contains 'colour' or oname contains 'tono'
+                assign color_pos = forloop.index
+              endif
+              if oname contains 'size' or oname contains 'talla' or oname contains 'tamano'
+                assign size_pos = forloop.index
+              endif
+            endfor
+          -%}
+
+          <li class="lg__item" role="listitem">
+            <article class="lg__card" data-product-card>
+
+              <a class="lg__card__media-link" href="{{ variant_url }}" aria-label="{{ product.title | escape }}" data-product-link tabindex="-1">
+                <div class="lg__card__media">
+                  {%- if cv_img != blank -%}
+                  <img
+                    class="lg__card__img"
+                    src="{{ cv_img | image_url: width: 900 }}"
+                    srcset="
+                      {{ cv_img | image_url: width: 450 }} 450w,
+                      {{ cv_img | image_url: width: 700 }} 700w,
+                      {{ cv_img | image_url: width: 900 }} 900w,
+                      {{ cv_img | image_url: width: 1200 }} 1200w
+                    "
+                    sizes="(max-width: 749px) calc(100vw / {{ section.settings.columns_mobile }} - {{ section.settings.gap }}px), calc(var(--lg-max-w) / {{ section.settings.columns_desktop }} - {{ section.settings.gap }}px)"
+                    width="{{ cv_img.width }}"
+                    height="{{ cv_img.height }}"
+                    alt="{{ cv_img.alt | default: product.title | escape }}"
+                    loading="lazy"
+                    data-main-image
+                  >
+                  {%- else -%}
+                  {{ 'product-1' | placeholder_svg_tag: 'lg__card__img lg__card__img--placeholder' }}
+                  {%- endif -%}
+
+                  {%- if section.settings.show_badges -%}
+                  <div class="lg__badges">
+                    {%- if product.available == false -%}
+                    <span class="lg__badge lg__badge--out">{{ section.settings.badge_soldout }}</span>
+                    {%- elsif compare_text != blank or section.settings.global_discount > 0 -%}
+                    <span class="lg__badge lg__badge--sale">{{ section.settings.badge_sale }}</span>
+                    {%- elsif section.settings.new_tag != blank and product.tags contains section.settings.new_tag -%}
+                    <span class="lg__badge">{{ section.settings.badge_new }}</span>
+                    {%- endif -%}
+                  </div>
+                  {%- endif -%}
+                </div>
+              </a>
+
+              <div class="lg__card__body">
+                <a class="lg__card__title" href="{{ variant_url }}" data-product-link>{{ product.title }}</a>
+
+                <div class="lg__card__price{% if compare_text != blank %} is-sale{% endif %}" data-price-wrap>
+                  <span class="lg__price lg__price--now" data-price-current>{{ price_text }}</span>
+                  <s class="lg__price lg__price--was{% if compare_text == blank %} is-hidden{% endif %}" data-price-compare>{{ compare_text }}</s>
+                </div>
+
+                {%- if section.settings.show_variant_label -%}
+                <p class="lg__variant-label{% if cv.title == blank or cv.title == 'Default Title' %} is-hidden{% endif %}" data-variant-label>
+                  {%- unless cv.title == 'Default Title' -%}{{ cv.title }}{%- endunless -%}
+                </p>
+                {%- endif -%}
+
+                {%- if section.settings.show_swatches and product.variants.size > 1 and color_pos > 0 -%}
+                <div class="lg__swatches" aria-label="Colores">
+                  {%- assign seen = '' -%}
+                  {%- for variant in product.variants -%}
+                    {%- liquid
+                      assign color_val = variant.option1
+                      case color_pos
+                        when 2
+                          assign color_val = variant.option2
+                        when 3
+                          assign color_val = variant.option3
+                      endcase
+                      assign key = color_val | handleize
+                      assign token = '|' | append: key | append: '|'
+
+                      assign sw_img = blank
+                      if variant.featured_media != blank
+                        assign sw_img = variant.featured_media.preview_image
+                      elsif variant.image != blank
+                        assign sw_img = variant.image
+                      endif
+
+                      assign v_price = variant.price | money
+                      assign v_compare = ''
+                      if section.settings.global_discount > 0
+                        assign v_sale = variant.price | times: disc_mult
+                        assign v_price = v_sale | money
+                        assign v_compare = variant.price | money
+                      elsif variant.compare_at_price != blank and variant.compare_at_price > variant.price
+                        assign v_compare = variant.compare_at_price | money
+                      endif
+                    -%}
+                    {%- unless seen contains token -%}
+                      {%- if sw_img != blank -%}
+                        {%- assign seen = seen | append: token -%}
+                        <button
+                          type="button"
+                          class="lg__swatch{% if cv != blank and variant.id == cv.id %} active{% endif %}"
+                          data-variant-trigger
+                          data-variant-id="{{ variant.id }}"
+                          data-image-src="{{ sw_img | image_url: width: 900 }}"
+                          data-image-srcset="{{ sw_img | image_url: width: 450 }} 450w, {{ sw_img | image_url: width: 700 }} 700w, {{ sw_img | image_url: width: 900 }} 900w, {{ sw_img | image_url: width: 1200 }} 1200w"
+                          data-price="{{ v_price | escape }}"
+                          data-compare-price="{{ v_compare | escape }}"
+                          data-variant-title="{{ variant.title | escape }}"
+                          data-variant-url="{{ product.url }}?variant={{ variant.id }}"
+                          data-available="{{ variant.available }}"
+                          title="{{ color_val | escape }}"
+                          aria-label="{{ color_val | escape }}"
+                        >
+                          <img src="{{ sw_img | image_url: width: 80 }}" alt="{{ color_val | escape }}" width="80" height="80" loading="lazy">
+                        </button>
+                      {%- endif -%}
+                    {%- endunless -%}
+                  {%- endfor -%}
+                </div>
+                {%- endif -%}
+
+                {%- if has_variants -%}
+                <div class="lg__chips" aria-label="Variantes">
+                  {%- for variant in product.variants -%}
+                    {%- liquid
+                      assign chip_label = variant.title
+                      if product.options.size == 1 and size_pos > 0
+                        case size_pos
+                          when 1
+                            assign chip_label = variant.option1
+                          when 2
+                            assign chip_label = variant.option2
+                          when 3
+                            assign chip_label = variant.option3
+                        endcase
+                      endif
+
+                      assign v_price2 = variant.price | money
+                      assign v_compare2 = ''
+                      if section.settings.global_discount > 0
+                        assign v_sale2 = variant.price | times: disc_mult
+                        assign v_price2 = v_sale2 | money
+                        assign v_compare2 = variant.price | money
+                      elsif variant.compare_at_price != blank and variant.compare_at_price > variant.price
+                        assign v_compare2 = variant.compare_at_price | money
+                      endif
+
+                      assign chip_img = blank
+                      if variant.featured_media != blank
+                        assign chip_img = variant.featured_media.preview_image
+                      elsif variant.image != blank
+                        assign chip_img = variant.image
+                      endif
+                    -%}
+                    <button
+                      type="button"
+                      class="lg__chip{% if cv != blank and variant.id == cv.id %} active{% endif %}"
+                      data-variant-trigger
+                      data-variant-id="{{ variant.id }}"
+                      data-image-src="{% if chip_img != blank %}{{ chip_img | image_url: width: 900 }}{% endif %}"
+                      data-image-srcset="{% if chip_img != blank %}{{ chip_img | image_url: width: 450 }} 450w, {{ chip_img | image_url: width: 700 }} 700w, {{ chip_img | image_url: width: 900 }} 900w, {{ chip_img | image_url: width: 1200 }} 1200w{% endif %}"
+                      data-price="{{ v_price2 | escape }}"
+                      data-compare-price="{{ v_compare2 | escape }}"
+                      data-variant-title="{{ variant.title | escape }}"
+                      data-variant-url="{{ product.url }}?variant={{ variant.id }}"
+                      data-available="{{ variant.available }}"
+                      aria-label="{{ chip_label | escape }}"
+                    >{{ chip_label }}</button>
+                  {%- endfor -%}
+                </div>
+                {%- endif -%}
+
+                {%- if section.settings.show_atc -%}
+                <form class="lg__form" method="post" action="/cart/add" data-product-form>
+                  <input type="hidden" name="id" value="{{ cv.id }}" data-variant-input>
+                  <button
+                    type="submit"
+                    class="lg__btn{% unless cv_available %} lg__btn--disabled{% endunless %}"
+                    {% unless cv_available %}disabled{% endunless %}
+                    data-atc-button
+                  >
+                    {%- if cv_available -%}{{ section.settings.atc_label | default: 'Agregar al carrito' }}{%- else -%}{{ section.settings.badge_soldout }}{%- endif -%}
+                  </button>
+                </form>
+                {%- endif -%}
+              </div>
+
+            </article>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      {%- if section.settings.show_view_all and section.settings.show_collection_head == false -%}
+      <div class="lg__viewall-wrap">
+        <a class="lg__viewall" href="{{ col.url }}">
+          {{ section.settings.view_all_label | default: 'Ver colección' }}
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+      {%- endif -%}
+
+    {%- else -%}
+    <div class="lg__empty">
+      <p>Selecciona una coleccion en los ajustes de la seccion.</p>
+    </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+<style>
+/* ── WRAP ──────────────────────────────────────────── */
+#{{ sid }} { background: var(--lg-bg); padding: var(--lg-pt) 0 var(--lg-pb); -webkit-font-smoothing: antialiased; }
+#{{ sid }} .lg__wrap { max-width: var(--lg-max-w); margin: 0 auto; padding: 0 2.4rem; }
+@media (max-width:749px) { #{{ sid }} .lg__wrap { padding: 0 1.6rem; } }
+
+/* ── HEADER ────────────────────────────────────────── */
+#{{ sid }} .lg__header { text-align: center; margin-bottom: 4.8rem; }
+#{{ sid }} .lg__eyebrow { font-size: 1.2rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--lg-accent); margin: 0 0 1rem; }
+#{{ sid }} .lg__title { font-size: clamp(2.8rem,4vw,4.8rem); font-weight: 700; letter-spacing: -0.028em; line-height: 1.08; color: var(--lg-text); margin: 0 0 1.2rem; }
+#{{ sid }} .lg__subtitle { font-size: clamp(1.5rem,1.8vw,1.8rem); color: var(--lg-muted); line-height: 1.6; max-width: 52ch; margin: 0 auto; }
+
+/* ── COLLECTION HEAD ───────────────────────────────── */
+#{{ sid }} .lg__col-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1.6rem; margin-bottom: 2.4rem; padding-bottom: 1.6rem; border-bottom: 1px solid rgba(0,0,0,0.08); }
+#{{ sid }} .lg__col-title { font-size: 1.6rem; font-weight: 600; letter-spacing: -0.01em; color: var(--lg-text); margin: 0; }
+#{{ sid }} .lg__col-desc { font-size: 1.3rem; color: var(--lg-muted); line-height: 1.6; margin: 0.5rem 0 0; }
+#{{ sid }} .lg__viewall { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1.3rem; font-weight: 600; color: var(--lg-accent); text-decoration: none; white-space: nowrap; transition: gap 0.2s; }
+#{{ sid }} .lg__viewall:hover { gap: 0.9rem; }
+#{{ sid }} .lg__viewall-wrap { text-align: center; margin-top: 4.8rem; }
+@media (max-width:749px) { #{{ sid }} .lg__col-head { flex-direction: column; align-items: flex-start; } }
+
+/* ── GRID ──────────────────────────────────────────── */
+#{{ sid }} .lg__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(var(--lg-cols-d),minmax(0,1fr)); gap: var(--lg-gap); }
+@media (max-width:749px) { #{{ sid }} .lg__grid { grid-template-columns: repeat(var(--lg-cols-m),minmax(0,1fr)); gap: calc(var(--lg-gap) * 0.75); } }
+
+/* ── CARD ──────────────────────────────────────────── */
+#{{ sid }} .lg__card { display: flex; flex-direction: column; border-radius: var(--lg-radius); background: var(--lg-surface); overflow: hidden; box-shadow: 0 0.2rem 1.2rem rgba(0,0,0,0.06); transition: box-shadow 0.3s, transform 0.3s; }
+#{{ sid }} .lg__card:hover { box-shadow: 0 1.4rem 4rem rgba(0,0,0,0.11); transform: translateY(-3px); }
+#{{ sid }} .lg__card__media-link { display: block; text-decoration: none; }
+#{{ sid }} .lg__card__media { position: relative; aspect-ratio: 1/1; background: #f5f5f7; overflow: hidden; }
+#{{ sid }} .lg__card__img { width: 100%; height: 100%; object-fit: contain; padding: 6%; display: block; transition: transform 0.7s cubic-bezier(.2,.7,.2,1); }
+#{{ sid }} .lg__card:hover .lg__card__img { transform: scale(1.04); }
+#{{ sid }} .lg__card__img--placeholder { width: 100%; height: 100%; display: block; padding: 0; object-fit: cover; }
+
+/* badges */
+#{{ sid }} .lg__badges { position: absolute; top: 1rem; left: 1rem; display: flex; gap: 0.5rem; z-index: 2; }
+#{{ sid }} .lg__badge { font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 0.4rem 0.8rem; border-radius: 10rem; background: rgba(17,17,17,0.88); color: #fff; line-height: 1; }
+#{{ sid }} .lg__badge--sale { background: var(--lg-sale); }
+#{{ sid }} .lg__badge--out { background: rgba(0,0,0,0.5); }
+
+/* body */
+#{{ sid }} .lg__card__body { flex: 1; padding: 1.4rem 1.4rem 1.6rem; display: flex; flex-direction: column; gap: 0.7rem; }
+#{{ sid }} .lg__card__title { font-size: 1.4rem; font-weight: 600; line-height: 1.4; color: var(--lg-text); text-decoration: none; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+#{{ sid }} .lg__card__title:hover { color: var(--lg-accent); }
+
+/* price */
+#{{ sid }} .lg__card__price { display: flex; align-items: baseline; gap: 0.7rem; }
+#{{ sid }} .lg__price { white-space: nowrap; }
+#{{ sid }} .lg__price--now { font-size: 1.5rem; font-weight: 700; color: var(--lg-text); }
+#{{ sid }} .lg__card__price.is-sale .lg__price--now { color: var(--lg-sale); }
+#{{ sid }} .lg__price--was { font-size: 1.2rem; font-weight: 500; color: var(--lg-muted); text-decoration: line-through; }
+#{{ sid }} .is-hidden { display: none !important; }
+
+/* variant label */
+#{{ sid }} .lg__variant-label { font-size: 1.2rem; color: var(--lg-muted); line-height: 1.4; margin: 0; }
+
+/* swatches */
+#{{ sid }} .lg__swatches { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+#{{ sid }} .lg__swatch { width: 2.8rem; height: 2.8rem; padding: 0.2rem; border: 1.5px solid #d2d2d7; background: #fff; border-radius: 50%; overflow: hidden; cursor: pointer; transition: border-color 0.18s, transform 0.18s; }
+#{{ sid }} .lg__swatch img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
+#{{ sid }} .lg__swatch:hover, #{{ sid }} .lg__swatch.active { border-color: #1d1d1f; transform: scale(1.1); }
+
+/* chips */
+#{{ sid }} .lg__chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+#{{ sid }} .lg__chip { min-width: 3.2rem; padding: 0.5rem 1rem; border: 1.5px solid #d2d2d7; border-radius: 10rem; background: #fff; color: var(--lg-text); font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background 0.18s, border-color 0.18s, color 0.18s; }
+#{{ sid }} .lg__chip:hover, #{{ sid }} .lg__chip.active { background: #1d1d1f; border-color: #1d1d1f; color: #fff; }
+
+/* ATC */
+#{{ sid }} .lg__form { margin-top: auto; padding-top: 0.4rem; }
+#{{ sid }} .lg__btn { width: 100%; min-height: 4.2rem; border-radius: 10rem; border: none; background: var(--lg-accent); color: #fff; font-size: 1.3rem; font-weight: 600; letter-spacing: 0.02em; cursor: pointer; transition: opacity 0.2s, transform 0.15s; }
+#{{ sid }} .lg__btn:hover { opacity: 0.88; transform: translateY(-1px); }
+#{{ sid }} .lg__btn--disabled { background: #d2d2d7 !important; color: #888 !important; cursor: not-allowed; transform: none !important; }
+
+/* empty */
+#{{ sid }} .lg__empty { text-align: center; padding: 4rem 2rem; border: 1px dashed #d2d2d7; border-radius: var(--lg-radius); color: var(--lg-muted); font-size: 1.4rem; }
+
+@media (max-width:749px) {
+  #{{ sid }} .lg__card__body { padding: 1.2rem 1.2rem 1.4rem; }
+  #{{ sid }} .lg__card__title { font-size: 1.3rem; }
+  #{{ sid }} .lg__price--now { font-size: 1.4rem; }
+}
+@media (prefers-reduced-motion: reduce) { #{{ sid }} * { transition: none !important; } }
+</style>
+
+<script>
+(function () {
+  function init(sectionId) {
+    var root = document.getElementById('LuxGrid-' + sectionId);
+    if (!root) return;
+
+    root.querySelectorAll('[data-product-card]').forEach(function (card) {
+      var mainImg      = card.querySelector('[data-main-image]');
+      var varInput     = card.querySelector('[data-variant-input]');
+      var priceWrap    = card.querySelector('[data-price-wrap]');
+      var priceNow     = card.querySelector('[data-price-current]');
+      var priceWas     = card.querySelector('[data-price-compare]');
+      var varLabel     = card.querySelector('[data-variant-label]');
+      var atcBtn       = card.querySelector('[data-atc-button]');
+      var productLinks = card.querySelectorAll('[data-product-link]');
+      var triggers     = card.querySelectorAll('[data-variant-trigger]');
+
+      triggers.forEach(function (trigger) {
+        trigger.addEventListener('click', function () {
+          var id        = this.dataset.variantId;
+          var src       = this.dataset.imageSrc;
+          var srcset    = this.dataset.imageSrcset;
+          var price     = this.dataset.price;
+          var compare   = this.dataset.comparePrice;
+          var title     = this.dataset.variantTitle;
+          var url       = this.dataset.variantUrl;
+          var available = this.dataset.available === 'true';
+
+          triggers.forEach(function (t) { t.classList.toggle('active', t.dataset.variantId === id); });
+
+          if (mainImg && src) { mainImg.src = src; if (srcset) mainImg.srcset = srcset; }
+          if (varInput) varInput.value = id;
+          if (priceNow) priceNow.textContent = price;
+          if (priceWas && priceWrap) {
+            if (compare) {
+              priceWas.textContent = compare;
+              priceWas.classList.remove('is-hidden');
+              priceWrap.classList.add('is-sale');
+            } else {
+              priceWas.textContent = '';
+              priceWas.classList.add('is-hidden');
+              priceWrap.classList.remove('is-sale');
+            }
+          }
+          if (varLabel) {
+            if (title && title !== 'Default Title') {
+              varLabel.textContent = title;
+              varLabel.classList.remove('is-hidden');
+            } else {
+              varLabel.textContent = '';
+              varLabel.classList.add('is-hidden');
+            }
+          }
+          productLinks.forEach(function (l) { l.href = url; });
+          if (atcBtn) {
+            atcBtn.disabled = !available;
+            atcBtn.classList.toggle('lg__btn--disabled', !available);
+            atcBtn.textContent = available ? {{ section.settings.atc_label | default: 'Agregar al carrito' | json }} : {{ section.settings.badge_soldout | default: 'Agotado' | json }};
+          }
+        });
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () { init('{{ section.id }}'); });
+  document.addEventListener('shopify:section:load', function (e) {
+    if (e.detail && e.detail.sectionId === '{{ section.id }}') init('{{ section.id }}');
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Luxo Product Grid",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Encabezado"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titulo seccion"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitulo seccion"
+    },
+    {
+      "type": "header",
+      "content": "Coleccion"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Coleccion a mostrar"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "Maximo de productos",
+      "min": 2,
+      "max": 50,
+      "step": 1,
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "global_discount",
+      "label": "Descuento visual global (%)",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_head",
+      "label": "Mostrar nombre de coleccion",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Mostrar descripcion de coleccion",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Mostrar enlace ver coleccion",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_label",
+      "label": "Texto ver coleccion",
+      "default": "Ver coleccion"
+    },
+    {
+      "type": "header",
+      "content": "Tarjetas"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_variant_label",
+      "label": "Mostrar variante activa",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_swatches",
+      "label": "Mostrar swatches de color",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_atc",
+      "label": "Mostrar boton agregar al carrito",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "atc_label",
+      "label": "Texto boton carrito",
+      "default": "Agregar al carrito"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badges",
+      "label": "Mostrar badges",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "new_tag",
+      "label": "Tag para badge NEW",
+      "default": "New"
+    },
+    {
+      "type": "text",
+      "id": "badge_new",
+      "label": "Texto badge nuevo",
+      "default": "Nuevo"
+    },
+    {
+      "type": "text",
+      "id": "badge_sale",
+      "label": "Texto badge oferta",
+      "default": "Oferta"
+    },
+    {
+      "type": "text",
+      "id": "badge_soldout",
+      "label": "Texto agotado",
+      "default": "Agotado"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columnas escritorio",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "label": "Columnas movil",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Espacio entre tarjetas",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Radio tarjetas",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Ancho maximo",
+      "min": 900,
+      "max": 1800,
+      "step": 20,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding superior",
+      "min": 0,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding inferior",
+      "min": 0,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fondo seccion",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Fondo tarjeta",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Texto",
+      "default": "#1d1d1f"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Texto secundario",
+      "default": "#6e6e73"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Acento y boton",
+      "default": "#0071e3"
+    },
+    {
+      "type": "color",
+      "id": "sale_color",
+      "label": "Precio oferta",
+      "default": "#ff3b30"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo Product Grid"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,595 @@
+{% comment %}
+  Luxo Banner Dinámico Pro - Corregido
+
+  - Imagen mobile opcional, NO obligatoria.
+  - Si no hay imagen mobile, se usa automáticamente la imagen principal.
+  - La imagen principal puede venir del metafield:
+    collection.metafields.custom.banner
+  - También incluye una imagen principal manual opcional desde el editor.
+  - Texto editable y opcional.
+  - Imagen adaptada al contenedor, no al revés.
+  - Compatible con object-fit: cover / contain.
+{% endcomment %}
+
+{% liquid
+  assign collection_banner_image = blank
+
+  if collection != blank and collection.metafields.custom.banner != blank
+    assign collection_banner_image = collection.metafields.custom.banner.value
+
+    if collection_banner_image == blank
+      assign collection_banner_image = collection.metafields.custom.banner
+    endif
+  endif
+
+  assign desktop_banner_image = section.settings.desktop_image
+
+  if collection_banner_image != blank
+    assign desktop_banner_image = collection_banner_image
+  endif
+
+  assign mobile_banner_image = section.settings.mobile_image
+
+  assign final_banner_image = desktop_banner_image
+
+  if final_banner_image == blank and mobile_banner_image != blank
+    assign final_banner_image = mobile_banner_image
+  endif
+
+  assign has_banner_image = false
+
+  if final_banner_image != blank
+    assign has_banner_image = true
+  endif
+
+  assign banner_title = section.settings.hero_title | strip
+
+  if banner_title == blank and collection != blank
+    assign banner_title = collection.title
+  endif
+
+  assign banner_description = section.settings.hero_description
+
+  if banner_description == blank and collection != blank and collection.description != blank
+    assign banner_description = collection.description
+  endif
+
+  assign banner_alt = section.settings.image_alt | strip
+
+  if banner_alt == blank and collection != blank
+    assign banner_alt = collection.title
+  endif
+
+  if banner_alt == blank
+    assign banner_alt = section.settings.hero_title | default: shop.name
+  endif
+%}
+
+<div
+  class="lux-banner-wrapper section-{{ section.id }}"
+  style="
+    --desktop-height: {{ section.settings.desktop_height }}px;
+    --mobile-height: {{ section.settings.mobile_height }}px;
+    --image-fit: {{ section.settings.image_fit }};
+    --desktop-position: {{ section.settings.image_position_desktop }};
+    --mobile-position: {{ section.settings.image_position_mobile }};
+    --overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    --text-color: {{ section.settings.text_color }};
+    --fallback-bg: {{ section.settings.fallback_background }};
+    --content-max-width: {{ section.settings.content_max_width }}px;
+  "
+>
+  <div class="lux-banner-container {% unless has_banner_image %}lux-banner-no-image{% endunless %}">
+
+    {% if has_banner_image %}
+      <div class="lux-banner-media">
+        <picture class="lux-banner-picture">
+
+          {% comment %}
+            Imagen mobile opcional:
+            Este source SOLO se renderiza cuando se selecciona una imagen mobile.
+            Si no hay imagen mobile, el navegador usará el <img> principal.
+          {% endcomment %}
+          {% if mobile_banner_image != blank %}
+            <source
+              media="(max-width: 749px)"
+              srcset="
+                {{ mobile_banner_image | image_url: width: 375 }} 375w,
+                {{ mobile_banner_image | image_url: width: 550 }} 550w,
+                {{ mobile_banner_image | image_url: width: 750 }} 750w,
+                {{ mobile_banner_image | image_url: width: 950 }} 950w,
+                {{ mobile_banner_image | image_url: width: 1200 }} 1200w
+              "
+              sizes="100vw"
+            >
+          {% endif %}
+
+          <img
+            src="{{ final_banner_image | image_url: width: 2400 }}"
+            srcset="
+              {{ final_banner_image | image_url: width: 750 }} 750w,
+              {{ final_banner_image | image_url: width: 1100 }} 1100w,
+              {{ final_banner_image | image_url: width: 1500 }} 1500w,
+              {{ final_banner_image | image_url: width: 2000 }} 2000w,
+              {{ final_banner_image | image_url: width: 2400 }} 2400w
+            "
+            sizes="100vw"
+            alt="{{ banner_alt | escape }}"
+            class="lux-banner-img"
+            loading="eager"
+            fetchpriority="high"
+            width="{{ final_banner_image.width | default: 2400 }}"
+            height="{{ final_banner_image.height | default: 1200 }}"
+          >
+        </picture>
+      </div>
+    {% endif %}
+
+    {% if section.settings.overlay_opacity > 0 and has_banner_image %}
+      <div class="lux-banner-overlay" aria-hidden="true"></div>
+    {% endif %}
+
+    {% if section.settings.show_text_block %}
+      <div class="lux-banner-content lux-content-{{ section.settings.text_alignment }} lux-vertical-{{ section.settings.content_vertical_alignment }} {% if section.settings.hide_text_mobile %}lux-hide-text-mobile{% endif %}">
+        <div class="lux-banner-inner">
+
+          {% if section.settings.show_heading and banner_title != blank %}
+            <h1 class="lux-banner-title">
+              {{ banner_title }}
+            </h1>
+          {% endif %}
+
+          {% if section.settings.show_description and banner_description != blank %}
+            <div class="lux-banner-desc rte">
+              {{ banner_description }}
+            </div>
+          {% endif %}
+
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+
+<style>
+  .section-{{ section.id }}.lux-banner-wrapper {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .section-{{ section.id }} .lux-banner-container {
+    position: relative;
+    width: 100%;
+    height: var(--desktop-height);
+    min-height: var(--desktop-height);
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--fallback-bg);
+  }
+
+  .section-{{ section.id }} .lux-banner-media {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    line-height: 0;
+  }
+
+  .section-{{ section.id }} .lux-banner-picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .section-{{ section.id }} .lux-banner-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: var(--image-fit);
+    object-position: var(--desktop-position);
+  }
+
+  .section-{{ section.id }} .lux-banner-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: rgba(0, 0, 0, var(--overlay-opacity));
+    pointer-events: none;
+  }
+
+  .section-{{ section.id }} .lux-banner-content {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding-inline: clamp(20px, 5vw, 72px);
+    color: var(--text-color);
+  }
+
+  .section-{{ section.id }} .lux-content-left {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .section-{{ section.id }} .lux-content-center {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .section-{{ section.id }} .lux-content-right {
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  .section-{{ section.id }} .lux-vertical-top {
+    align-items: flex-start;
+    padding-top: clamp(32px, 7vw, 90px);
+  }
+
+  .section-{{ section.id }} .lux-vertical-center {
+    align-items: center;
+  }
+
+  .section-{{ section.id }} .lux-vertical-bottom {
+    align-items: flex-end;
+    padding-bottom: clamp(32px, 7vw, 90px);
+  }
+
+  .section-{{ section.id }} .lux-banner-inner {
+    width: 100%;
+    max-width: var(--content-max-width);
+  }
+
+  .section-{{ section.id }} .lux-content-center .lux-banner-inner {
+    margin-inline: auto;
+  }
+
+  .section-{{ section.id }} .lux-content-right .lux-banner-inner {
+    margin-left: auto;
+  }
+
+  .section-{{ section.id }} .lux-banner-title {
+    margin: 0;
+    color: var(--text-color);
+    font-family: var(--font-heading-family);
+    font-size: clamp(34px, 5.5vw, 68px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+  }
+
+  .section-{{ section.id }} .lux-banner-desc {
+    margin-top: 18px;
+    max-width: 560px;
+    color: var(--text-color);
+    font-family: var(--font-body-family);
+    font-size: clamp(15px, 1.4vw, 18px);
+    line-height: 1.6;
+  }
+
+  .section-{{ section.id }} .lux-content-center .lux-banner-desc {
+    margin-inline: auto;
+  }
+
+  .section-{{ section.id }} .lux-content-right .lux-banner-desc {
+    margin-left: auto;
+  }
+
+  .section-{{ section.id }} .lux-banner-desc p {
+    margin-top: 0;
+  }
+
+  .section-{{ section.id }} .lux-banner-desc p:last-child {
+    margin-bottom: 0;
+  }
+
+  .section-{{ section.id }} .lux-banner-no-image {
+    display: flex;
+    align-items: center;
+  }
+
+  .section-{{ section.id }} .lux-banner-no-image .lux-banner-content {
+    min-height: var(--desktop-height);
+  }
+
+  @media screen and (max-width: 749px) {
+    .section-{{ section.id }} .lux-banner-container {
+      height: var(--mobile-height);
+      min-height: var(--mobile-height);
+    }
+
+    .section-{{ section.id }} .lux-banner-no-image .lux-banner-content {
+      min-height: var(--mobile-height);
+    }
+
+    .section-{{ section.id }} .lux-banner-img {
+      object-position: var(--mobile-position);
+    }
+
+    .section-{{ section.id }} .lux-banner-content {
+      padding-inline: 20px;
+    }
+
+    .section-{{ section.id }} .lux-vertical-top {
+      padding-top: 32px;
+    }
+
+    .section-{{ section.id }} .lux-vertical-bottom {
+      padding-bottom: 32px;
+    }
+
+    .section-{{ section.id }} .lux-banner-title {
+      font-size: clamp(28px, 9vw, 42px);
+      line-height: 1.08;
+    }
+
+    .section-{{ section.id }} .lux-banner-desc {
+      margin-top: 12px;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .section-{{ section.id }} .lux-hide-text-mobile {
+      display: none;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Luxo Banner Dinámico",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenido del hero"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_text_block",
+      "label": "Mostrar bloque de texto",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_heading",
+      "label": "Mostrar título",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Título personalizado",
+      "info": "Si lo dejás vacío, se usará el nombre de la colección cuando exista."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Mostrar descripción",
+      "default": true
+    },
+    {
+      "type": "richtext",
+      "id": "hero_description",
+      "label": "Descripción personalizada",
+      "info": "Si la dejás vacía, se usará la descripción de la colección cuando exista."
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_text_mobile",
+      "label": "Ocultar texto en móvil",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Imagen"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image",
+      "label": "Imagen principal manual",
+      "info": "Opcional. Se usa como respaldo si la colección no tiene el metafield custom.banner."
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Imagen específica para móvil",
+      "info": "Opcional. Si no se selecciona, se usará automáticamente la imagen principal."
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Texto ALT de la imagen",
+      "info": "Si queda vacío, se usará el nombre de la colección o el título personalizado."
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Ajuste de la imagen dentro del contenedor",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Cubrir contenedor sin deformar"
+        },
+        {
+          "value": "contain",
+          "label": "Mostrar imagen completa sin deformar"
+        }
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "select",
+      "id": "image_position_desktop",
+      "label": "Foco de imagen en desktop",
+      "options": [
+        {
+          "value": "center center",
+          "label": "Centro"
+        },
+        {
+          "value": "center top",
+          "label": "Arriba"
+        },
+        {
+          "value": "center bottom",
+          "label": "Abajo"
+        },
+        {
+          "value": "left center",
+          "label": "Izquierda"
+        },
+        {
+          "value": "right center",
+          "label": "Derecha"
+        }
+      ],
+      "default": "center center"
+    },
+    {
+      "type": "select",
+      "id": "image_position_mobile",
+      "label": "Foco de imagen en móvil",
+      "options": [
+        {
+          "value": "center center",
+          "label": "Centro"
+        },
+        {
+          "value": "center top",
+          "label": "Arriba"
+        },
+        {
+          "value": "center bottom",
+          "label": "Abajo"
+        },
+        {
+          "value": "left center",
+          "label": "Izquierda"
+        },
+        {
+          "value": "right center",
+          "label": "Derecha"
+        }
+      ],
+      "default": "center center"
+    },
+    {
+      "type": "header",
+      "content": "Dimensiones del contenedor"
+    },
+    {
+      "type": "range",
+      "id": "desktop_height",
+      "min": 300,
+      "max": 900,
+      "step": 10,
+      "unit": "px",
+      "label": "Altura en desktop",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "mobile_height",
+      "min": 220,
+      "max": 700,
+      "step": 10,
+      "unit": "px",
+      "label": "Altura en móvil",
+      "default": 430
+    },
+    {
+      "type": "header",
+      "content": "Diseño del texto"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Alineación horizontal",
+      "options": [
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "content_vertical_alignment",
+      "label": "Alineación vertical",
+      "options": [
+        {
+          "value": "top",
+          "label": "Arriba"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "bottom",
+          "label": "Abajo"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "min": 320,
+      "max": 900,
+      "step": 20,
+      "unit": "px",
+      "label": "Ancho máximo del texto",
+      "default": 640
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Overlay y fondo"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "label": "Oscurecer imagen",
+      "default": 25
+    },
+    {
+      "type": "color",
+      "id": "fallback_background",
+      "label": "Fondo cuando no hay imagen",
+      "default": "#f6f3ed"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo Banner Dinámico"
+    }
+  ]
+}
+{% endschema %}

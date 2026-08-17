@@ -1,0 +1,174 @@
+{% comment %}
+  Luxo | Buscas Algo Más? - VERSIÓN 100% AUTOMÁTICA
+  - Se agrega UNA SOLA VEZ en collection.liquid
+  - Aparece automáticamente en TODAS las colecciones
+  - Las colecciones relacionadas se eligen SOLAS según la colección actual (lógica inteligente)
+  - Sin ajustes manuales. Sin bloques. Sin selección en el editor.
+{% endcomment %}
+
+<section id="LuxBuscasAlgoMas-{{ section.id }}" class="lux-buscas-mas">
+  <div class="lux-buscas-container">
+    <h2 class="lux-buscas-title">¿BUSCAS ALGO MÁS?</h2>
+
+    <div class="lux-buscas-grid">
+
+      {%- assign related1 = blank -%}
+      {%- assign related2 = blank -%}
+
+      {%- comment %} === LÓGICA AUTOMÁTICA DE COLECCIONES RELACIONADAS === {%- endcomment %}
+      {%- if collection.title contains 'FAJA' or collection.title contains 'Faja' or collection.title contains 'SHAPER' -%}
+        {%- assign related1 = collections['brasieres'] -%}
+        {%- assign related2 = collections['suplementos-para-mejorar-tu-salud'] -%}
+      {%- elsif collection.title contains 'BRASIER' or collection.title contains 'Bra' -%}
+        {%- assign related1 = collections['fajas-moldeadoras-colombianas'] -%}
+        {%- assign related2 = collections['cuidado-personal'] -%}
+      {%- elsif collection.title contains 'SUPLEMENTO' or collection.title contains 'Skinny' -%}
+        {%- assign related1 = collections['productos-para-adelgazar'] -%}
+        {%- assign related2 = collections['cuidado-facial'] -%}
+      {%- elsif collection.title contains 'CUIDADO' or collection.title contains 'FACIAL' -%}
+        {%- assign related1 = collections['suplementos-para-mejorar-tu-salud'] -%}
+        {%- assign related2 = collections['brasieres'] -%}
+      {%- elsif collection.title contains 'PROMOCION' or collection.title contains 'OUTLET' -%}
+        {%- assign related1 = collections['los-mas-vendidos'] -%}
+        {%- assign related2 = collections['bundles'] -%}
+      {%- else -%}
+        {%- assign related1 = collections['los-mas-vendidos'] -%}
+        {%- assign related2 = collections['fajas-moldeadoras-colombianas'] -%}
+      {%- endif -%}
+
+      {%- if related1 != blank -%}
+        <a href="{{ related1.url }}" class="lux-buscas-card">
+          <div class="lux-buscas-image-wrapper">
+            {%- if related1.image != blank -%}
+              <img src="{{ related1.image | image_url: width: 1400 }}" alt="{{ related1.title | escape }}" loading="lazy" width="800" height="1000">
+            {%- elsif related1.products.first.featured_image != blank -%}
+              <img src="{{ related1.products.first.featured_image | image_url: width: 1400 }}" alt="{{ related1.title | escape }}" loading="lazy" width="800" height="1000">
+            {%- endif -%}
+          </div>
+          <div class="lux-buscas-button">Comprar {{ related1.title | upcase }}</div>
+        </a>
+      {%- endif -%}
+
+      {%- if related2 != blank -%}
+        <a href="{{ related2.url }}" class="lux-buscas-card">
+          <div class="lux-buscas-image-wrapper">
+            {%- if related2.image != blank -%}
+              <img src="{{ related2.image | image_url: width: 1400 }}" alt="{{ related2.title | escape }}" loading="lazy" width="800" height="1000">
+            {%- elsif related2.products.first.featured_image != blank -%}
+              <img src="{{ related2.products.first.featured_image | image_url: width: 1400 }}" alt="{{ related2.title | escape }}" loading="lazy" width="800" height="1000">
+            {%- endif -%}
+          </div>
+          <div class="lux-buscas-button">Comprar {{ related2.title | upcase }}</div>
+        </a>
+      {%- endif -%}
+
+    </div>
+  </div>
+</section>
+
+<style>
+  #LuxBuscasAlgoMas-{{ section.id }} { 
+    padding: 80px 20px 70px; 
+    background: #ffffff; 
+  }
+  .lux-buscas-container { 
+    max-width: 1400px; /* Un poco más ancho para dar el efecto editorial */
+    margin: 0 auto; 
+  }
+  .lux-buscas-title {
+    text-align: center;
+    font-family: var(--font-heading-family);
+    font-size: clamp(24px, 3vw, 36px);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #111;
+    margin-bottom: 40px;
+  }
+  .lux-buscas-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px; /* Separación mínima como en la imagen */
+  }
+  .lux-buscas-card {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    transition: all 0.45s ease;
+  }
+  .lux-buscas-image-wrapper {
+    position: relative;
+    padding-bottom: 85%; /* Proporción más rectangular/paisaje */
+    overflow: hidden;
+  }
+  
+  /* Gradiente oscuro inferior para resaltar el botón blanco */
+  .lux-buscas-image-wrapper::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40%;
+    background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 100%);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .lux-buscas-image-wrapper img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.9s cubic-bezier(0.23,1,0.32,1);
+    z-index: 0;
+  }
+  .lux-buscas-card:hover img { 
+    transform: scale(1.05); 
+  }
+  .lux-buscas-button {
+    position: absolute;
+    bottom: 40px;
+    left: 40px; /* Alineado a la izquierda */
+    background: #fff;
+    color: #000;
+    padding: 12px 32px;
+    border-radius: 50px;
+    font-family: var(--font-body-family, sans-serif);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    z-index: 2;
+  }
+  .lux-buscas-card:hover .lux-buscas-button {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+  }
+  
+  @media (max-width: 768px) {
+    .lux-buscas-grid { 
+      grid-template-columns: 1fr; 
+      gap: 10px; 
+    }
+    .lux-buscas-button { 
+      bottom: 24px; 
+      left: 24px;
+      padding: 10px 26px; 
+      font-size: 12px; 
+    }
+    .lux-buscas-image-wrapper {
+      padding-bottom: 100%; /* Un poco más cuadrado en móviles */
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Luxo | Buscas Algo Más",
+  "settings": [],
+  "presets": [{ "name": "Luxo | Buscas Algo Más" }]
+}
+{% endschema %}

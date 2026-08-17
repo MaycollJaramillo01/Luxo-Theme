@@ -1,0 +1,644 @@
+{% liquid
+  assign popup_enabled = section.settings.enable_popup
+  assign video_src = section.settings.video_url | strip
+  assign popup_id = 'mao-video-popup-' | append: section.id
+%}
+
+{% if popup_enabled and video_src != blank %}
+  <div
+    id="{{ popup_id }}"
+    class="mao-video-popup"
+    data-section-id="{{ section.id }}"
+    data-delay="{{ section.settings.delay_seconds | times: 1000 }}"
+    data-frequency="{{ section.settings.frequency }}"
+    data-hide-days="{{ section.settings.hide_days }}"
+    data-auto-close="{{ section.settings.auto_close_seconds | times: 1000 }}"
+    aria-hidden="true"
+  >
+    <div class="mao-video-popup__overlay" data-popup-close></div>
+
+    <div
+      class="mao-video-popup__dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-label="{{ section.settings.accessibility_label | escape }}"
+    >
+      <button
+        type="button"
+        class="mao-video-popup__close"
+        aria-label="Cerrar popup"
+        data-popup-close
+      >
+        ×
+      </button>
+
+      {% if section.settings.popup_link != blank %}
+        <a
+          class="mao-video-popup__media-link"
+          href="{{ section.settings.popup_link }}"
+          {% if section.settings.open_new_tab %}
+            target="_blank"
+            rel="noopener noreferrer"
+          {% endif %}
+        >
+      {% else %}
+        <div class="mao-video-popup__media-link">
+      {% endif %}
+
+        <video
+          class="mao-video-popup__video"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto"
+        >
+          <source src="{{ video_src }}" type="video/quicktime">
+          <source src="{{ video_src }}">
+        </video>
+
+      {% if section.settings.popup_link != blank %}
+        </a>
+      {% else %}
+        </div>
+      {% endif %}
+
+      {% if section.settings.button_text != blank and section.settings.popup_link != blank %}
+        <a
+          class="mao-video-popup__button"
+          href="{{ section.settings.popup_link }}"
+          {% if section.settings.open_new_tab %}
+            target="_blank"
+            rel="noopener noreferrer"
+          {% endif %}
+        >
+          {{ section.settings.button_text }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <style>
+    #{{ popup_id }} {
+      position: fixed;
+      inset: 0;
+      z-index: {{ section.settings.z_index }};
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 220ms ease, visibility 220ms ease;
+    }
+
+    #{{ popup_id }}.is-active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    #{{ popup_id }} .mao-video-popup__overlay {
+      position: absolute;
+      inset: 0;
+      background: {{ section.settings.overlay_color }};
+      opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+      cursor: pointer;
+    }
+
+    #{{ popup_id }} .mao-video-popup__dialog {
+      position: relative;
+      width: min({{ section.settings.popup_width }}px, 100%);
+      max-height: calc(100vh - 36px);
+      background: {{ section.settings.background_color }};
+      border-radius: {{ section.settings.border_radius }}px;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+      transform: translateY(14px) scale(0.96);
+      transition: transform 220ms ease;
+    }
+
+    #{{ popup_id }}.is-active .mao-video-popup__dialog {
+      transform: translateY(0) scale(1);
+    }
+
+    #{{ popup_id }} .mao-video-popup__close {
+      position: absolute;
+      top: {{ section.settings.close_spacing }}px;
+      right: {{ section.settings.close_spacing }}px;
+      z-index: 3;
+      width: {{ section.settings.close_size }}px;
+      height: {{ section.settings.close_size }}px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      border-radius: 999px;
+      background: {{ section.settings.close_background }};
+      color: {{ section.settings.close_color }};
+      font-size: {{ section.settings.close_font_size }}px;
+      line-height: 1;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+    }
+
+    #{{ popup_id }} .mao-video-popup__media-link {
+      display: block;
+      width: 100%;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    #{{ popup_id }} .mao-video-popup__video {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: {{ section.settings.video_max_height }}vh;
+      object-fit: contain;
+      background: {{ section.settings.video_background }};
+    }
+
+    #{{ popup_id }} .mao-video-popup__button {
+      display: block;
+      margin: {{ section.settings.button_margin_top }}px auto {{ section.settings.button_margin_bottom }}px;
+      width: calc(100% - 32px);
+      max-width: {{ section.settings.button_max_width }}px;
+      padding: {{ section.settings.button_padding_y }}px {{ section.settings.button_padding_x }}px;
+      border-radius: {{ section.settings.button_radius }}px;
+      background: {{ section.settings.button_background }};
+      color: {{ section.settings.button_color }};
+      font-size: {{ section.settings.button_font_size }}px;
+      font-weight: 700;
+      line-height: 1.2;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    html.mao-popup-open-{{ section.id }},
+    html.mao-popup-open-{{ section.id }} body {
+      overflow: hidden;
+    }
+
+    @media screen and (max-width: 749px) {
+      #{{ popup_id }} {
+        padding: {{ section.settings.mobile_padding }}px;
+        align-items: {{ section.settings.mobile_vertical_position }};
+      }
+
+      #{{ popup_id }} .mao-video-popup__dialog {
+        width: min({{ section.settings.mobile_popup_width }}px, 100%);
+        border-radius: {{ section.settings.mobile_border_radius }}px;
+      }
+
+      #{{ popup_id }} .mao-video-popup__video {
+        max-height: {{ section.settings.mobile_video_max_height }}vh;
+      }
+
+      #{{ popup_id }} .mao-video-popup__button {
+        font-size: {{ section.settings.mobile_button_font_size }}px;
+      }
+    }
+  </style>
+
+  <script>
+    (function () {
+      var popup = document.getElementById({{ popup_id | json }});
+
+      if (!popup) return;
+
+      var sectionId = popup.getAttribute('data-section-id');
+      var delay = parseInt(popup.getAttribute('data-delay'), 10) || 0;
+      var frequency = popup.getAttribute('data-frequency') || 'always';
+      var hideDays = parseInt(popup.getAttribute('data-hide-days'), 10) || 1;
+      var autoClose = parseInt(popup.getAttribute('data-auto-close'), 10) || 0;
+      var storageKey = 'mao_video_popup_' + sectionId;
+      var sessionKey = 'mao_video_popup_session_' + sectionId;
+      var html = document.documentElement;
+      var closeButtons = popup.querySelectorAll('[data-popup-close]');
+      var video = popup.querySelector('video');
+      var autoCloseTimer = null;
+
+      function canShowPopup() {
+        if (window.Shopify && Shopify.designMode) {
+          return true;
+        }
+
+        if (frequency === 'always') {
+          return true;
+        }
+
+        if (frequency === 'session') {
+          return sessionStorage.getItem(sessionKey) !== 'hidden';
+        }
+
+        if (frequency === 'days') {
+          var expiresAt = localStorage.getItem(storageKey);
+
+          if (!expiresAt) {
+            return true;
+          }
+
+          return Date.now() > parseInt(expiresAt, 10);
+        }
+
+        return true;
+      }
+
+      function savePopupState() {
+        if (window.Shopify && Shopify.designMode) {
+          return;
+        }
+
+        if (frequency === 'session') {
+          sessionStorage.setItem(sessionKey, 'hidden');
+        }
+
+        if (frequency === 'days') {
+          var expiresAt = Date.now() + hideDays * 24 * 60 * 60 * 1000;
+          localStorage.setItem(storageKey, String(expiresAt));
+        }
+      }
+
+      function openPopup() {
+        popup.classList.add('is-active');
+        popup.setAttribute('aria-hidden', 'false');
+        html.classList.add('mao-popup-open-{{ section.id }}');
+
+        if (video) {
+          video.play().catch(function () {});
+        }
+
+        if (autoClose > 0) {
+          autoCloseTimer = setTimeout(closePopup, autoClose);
+        }
+      }
+
+      function closePopup() {
+        popup.classList.remove('is-active');
+        popup.setAttribute('aria-hidden', 'true');
+        html.classList.remove('mao-popup-open-{{ section.id }}');
+
+        if (autoCloseTimer) {
+          clearTimeout(autoCloseTimer);
+        }
+
+        savePopupState();
+      }
+
+      closeButtons.forEach(function (button) {
+        button.addEventListener('click', closePopup);
+      });
+
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && popup.classList.contains('is-active')) {
+          closePopup();
+        }
+      });
+
+      if (canShowPopup()) {
+        setTimeout(openPopup, delay);
+      }
+    })();
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Popup video tipo GIF",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_popup",
+      "label": "Activar popup",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "video_url",
+      "label": "URL del video",
+      "default": "https://cdn.shopify.com/videos/c/o/v/36af48d79aed4318a2bd8cf04bf12210.mov"
+    },
+    {
+      "type": "url",
+      "id": "popup_link",
+      "label": "Link al hacer clic"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_new_tab",
+      "label": "Abrir link en nueva pestaña",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Texto del botón",
+      "default": "Ver promoción"
+    },
+    {
+      "type": "text",
+      "id": "accessibility_label",
+      "label": "Etiqueta de accesibilidad",
+      "default": "Promoción destacada"
+    },
+    {
+      "type": "select",
+      "id": "frequency",
+      "label": "Frecuencia de aparición",
+      "default": "days",
+      "options": [
+        {
+          "value": "always",
+          "label": "Mostrar siempre"
+        },
+        {
+          "value": "session",
+          "label": "Una vez por sesión"
+        },
+        {
+          "value": "days",
+          "label": "Ocultar por días después de cerrar"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "hide_days",
+      "label": "Días oculto después de cerrar",
+      "min": 1,
+      "max": 30,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "delay_seconds",
+      "label": "Retraso antes de mostrar",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "auto_close_seconds",
+      "label": "Cerrar automáticamente después de segundos",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "popup_width",
+      "label": "Ancho del popup en desktop",
+      "min": 260,
+      "max": 900,
+      "step": 10,
+      "default": 460
+    },
+    {
+      "type": "range",
+      "id": "mobile_popup_width",
+      "label": "Ancho del popup en mobile",
+      "min": 260,
+      "max": 420,
+      "step": 10,
+      "default": 340
+    },
+    {
+      "type": "range",
+      "id": "video_max_height",
+      "label": "Altura máxima del video en desktop",
+      "min": 30,
+      "max": 95,
+      "step": 1,
+      "unit": "vh",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "mobile_video_max_height",
+      "label": "Altura máxima del video en mobile",
+      "min": 30,
+      "max": 95,
+      "step": 1,
+      "unit": "vh",
+      "default": 75
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Color del overlay",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Opacidad del overlay",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "default": 65
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Fondo del popup",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "video_background",
+      "label": "Fondo del video",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Bordes redondeados desktop",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "mobile_border_radius",
+      "label": "Bordes redondeados mobile",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "close_background",
+      "label": "Fondo del botón cerrar",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "close_color",
+      "label": "Color del botón cerrar",
+      "default": "#111111"
+    },
+    {
+      "type": "range",
+      "id": "close_size",
+      "label": "Tamaño del botón cerrar",
+      "min": 28,
+      "max": 60,
+      "step": 2,
+      "default": 38
+    },
+    {
+      "type": "range",
+      "id": "close_font_size",
+      "label": "Tamaño de la X",
+      "min": 18,
+      "max": 42,
+      "step": 1,
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "close_spacing",
+      "label": "Separación del botón cerrar",
+      "min": 6,
+      "max": 30,
+      "step": 1,
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Fondo del botón",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Color del texto del botón",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "Tamaño texto botón desktop",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "mobile_button_font_size",
+      "label": "Tamaño texto botón mobile",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "button_padding_y",
+      "label": "Padding vertical botón",
+      "min": 8,
+      "max": 28,
+      "step": 1,
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_padding_x",
+      "label": "Padding horizontal botón",
+      "min": 12,
+      "max": 40,
+      "step": 1,
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "button_radius",
+      "label": "Bordes del botón",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "button_max_width",
+      "label": "Ancho máximo botón",
+      "min": 180,
+      "max": 600,
+      "step": 10,
+      "default": 360
+    },
+    {
+      "type": "range",
+      "id": "button_margin_top",
+      "label": "Margen superior botón",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_margin_bottom",
+      "label": "Margen inferior botón",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding",
+      "label": "Padding externo mobile",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "mobile_vertical_position",
+      "label": "Posición vertical en mobile",
+      "default": "center",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Arriba"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "flex-end",
+          "label": "Abajo"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "z_index",
+      "label": "Z-index",
+      "min": 1000,
+      "max": 9900,
+      "step": 100,
+      "default": 9000
+    }
+  ],
+  "presets": [
+    {
+      "name": "Popup video tipo GIF"
+    }
+  ]
+}
+{% endschema %}

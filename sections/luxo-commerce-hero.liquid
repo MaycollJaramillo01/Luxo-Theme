@@ -1,0 +1,71 @@
+{%- liquid
+  assign desktop_image = section.settings.desktop_image
+  assign mobile_image = section.settings.mobile_image | default: desktop_image
+  assign primary_link = section.settings.primary_link | default: routes.all_products_collection_url
+  assign secondary_link = section.settings.secondary_link | default: routes.all_products_collection_url
+-%}
+
+<section class="luxo-hero" style="--luxo-hero-position: {{ section.settings.image_position }};">
+  <div class="luxo-hero__media" aria-hidden="true">
+    {%- if desktop_image != blank -%}
+      <picture>
+        {%- if mobile_image != blank -%}
+          <source media="(max-width: 749px)" srcset="{{ mobile_image | image_url: width: 900 }}" sizes="100vw">
+        {%- endif -%}
+        {{ desktop_image | image_url: width: 2400 | image_tag:
+          widths: '960, 1280, 1600, 2000, 2400',
+          sizes: '100vw',
+          loading: 'eager',
+          fetchpriority: 'high',
+          alt: ''
+        }}
+      </picture>
+    {%- else -%}
+      <img src="{{ 'luxo-campaign-hero.webp' | asset_url }}" width="1680" height="945" alt="" loading="eager" fetchpriority="high">
+    {%- endif -%}
+  </div>
+
+  <div class="luxo-hero__inner">
+    <div class="luxo-hero__content">
+      {%- if section.settings.kicker != blank -%}<p class="luxo-kicker">{{ section.settings.kicker | escape }}</p>{%- endif -%}
+      <h1 class="luxo-hero__title">{{ section.settings.heading }}</h1>
+      {%- if section.settings.copy != blank -%}<div class="luxo-hero__copy">{{ section.settings.copy }}</div>{%- endif -%}
+      <div class="luxo-hero__actions">
+        {%- if section.settings.primary_label != blank -%}
+          <a class="luxo-button luxo-button--dark" href="{{ primary_link }}">{{ section.settings.primary_label | escape }}</a>
+        {%- endif -%}
+        {%- if section.settings.secondary_label != blank -%}
+          <a class="luxo-hero__secondary" href="{{ secondary_link }}">{{ section.settings.secondary_label | escape }} <span aria-hidden="true">↗</span></a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxo — Campaña principal",
+  "tag": "section",
+  "settings": [
+    { "type": "image_picker", "id": "desktop_image", "label": "Imagen de campaña para escritorio" },
+    { "type": "image_picker", "id": "mobile_image", "label": "Imagen de campaña para móvil" },
+    {
+      "type": "select", "id": "image_position", "label": "Posición de imagen", "default": "center center",
+      "options": [
+        { "value": "left center", "label": "Izquierda" },
+        { "value": "center center", "label": "Centro" },
+        { "value": "right center", "label": "Derecha" },
+        { "value": "center top", "label": "Arriba" }
+      ]
+    },
+    { "type": "text", "id": "kicker", "label": "Antetítulo", "default": "NUEVA COLECCIÓN" },
+    { "type": "inline_richtext", "id": "heading", "label": "Título", "default": "La base de todo." },
+    { "type": "richtext", "id": "copy", "label": "Descripción", "default": "<p>Esenciales que realzan tu figura, todos los días.</p>" },
+    { "type": "text", "id": "primary_label", "label": "Botón principal", "default": "COMPRAR FAJAS" },
+    { "type": "url", "id": "primary_link", "label": "Enlace principal" },
+    { "type": "text", "id": "secondary_label", "label": "Botón secundario", "default": "VER BESTSELLERS" },
+    { "type": "url", "id": "secondary_link", "label": "Enlace secundario" }
+  ],
+  "presets": [{ "name": "Luxo — Campaña principal" }]
+}
+{% endschema %}

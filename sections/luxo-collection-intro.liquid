@@ -1,0 +1,30 @@
+<section class="luxo-collection-intro">
+  <div class="luxo-container luxo-container--wide">
+    <nav class="luxo-collection-intro__breadcrumb" aria-label="Ruta de navegación">
+      <a href="{{ routes.root_url }}">Inicio</a><span aria-hidden="true">/</span><span>{{ collection.title | escape }}</span>
+    </nav>
+    <div class="luxo-collection-intro__content">
+      <div>
+        <p class="luxo-kicker">{{ section.settings.kicker | escape }}</p>
+        <h1>{{ collection.title | escape }}</h1>
+      </div>
+      {%- if section.settings.show_description and collection.description != blank -%}
+        <div class="luxo-collection-intro__description rte">{{ collection.description }}</div>
+      {%- else -%}
+        <p class="luxo-collection-intro__fallback">{{ section.settings.fallback_copy | escape }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxo colección",
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Antetítulo", "default": "LA EDICIÓN LUXO" },
+    { "type": "checkbox", "id": "show_description", "label": "Mostrar descripción", "default": true },
+    { "type": "text", "id": "fallback_copy", "label": "Texto alternativo", "default": "Prendas elegidas para acompañarte con soporte, comodidad y confianza." }
+  ],
+  "presets": [{ "name": "Luxo colección" }]
+}
+{% endschema %}

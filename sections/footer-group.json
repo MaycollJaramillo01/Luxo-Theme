@@ -1,0 +1,47 @@
+{
+  "name": "Footer",
+  "type": "footer",
+  "sections": {
+    "luxo_commerce_footer": {
+      "type": "luxo-commerce-footer",
+      "blocks": {
+        "shop_menu": {
+          "type": "menu",
+          "settings": {
+            "heading": "COMPRAR",
+            "menu": "footer"
+          }
+        },
+        "help_menu": {
+          "type": "menu",
+          "settings": {
+            "heading": "AYUDA",
+            "menu": "main-menu"
+          }
+        },
+        "contact": {
+          "type": "contact",
+          "settings": {
+            "heading": "CONTACTO"
+          }
+        }
+      },
+      "block_order": ["shop_menu", "help_menu", "contact"],
+      "settings": {
+        "show_newsletter": true,
+        "newsletter_kicker": "ACCESO LUXO",
+        "heading": "Acceso anticipado.",
+        "copy": "Lanzamientos, guías de talla y selecciones para tu rutina.",
+        "newsletter_note": "Al suscribirte aceptas recibir correos de Luxo. Puedes darte de baja cuando quieras.",
+        "brand_copy": "Fajas, moda y bienestar elegidos para acompañar tu cuerpo y tu vida.",
+        "show_social": true,
+        "show_reassurance": true,
+        "reassurance_1": "ENVÍOS A TODO EE. UU.",
+        "reassurance_2": "CAMBIOS ACOMPAÑADOS",
+        "reassurance_3": "PAGO PROTEGIDO",
+        "show_payment_icons": true
+      }
+    }
+  },
+  "order": ["luxo_commerce_footer"]
+}

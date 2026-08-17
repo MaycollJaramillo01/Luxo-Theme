@@ -1,0 +1,118 @@
+{{ 'luxo-landing.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+  assign primary_href = section.settings.primary_url
+  if primary_href == blank
+    assign primary_href = section.settings.fallback_url
+  endif
+
+  assign secondary_href = section.settings.secondary_url
+  if secondary_href == blank
+    assign secondary_href = section.settings.fallback_secondary_url
+  endif
+%}
+
+<section
+  class="luxo-block"
+  style="
+    --lb-dark: {{ section.settings.dark_color }};
+    --lb-max: {{ section.settings.page_width }}px;
+  "
+>
+  <div class="lb-dark-cta">
+    <div class="lb-wrap">
+      <div class="lb-dark-inner">
+        {% if section.settings.title != blank %}
+          <h2 class="lb-dark-title">{{ section.settings.title | newline_to_br }}</h2>
+        {% endif %}
+
+        {% if section.settings.text != blank %}
+          <div class="lb-dark-copy lb-rte">{{ section.settings.text }}</div>
+        {% endif %}
+
+        <div class="lb-dark-actions">
+          {% if section.settings.primary_label != blank and primary_href != blank %}
+            <a class="lb-btn lb-btn-light" href="{{ primary_href }}">{{ section.settings.primary_label }}</a>
+          {% endif %}
+
+          {% if section.settings.secondary_label != blank and secondary_href != blank %}
+            <a class="lb-btn lb-btn-outline-light" href="{{ secondary_href }}">{{ section.settings.secondary_label }}</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxo - CTA final",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "title",
+      "label": "Título",
+      "default": "No necesitas esperar para sentirte\nincreíble con tu cuerpo"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Texto",
+      "default": "<p>Ordena hoy y aprovecha el descuento antes de que se agoten.</p>"
+    },
+    {
+      "type": "text",
+      "id": "primary_label",
+      "label": "Botón principal",
+      "default": "QUIERO MI FAJA CON DESCUENTO"
+    },
+    {
+      "type": "url",
+      "id": "primary_url",
+      "label": "URL botón principal"
+    },
+    {
+      "type": "text",
+      "id": "secondary_label",
+      "label": "Botón secundario",
+      "default": "Hablar por WhatsApp"
+    },
+    {
+      "type": "url",
+      "id": "secondary_url",
+      "label": "URL botón secundario"
+    },
+    {
+      "type": "url",
+      "id": "fallback_url",
+      "label": "URL fallback principal"
+    },
+    {
+      "type": "url",
+      "id": "fallback_secondary_url",
+      "label": "URL fallback secundaria"
+    },
+    {
+      "type": "range",
+      "id": "page_width",
+      "label": "Ancho máximo",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1280
+    },
+    {
+      "type": "color",
+      "id": "dark_color",
+      "label": "Fondo oscuro",
+      "default": "#13110f"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo - CTA final"
+    }
+  ]
+}
+{% endschema %}

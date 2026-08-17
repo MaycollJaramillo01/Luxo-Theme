@@ -1,0 +1,123 @@
+{
+  "sections": {
+    "main": {
+      "type": "luxo-main-product",
+      "blocks": {
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "picker_type": "button",
+            "swatch_shape": "circle"
+          }
+        },
+        "quantity_selector": {
+          "type": "quantity_selector",
+          "settings": {}
+        },
+        "subscriptions": {
+          "type": "shopify://apps/subscriptions/blocks/app-block/a3bfe9ec-96f8-4508-a003-df608a36d2ad",
+          "settings": {
+            "widget_style": "card",
+            "widget_style_card_selector": "radio_button",
+            "subscription_policy_url": "",
+            "color_text_body": "#5F5852",
+            "dividers_color": "#D3CEC8",
+            "background_color": "#FBFAF8",
+            "border_thickness": 1,
+            "border_radius": 0,
+            "product": "{{product}}"
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": false,
+            "show_gift_card_recipient": true
+          }
+        }
+      },
+      "block_order": ["variant_picker", "quantity_selector", "subscriptions", "buy_buttons"],
+      "settings": {
+        "enable_sticky_info": true,
+        "media_size": "large",
+        "gallery_layout": "columns",
+        "mobile_thumbnails": "hide",
+        "hide_variants": false,
+        "enable_video_looping": false,
+        "constrain_to_viewport": false,
+        "media_fit": "contain",
+        "image_zoom": "lightbox",
+        "fit_and_care": "<p>Consulta la guía de tallas antes de elegir. Lava la prenda a mano con agua fría y déjala secar al aire.</p>",
+        "shipping": "<p>Tu pedido incluye seguimiento. Si necesitas ayuda con un cambio, nuestro equipo te acompaña.</p>"
+      }
+    },
+    "promises": {
+      "type": "luxo-product-promises",
+      "blocks": {
+        "fit": {
+          "type": "promise",
+          "settings": {
+            "title": "Talla correcta",
+            "text": "Escríbenos y te ayudamos a elegir la medida antes de comprar."
+          }
+        },
+        "secure": {
+          "type": "promise",
+          "settings": {
+            "title": "Compra protegida",
+            "text": "Tus datos y tu pago viajan cifrados en cada pedido."
+          }
+        },
+        "tracking": {
+          "type": "promise",
+          "settings": {
+            "title": "Seguimiento real",
+            "text": "Recibes actualizaciones de tu envío hasta la entrega."
+          }
+        }
+      },
+      "block_order": ["fit", "secure", "tracking"],
+      "settings": {
+        "kicker": "Compra informada",
+        "heading": "Estamos contigo antes y después."
+      }
+    },
+    "recommendations": {
+      "type": "luxo-product-recommendations",
+      "settings": {
+        "kicker": "MEJOR JUNTAS",
+        "heading": "Completa tu look",
+        "products_to_show": 4,
+        "columns": 4
+      }
+    },
+    "related_collections": {
+      "type": "luxo-related-collections",
+      "blocks": {
+        "media": {
+          "type": "collection",
+          "settings": {
+            "collection": "fajas-de-mediana-compresion",
+            "label": "COMPRESIÓN MEDIA"
+          }
+        },
+        "max": {
+          "type": "collection",
+          "settings": {
+            "collection": "fajas-de-maxima-compresion",
+            "label": "MÁXIMA COMPRESIÓN"
+          }
+        }
+      },
+      "block_order": ["media", "max"],
+      "settings": {
+        "kicker": "SIGUE EXPLORANDO",
+        "heading": "Colecciones similares",
+        "columns": 2,
+        "ratio": "16 / 11",
+        "label_position": "bottom"
+      }
+    }
+  },
+  "order": ["main", "promises", "recommendations", "related_collections"]
+}

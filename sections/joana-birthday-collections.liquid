@@ -1,0 +1,1033 @@
+{% comment %}
+  sections/joana-birthday-collections.liquid
+  Base: Lux Collections Shop Grid
+{% endcomment %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<section
+  id="JoanaBday-{{ section.id }}"
+  class="joana-bday-cols"
+  style="
+    --jb-bg:        {{ section.settings.bg_color }};
+    --jb-surface:   {{ section.settings.card_bg_color }};
+    --jb-text:      {{ section.settings.text_color }};
+    --jb-muted:     {{ section.settings.muted_color }};
+    --jb-accent:    {{ section.settings.accent_color }};
+    --jb-border:    {{ section.settings.border_color }};
+    --jb-sale:      {{ section.settings.sale_color }};
+    --jb-gold:      {{ section.settings.gold_color }};
+    --jb-pt:        {{ section.settings.padding_top }}px;
+    --jb-pb:        {{ section.settings.padding_bottom }}px;
+    --jb-container: {{ section.settings.container_width }}px;
+    --jb-cols-desk: {{ section.settings.columns_desktop }};
+    --jb-cols-mob:  {{ section.settings.columns_mobile }};
+    --jb-gap:       {{ section.settings.gap }}px;
+    --jb-radius:    {{ section.settings.card_radius }}px;
+    --serif:        'Cormorant Garamond', Georgia, serif;
+    --sans:         'Montserrat', Arial, sans-serif;
+  "
+>
+  <div class="joana-bday-cols__container">
+
+    <!-- CABECERA -->
+    {%- if section.settings.title != blank or section.settings.subtitle != blank -%}
+      <header class="joana-bday-cols__header">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="joana-bday-cols__eyebrow">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        {%- if section.settings.title != blank -%}
+          <h2 class="joana-bday-cols__title">{{ section.settings.title }}</h2>
+        {%- endif -%}
+        <div class="joana-bday-cols__divider"></div>
+        {%- if section.settings.subtitle != blank -%}
+          <div class="joana-bday-cols__subtitle rte">{{ section.settings.subtitle }}</div>
+        {%- endif -%}
+        {%- if section.settings.show_discount_badge -%}
+          <div class="joana-bday-cols__badge">
+            <span class="joana-bday-cols__badge-num">{{ section.settings.badge_discount_label | default: '42%' }}</span>
+            <span class="joana-bday-cols__badge-txt">de descuento<br>en esta colección</span>
+          </div>
+        {%- endif -%}
+      </header>
+    {%- endif -%}
+
+    <!-- COLECCIÓN -->
+    {%- assign col = section.settings.collection -%}
+    {%- if col == blank -%}{%- assign col = collection -%}{%- endif -%}
+
+    {%- if col != blank and col.products_count > 0 -%}
+
+      <div class="joana-bday-cols__group">
+
+        <!-- HEAD GRUPO -->
+        <div class="joana-bday-cols__group-head">
+          <div class="joana-bday-cols__group-title-wrap">
+            <h3 class="joana-bday-cols__group-title">{{ col.title }}</h3>
+            {%- if section.settings.description_show and col.description != blank -%}
+              <p class="joana-bday-cols__group-desc">{{ col.description | strip_html | truncate: 140 }}</p>
+            {%- endif -%}
+          </div>
+          {%- if section.settings.show_view_all -%}
+            <a class="joana-bday-cols__viewall" href="{{ col.url }}">
+              {{ section.settings.view_all_label | default: 'Ver colección' }}
+            </a>
+          {%- endif -%}
+        </div>
+
+        <!-- GRILLA -->
+        <div class="joana-bday-cols__grid" role="list">
+          {%- for product in col.products limit: section.settings.max_products -%}
+            {%- liquid
+              assign fallback_variant = product.selected_or_first_available_variant
+              if fallback_variant == blank
+                assign fallback_variant = product.first_available_variant
+              endif
+              if fallback_variant == blank
+                assign fallback_variant = product.variants.first
+              endif
+              assign current_variant = fallback_variant
+
+              assign has_real_variants = false
+              unless product.has_only_default_variant
+                assign has_real_variants = true
+              endunless
+
+              assign current_available = false
+              if current_variant != blank
+                assign current_available = current_variant.available
+              elsif product.available
+                assign current_available = true
+              endif
+
+              assign current_price_raw = blank
+              if current_variant != blank and current_variant.price != blank
+                assign current_price_raw = current_variant.price
+              elsif product.price_min != blank
+                assign current_price_raw = product.price_min
+              elsif product.price != blank
+                assign current_price_raw = product.price
+              endif
+
+              assign current_compare_price_raw = blank
+              if current_variant != blank and current_variant.compare_at_price != blank
+                assign current_compare_price_raw = current_variant.compare_at_price
+              elsif product.compare_at_price_max != blank and product.compare_at_price_max > current_price_raw
+                assign current_compare_price_raw = product.compare_at_price_max
+              endif
+
+              assign current_price_text = ''
+              assign current_compare_price_text = ''
+
+              if current_price_raw != blank
+                assign current_price_text = current_price_raw | money
+              endif
+              if current_compare_price_raw != blank and current_compare_price_raw > current_price_raw
+                assign current_compare_price_text = current_compare_price_raw | money
+              endif
+
+              assign featured_media = blank
+              if current_variant != blank and current_variant.featured_media != blank
+                assign featured_media = current_variant.featured_media
+              elsif product.featured_media != blank
+                assign featured_media = product.featured_media
+              endif
+
+              assign featured_image = blank
+              if featured_media != blank
+                assign featured_image = featured_media.preview_image
+              endif
+
+              assign variant_url = product.url
+              if current_variant != blank
+                assign variant_url = product.url | append: '?variant=' | append: current_variant.id
+              endif
+
+              assign color_option_position = 0
+              assign size_option_position = 0
+              for option in product.options_with_values
+                assign oname = option.name | downcase
+                if oname contains 'color' or oname contains 'colour' or oname contains 'tono'
+                  assign color_option_position = forloop.index
+                endif
+                if oname contains 'size' or oname contains 'talla' or oname contains 'talle' or oname contains 'tamano'
+                  assign size_option_position = forloop.index
+                endif
+              endfor
+
+              assign current_variant_label = ''
+              if has_real_variants and current_variant != blank and current_variant.title != 'Default Title'
+                assign current_variant_label = current_variant.title
+              endif
+            -%}
+
+            <article class="joana-bday-card" role="listitem" data-product-card>
+
+              <!-- IMAGEN -->
+              <a class="joana-bday-card__media" href="{{ variant_url }}" aria-label="{{ product.title | escape }}" data-product-link>
+                {%- if featured_image != blank -%}
+                  <img
+                    class="joana-bday-card__img"
+                    src="{{ featured_image | image_url: width: 1200 }}"
+                    srcset="
+                      {{ featured_image | image_url: width: 450 }} 450w,
+                      {{ featured_image | image_url: width: 700 }} 700w,
+                      {{ featured_image | image_url: width: 900 }} 900w,
+                      {{ featured_image | image_url: width: 1200 }} 1200w
+                    "
+                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                    width="{{ featured_image.width }}"
+                    height="{{ featured_image.height }}"
+                    alt="{{ featured_image.alt | default: product.title | escape }}"
+                    loading="lazy"
+                    data-main-image
+                  >
+                {%- else -%}
+                  {{ 'product-1' | placeholder_svg_tag: 'joana-bday-card__img joana-bday-card__img--placeholder' }}
+                {%- endif -%}
+
+                {%- if section.settings.show_badges -%}
+                  <div class="joana-bday-card__badges">
+                    {%- if product.available == false -%}
+                      <span class="joana-bday-badge joana-bday-badge--out">{{ section.settings.badge_soldout }}</span>
+                    {%- elsif current_compare_price_raw != blank and current_compare_price_raw > current_price_raw -%}
+                      <span class="joana-bday-badge joana-bday-badge--sale">{{ section.settings.badge_discount_label | default: '42%' }}</span>
+                    {%- elsif section.settings.new_tag != blank and product.tags contains section.settings.new_tag -%}
+                      <span class="joana-bday-badge">{{ section.settings.badge_new }}</span>
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+              </a>
+
+              <!-- CUERPO -->
+              <div class="joana-bday-card__body">
+                <p class="joana-bday-card__vendor">{{ product.vendor }}</p>
+
+                <a class="joana-bday-card__title" href="{{ variant_url }}" data-product-link>
+                  {{ product.title }}
+                </a>
+
+                <div class="joana-bday-card__price{% if current_compare_price_text != blank %} is-on-sale{% endif %}" data-price-wrap>
+                  <span class="joana-bday-price joana-bday-price--current" data-price-current>
+                    {%- if current_price_text != blank -%}{{ current_price_text }}{%- else -%}{{ product.price_min | money }}{%- endif -%}
+                  </span>
+                  <span class="joana-bday-price joana-bday-price--compare{% if current_compare_price_text == blank %} is-hidden{% endif %}" data-price-compare>
+                    {{ current_compare_price_text }}
+                  </span>
+                </div>
+
+                {%- if section.settings.show_variant_label -%}
+                  <div class="joana-bday-card__variant-label{% if current_variant_label == blank %} is-hidden{% endif %}" data-variant-label>
+                    {{ current_variant_label }}
+                  </div>
+                {%- endif -%}
+
+                <!-- SWATCHES DE COLOR -->
+                {%- if section.settings.show_color_swatches and product.variants.size > 1 -%}
+                  <div class="joana-bday-card__swatches" aria-label="Colores">
+                    {%- assign shown_swatches = '' -%}
+                    {%- for variant in product.variants -%}
+                      {%- liquid
+                        assign swatch_media = blank
+                        if variant.featured_media != blank
+                          assign swatch_media = variant.featured_media
+                        elsif variant.image != blank
+                          assign swatch_media = variant.image
+                        endif
+                        assign swatch_image = blank
+                        if swatch_media != blank
+                          assign swatch_image = swatch_media.preview_image | default: swatch_media
+                        endif
+                        assign color_value = variant.option1
+                        case color_option_position
+                          when 2
+                            assign color_value = variant.option2
+                          when 3
+                            assign color_value = variant.option3
+                        endcase
+                        assign swatch_key = color_value | default: variant.title | handleize
+                        assign swatch_token = '|' | append: swatch_key | append: '|'
+                        assign vp_text = variant.price | money
+                        assign vc_text = ''
+                        if variant.compare_at_price != blank and variant.compare_at_price > variant.price
+                          assign vc_text = variant.compare_at_price | money
+                        endif
+                      -%}
+                      {%- unless shown_swatches contains swatch_token -%}
+                        {%- if swatch_image != blank -%}
+                          {%- assign shown_swatches = shown_swatches | append: swatch_token -%}
+                          <button
+                            type="button"
+                            class="joana-bday-swatch{% if current_variant != blank and variant.id == current_variant.id %} active{% endif %}"
+                            data-variant-trigger="true"
+                            data-variant-id="{{ variant.id }}"
+                            data-image-src="{{ swatch_image | image_url: width: 1200 }}"
+                            data-image-srcset="{{ swatch_image | image_url: width: 450 }} 450w, {{ swatch_image | image_url: width: 700 }} 700w, {{ swatch_image | image_url: width: 900 }} 900w, {{ swatch_image | image_url: width: 1200 }} 1200w"
+                            data-price="{{ vp_text | escape }}"
+                            data-compare-price="{{ vc_text | escape }}"
+                            data-variant-title="{{ variant.title | escape }}"
+                            data-variant-url="{{ product.url }}?variant={{ variant.id }}"
+                            data-available="{{ variant.available }}"
+                            title="{{ color_value | default: variant.title | escape }}"
+                            aria-label="{{ color_value | default: variant.title | escape }}"
+                          >
+                            <img src="{{ swatch_image | image_url: width: 80 }}" alt="{{ color_value | default: variant.title | escape }}" width="80" height="80" loading="lazy">
+                          </button>
+                        {%- endif -%}
+                      {%- endunless -%}
+                    {%- endfor -%}
+                  </div>
+                {%- endif -%}
+
+                <!-- CHIPS DE VARIANTES -->
+                {%- if has_real_variants -%}
+                  <div class="joana-bday-card__chips" aria-label="Variantes">
+                    {%- for variant in product.variants -%}
+                      {%- liquid
+                        assign vm = blank
+                        if variant.featured_media != blank
+                          assign vm = variant.featured_media
+                        elsif variant.image != blank
+                          assign vm = variant.image
+                        endif
+                        assign vi = blank
+                        if vm != blank
+                          assign vi = vm.preview_image | default: vm
+                        endif
+                        assign vp_text = variant.price | money
+                        assign vc_text = ''
+                        if variant.compare_at_price != blank and variant.compare_at_price > variant.price
+                          assign vc_text = variant.compare_at_price | money
+                        endif
+                        assign chip_label = variant.title
+                        if product.options.size == 1 and size_option_position > 0
+                          case size_option_position
+                            when 1
+                              assign chip_label = variant.option1
+                            when 2
+                              assign chip_label = variant.option2
+                            when 3
+                              assign chip_label = variant.option3
+                          endcase
+                        endif
+                      -%}
+                      <button
+                        type="button"
+                        class="joana-bday-chip{% if current_variant != blank and variant.id == current_variant.id %} active{% endif %}"
+                        data-variant-trigger="true"
+                        data-variant-id="{{ variant.id }}"
+                        data-image-src="{% if vi != blank %}{{ vi | image_url: width: 1200 }}{% endif %}"
+                        data-image-srcset="{% if vi != blank %}{{ vi | image_url: width: 450 }} 450w, {{ vi | image_url: width: 700 }} 700w, {{ vi | image_url: width: 900 }} 900w, {{ vi | image_url: width: 1200 }} 1200w{% endif %}"
+                        data-price="{{ vp_text | escape }}"
+                        data-compare-price="{{ vc_text | escape }}"
+                        data-variant-title="{{ variant.title | escape }}"
+                        data-variant-url="{{ product.url }}?variant={{ variant.id }}"
+                        data-available="{{ variant.available }}"
+                        aria-label="{{ chip_label | escape }}"
+                      >{{ chip_label }}</button>
+                    {%- endfor -%}
+                  </div>
+                {%- endif -%}
+
+                <!-- BOTÓN ATC -->
+                {%- if section.settings.show_add_to_cart -%}
+                  {%- if current_variant != blank -%}
+                    <form method="post" action="/cart/add" class="joana-bday-card__form" data-product-form>
+                      <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-input>
+                      <button
+                        type="submit"
+                        class="joana-bday-btn{% unless current_available %} joana-bday-btn--disabled{% endunless %}"
+                        {% unless current_available %}disabled{% endunless %}
+                        data-atc-button
+                      >
+                        {%- if current_available -%}{{ section.settings.add_to_cart_label }}{%- else -%}{{ section.settings.badge_soldout }}{%- endif -%}
+                      </button>
+                    </form>
+                  {%- else -%}
+                    <div class="joana-bday-card__form">
+                      <button type="button" class="joana-bday-btn joana-bday-btn--disabled" disabled data-atc-button>{{ section.settings.badge_soldout }}</button>
+                    </div>
+                  {%- endif -%}
+                {%- endif -%}
+
+              </div><!-- /body -->
+            </article>
+          {%- endfor -%}
+        </div><!-- /grid -->
+      </div><!-- /group -->
+
+    {%- else -%}
+      <div class="joana-bday-cols__empty">
+        <h3>No hay productos para mostrar</h3>
+        <p>Selecciona una colección en los ajustes de la sección.</p>
+      </div>
+    {%- endif -%}
+
+  </div><!-- /container -->
+</section>
+
+<!-- ═══════════════════════ ESTILOS ═══════════════════════ -->
+<style>
+#JoanaBday-{{ section.id }} {
+  background: var(--jb-bg);
+  color: var(--jb-text);
+  padding: var(--jb-pt) 0 var(--jb-pb);
+}
+#JoanaBday-{{ section.id }} .joana-bday-cols__container {
+  max-width: var(--jb-container);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* CABECERA */
+#JoanaBday-{{ section.id }} .joana-bday-cols__header {
+  text-align: center;
+  max-width: 580px;
+  margin: 0 auto 56px;
+}
+#JoanaBday-{{ section.id }} .joana-bday-cols__eyebrow {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--jb-gold);
+  margin: 0 0 14px;
+}
+#JoanaBday-{{ section.id }} .joana-bday-cols__title {
+  font-family: var(--serif);
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 300;
+  line-height: 1.1;
+  color: var(--jb-text);
+  margin: 0 0 16px;
+}
+#JoanaBday-{{ section.id }} .joana-bday-cols__title em {
+  font-style: italic;
+  color: var(--jb-gold);
+}
+#JoanaBday-{{ section.id }} .joana-bday-cols__divider {
+  width: 36px;
+  height: 1px;
+  background: var(--jb-gold);
+  margin: 0 auto 16px;
+  opacity: .6;
+}
+#JoanaBday-{{ section.id }} .joana-bday-cols__subtitle,
+#JoanaBday-{{ section.id }} .joana-bday-cols__subtitle * {
+  font-family: var(--sans) !important;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--jb-muted);
+  margin: 0 0 20px;
+}
+#JoanaBday-{{ section.id }} .joana-bday-cols__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--jb-text);
+  padding: 12px 22px;
+  border-radius: 2px;
+}
+#JoanaBday-{{ section.id }} .joana-bday-cols__badge-num {
+  font-family: var(--serif);
+  font-size: 34px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--jb-gold);
+}
+#JoanaBday-{{ section.id }} .joana-bday-cols__badge-txt {
+  font-family: var(--sans);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: #EDE3D9;
+  line-height: 1.6;
+  text-align: left;
+}
+
+/* HEAD GRUPO */
+#JoanaBday-{{ section.id }} .joana-bday-cols__group-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--jb-border);
+}
+#JoanaBday-{{ section.id }} .joana-bday-cols__group-title {
+  font-family: var(--serif);
+  font-size: clamp(22px, 3vw, 34px);
+  font-weight: 300;
+  color: var(--jb-text);
+  margin: 0;
+  letter-spacing: .02em;
+}
+#JoanaBday-{{ section.id }} .joana-bday-cols__group-desc {
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--jb-muted);
+  margin: 8px 0 0;
+}
+#JoanaBday-{{ section.id }} .joana-bday-cols__viewall {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--jb-text);
+  text-decoration: none;
+  white-space: nowrap;
+  position: relative;
+  padding-bottom: 2px;
+}
+#JoanaBday-{{ section.id }} .joana-bday-cols__viewall::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(.8);
+  transform-origin: left;
+  transition: transform 220ms ease;
+}
+#JoanaBday-{{ section.id }} .joana-bday-cols__viewall:hover::after { transform: scaleX(1); }
+
+/* GRILLA */
+#JoanaBday-{{ section.id }} .joana-bday-cols__grid {
+  display: grid;
+  grid-template-columns: repeat(var(--jb-cols-desk), minmax(0, 1fr));
+  gap: var(--jb-gap);
+}
+
+/* TARJETA */
+#JoanaBday-{{ section.id }} .joana-bday-card {
+  background: var(--jb-surface);
+  border: 1px solid var(--jb-border);
+  border-radius: var(--jb-radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease;
+}
+#JoanaBday-{{ section.id }} .joana-bday-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px rgba(26,26,26,.08);
+  border-color: var(--jb-gold);
+}
+
+/* IMAGEN */
+#JoanaBday-{{ section.id }} .joana-bday-card__media {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: #EDE3D9;
+  text-decoration: none;
+}
+#JoanaBday-{{ section.id }} .joana-bday-card__img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transform: scale(1.01);
+  transition: transform 700ms cubic-bezier(.2,.7,.2,1);
+}
+#JoanaBday-{{ section.id }} .joana-bday-card:hover .joana-bday-card__img { transform: scale(1.06); }
+
+/* BADGES */
+#JoanaBday-{{ section.id }} .joana-bday-card__badges {
+  position: absolute;
+  left: 12px; bottom: 12px;
+  display: flex; gap: 6px; flex-wrap: wrap; z-index: 2;
+}
+#JoanaBday-{{ section.id }} .joana-bday-badge {
+  font-family: var(--sans) !important;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  padding: 6px 10px; border-radius: 2px;
+  background: var(--jb-text); color: var(--jb-gold);
+  line-height: 1;
+}
+#JoanaBday-{{ section.id }} .joana-bday-badge--sale { background: var(--jb-text); color: var(--jb-gold); }
+#JoanaBday-{{ section.id }} .joana-bday-badge--out { background: rgba(0,0,0,.55); color: #fff; }
+
+/* CUERPO */
+#JoanaBday-{{ section.id }} .joana-bday-card__body {
+  padding: 16px 18px 20px;
+  display: flex; flex-direction: column; gap: 8px;
+  flex: 1;
+}
+#JoanaBday-{{ section.id }} .joana-bday-card__vendor {
+  font-family: var(--sans);
+  font-size: 9px; font-weight: 500;
+  letter-spacing: .24em; text-transform: uppercase;
+  color: var(--jb-gold); margin: 0;
+}
+#JoanaBday-{{ section.id }} .joana-bday-card__title {
+  font-family: var(--serif);
+  font-size: 19px; font-weight: 400; line-height: 1.2;
+  color: var(--jb-text); text-decoration: none;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  min-height: calc(1.2em * 2);
+}
+#JoanaBday-{{ section.id }} .joana-bday-card__title:hover { color: var(--jb-gold); }
+
+/* PRECIOS */
+#JoanaBday-{{ section.id }} .joana-bday-card__price {
+  display: flex; align-items: baseline; gap: 8px; min-height: 22px;
+}
+#JoanaBday-{{ section.id }} .joana-bday-price {
+  font-family: var(--sans) !important;
+  white-space: nowrap;
+}
+#JoanaBday-{{ section.id }} .joana-bday-price--current {
+  font-size: 16px; font-weight: 700; color: var(--jb-text);
+}
+#JoanaBday-{{ section.id }} .joana-bday-card__price.is-on-sale .joana-bday-price--current {
+  color: var(--jb-sale);
+}
+#JoanaBday-{{ section.id }} .joana-bday-price--compare {
+  font-size: 13px; font-weight: 400;
+  color: var(--jb-muted); text-decoration: line-through;
+}
+#JoanaBday-{{ section.id }} .is-hidden { display: none !important; }
+
+/* LABEL VARIANTE */
+#JoanaBday-{{ section.id }} .joana-bday-card__variant-label {
+  font-family: var(--sans);
+  font-size: 11px; color: var(--jb-muted); min-height: 16px;
+}
+
+/* SWATCHES */
+#JoanaBday-{{ section.id }} .joana-bday-card__swatches {
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+#JoanaBday-{{ section.id }} .joana-bday-swatch {
+  width: 30px; height: 30px; padding: 2px;
+  border: 1px solid var(--jb-border); background: #fff;
+  border-radius: 50%; overflow: hidden; cursor: pointer;
+  transition: border-color 200ms, transform 200ms, box-shadow 200ms;
+}
+#JoanaBday-{{ section.id }} .joana-bday-swatch img {
+  width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;
+}
+#JoanaBday-{{ section.id }} .joana-bday-swatch:hover,
+#JoanaBday-{{ section.id }} .joana-bday-swatch.active {
+  border-color: var(--jb-text);
+  transform: scale(1.12);
+  box-shadow: 0 0 0 2px rgba(26,26,26,.12);
+}
+
+/* CHIPS */
+#JoanaBday-{{ section.id }} .joana-bday-card__chips {
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+#JoanaBday-{{ section.id }} .joana-bday-chip {
+  min-width: 36px; min-height: 30px; padding: 5px 10px;
+  border: 1px solid var(--jb-border); border-radius: 2px;
+  background: var(--jb-surface); color: var(--jb-text);
+  font-family: var(--sans) !important;
+  font-size: 11px; font-weight: 500; letter-spacing: .04em;
+  cursor: pointer;
+  transition: background 200ms, border-color 200ms, color 200ms;
+}
+#JoanaBday-{{ section.id }} .joana-bday-chip:hover,
+#JoanaBday-{{ section.id }} .joana-bday-chip.active {
+  background: var(--jb-text); border-color: var(--jb-text); color: #FAF7F3;
+}
+
+/* BOTÓN */
+#JoanaBday-{{ section.id }} .joana-bday-card__form { margin-top: auto; padding-top: 4px; }
+#JoanaBday-{{ section.id }} .joana-bday-btn {
+  width: 100%; min-height: 44px;
+  border: 1px solid var(--jb-accent); background: var(--jb-accent); color: #FAF7F3;
+  font-family: var(--sans) !important;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .2em; text-transform: uppercase;
+  border-radius: 2px; cursor: pointer;
+  transition: background 200ms, border-color 200ms, transform 180ms;
+}
+#JoanaBday-{{ section.id }} .joana-bday-btn:hover:not([disabled]) {
+  background: var(--jb-gold); border-color: var(--jb-gold);
+  transform: translateY(-1px);
+}
+#JoanaBday-{{ section.id }} .joana-bday-btn--disabled {
+  background: #d9d9d9 !important; border-color: #d9d9d9 !important;
+  color: #888 !important; cursor: not-allowed;
+}
+
+/* VACÍO */
+#JoanaBday-{{ section.id }} .joana-bday-cols__empty {
+  text-align: center; padding: 60px 24px;
+  font-family: var(--sans); color: var(--jb-muted);
+}
+
+/* RESPONSIVE */
+@media (max-width: 990px) {
+  #JoanaBday-{{ section.id }} .joana-bday-cols__group-head { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 768px) {
+  #JoanaBday-{{ section.id }} .joana-bday-cols__grid { grid-template-columns: repeat(var(--jb-cols-mob), minmax(0, 1fr)); }
+  #JoanaBday-{{ section.id }} .joana-bday-card__body { padding: 12px 14px 16px; }
+  #JoanaBday-{{ section.id }} .joana-bday-card__title { font-size: 17px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #JoanaBday-{{ section.id }} * { transition: none !important; animation: none !important; }
+}
+</style>
+
+<!-- ═══════════════════════ JAVASCRIPT ═══════════════════════ -->
+<script>
+(function () {
+  function initJoanaBday(sectionId) {
+    var section = document.getElementById('JoanaBday-' + sectionId);
+    if (!section) return;
+
+    section.querySelectorAll('[data-product-card]').forEach(function (card) {
+      var mainImage    = card.querySelector('[data-main-image]');
+      var variantInput = card.querySelector('[data-variant-input]');
+      var priceWrap    = card.querySelector('[data-price-wrap]');
+      var currentPrice = card.querySelector('[data-price-current]');
+      var comparePrice = card.querySelector('[data-price-compare]');
+      var variantLabel = card.querySelector('[data-variant-label]');
+      var atcButton    = card.querySelector('[data-atc-button]');
+      var productLinks = card.querySelectorAll('[data-product-link]');
+      var triggers     = card.querySelectorAll('[data-variant-trigger]');
+
+      triggers.forEach(function (trigger) {
+        trigger.addEventListener('click', function () {
+          var id          = this.dataset.variantId || '';
+          var imgSrc      = this.dataset.imageSrc || '';
+          var imgSrcset   = this.dataset.imageSrcset || '';
+          var price       = this.dataset.price || '';
+          var compare     = this.dataset.comparePrice || '';
+          var title       = this.dataset.variantTitle || '';
+          var url         = this.dataset.variantUrl || '#';
+          var available   = this.dataset.available === 'true';
+
+          triggers.forEach(function (t) {
+            t.classList.toggle('active', t.dataset.variantId === id);
+          });
+
+          if (mainImage && imgSrc) {
+            mainImage.src = imgSrc;
+            if (imgSrcset) mainImage.srcset = imgSrcset;
+            if (title) mainImage.alt = title;
+          }
+          if (variantInput && id) variantInput.value = id;
+          if (currentPrice) currentPrice.textContent = price;
+          if (comparePrice && priceWrap) {
+            if (compare && compare.trim() !== '') {
+              comparePrice.textContent = compare;
+              comparePrice.classList.remove('is-hidden');
+              priceWrap.classList.add('is-on-sale');
+            } else {
+              comparePrice.textContent = '';
+              comparePrice.classList.add('is-hidden');
+              priceWrap.classList.remove('is-on-sale');
+            }
+          }
+          if (variantLabel) {
+            if (title && title !== 'Default Title') {
+              variantLabel.textContent = title;
+              variantLabel.classList.remove('is-hidden');
+            } else {
+              variantLabel.textContent = '';
+              variantLabel.classList.add('is-hidden');
+            }
+          }
+          productLinks.forEach(function (link) { link.setAttribute('href', url); });
+          if (atcButton) {
+            atcButton.disabled = !available;
+            atcButton.classList.toggle('joana-bday-btn--disabled', !available);
+            atcButton.textContent = available
+              ? {{ section.settings.add_to_cart_label | json }}
+              : {{ section.settings.badge_soldout | json }};
+          }
+        });
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () { initJoanaBday('{{ section.id }}'); });
+  document.addEventListener('shopify:section:load', function (e) {
+    if (e.detail && e.detail.sectionId === '{{ section.id }}') initJoanaBday('{{ section.id }}');
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Joana – Colecciones",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Cabecera"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Texto pequeño superior",
+      "default": "Evento exclusivo · Solo hoy"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Colecciones seleccionadas"
+    },
+    {
+      "type": "richtext",
+      "id": "subtitle",
+      "label": "Subtítulo",
+      "default": "<p>Descuento aplicado automáticamente en colecciones seleccionadas durante el evento.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Colección"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Colección a mostrar"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "Máximo de productos",
+      "min": 4,
+      "max": 50,
+      "step": 1,
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Descuento"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_discount_badge",
+      "label": "Mostrar badge de descuento",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "badge_discount_label",
+      "label": "Etiqueta de descuento",
+      "info": "Escribe lo que quieras: 42%, SALE, −42%, etc.",
+      "default": "42%"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Ancho máximo",
+      "min": 980,
+      "max": 1800,
+      "step": 20,
+      "unit": "px",
+      "default": 1440
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding superior",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding inferior",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columnas desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "label": "Columnas mobile",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Espacio entre tarjetas",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Radio de tarjetas",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Opciones de tarjeta"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_color_swatches",
+      "label": "Mostrar swatches de color",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_variant_label",
+      "label": "Mostrar nombre de variante activa",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_add_to_cart",
+      "label": "Mostrar botón agregar al carrito",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_label",
+      "label": "Texto botón comprar",
+      "default": "Agregar al carrito"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badges",
+      "label": "Mostrar badges",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "new_tag",
+      "label": "Tag para badge NUEVO",
+      "default": "New"
+    },
+    {
+      "type": "text",
+      "id": "badge_new",
+      "label": "Texto badge NUEVO",
+      "default": "Nuevo"
+    },
+    {
+      "type": "text",
+      "id": "badge_sale",
+      "label": "Texto badge OFERTA",
+      "default": "Oferta"
+    },
+    {
+      "type": "text",
+      "id": "badge_soldout",
+      "label": "Texto agotado",
+      "default": "Agotado"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Mostrar enlace ver colección",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_label",
+      "label": "Texto enlace ver colección",
+      "default": "Ver colección"
+    },
+    {
+      "type": "checkbox",
+      "id": "description_show",
+      "label": "Mostrar descripción de colección",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fondo sección",
+      "default": "#FAF7F3"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Fondo tarjeta",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Texto principal",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Texto secundario",
+      "default": "#6B6B6B"
+    },
+    {
+      "type": "color",
+      "id": "gold_color",
+      "label": "Color dorado / acento",
+      "default": "#B8966E"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Color botón",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "color",
+      "id": "sale_color",
+      "label": "Color precio oferta",
+      "default": "#B83232"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Color borde",
+      "default": "#E2D9CE"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Joana – Colecciones"
+    }
+  ]
+}
+{% endschema %}

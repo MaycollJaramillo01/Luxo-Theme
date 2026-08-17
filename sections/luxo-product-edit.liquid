@@ -1,0 +1,77 @@
+{%- liquid
+  assign featured_collection = section.settings.collection
+
+  # Solo hay respaldo cuando el editor todavía no eligió colección.
+  # Si la colección elegida está vacía se muestra el aviso, no otros productos.
+  if featured_collection == blank
+    assign featured_collection = collections.all
+  endif
+
+  assign products_to_show = section.settings.products_to_show | default: 4
+  assign columns = section.settings.columns | default: 4
+-%}
+
+{%- if featured_collection.products.size > 0 -%}
+  <section class="luxo-section luxo-section--products" style="--luxo-cols: {{ columns }};">
+    <div class="luxo-container luxo-container--wide">
+      <header class="luxo-section__head luxo-section__head--compact">
+        <div>
+          {%- if section.settings.kicker != blank -%}<p class="luxo-kicker">{{ section.settings.kicker | escape }}</p>{%- endif -%}
+          <h2 class="luxo-section__title">{{ section.settings.heading }}</h2>
+        </div>
+        {%- if section.settings.view_all_label != blank -%}
+          <a class="luxo-text-link" href="{{ featured_collection.url }}">{{ section.settings.view_all_label | escape }} <span aria-hidden="true">→</span></a>
+        {%- endif -%}
+      </header>
+
+      <ul class="luxo-product-rail" role="list">
+        {%- for product in featured_collection.products limit: products_to_show -%}
+          <li>{% render 'luxo-product-card', product: product %}</li>
+        {%- endfor -%}
+      </ul>
+
+      {%- if request.design_mode and featured_collection.products.size < products_to_show -%}
+        <p class="luxo-editor-note">
+          «{{ featured_collection.title }}» solo tiene {{ featured_collection.products.size }}
+          producto{% if featured_collection.products.size != 1 %}s{% endif %} disponible{% if featured_collection.products.size != 1 %}s{% endif %}:
+          subir «Productos a mostrar» no añade más. Agrega productos a la colección o elige otra.
+        </p>
+      {%- endif -%}
+    </div>
+  </section>
+{%- elsif request.design_mode -%}
+  <section class="luxo-section luxo-section--products">
+    <div class="luxo-container luxo-container--wide">
+      <p class="luxo-editor-note">
+        La colección «{{ section.settings.collection.title | default: 'seleccionada' }}» no tiene productos visibles,
+        por eso la sección aparece vacía. Elige otra colección o agrégale productos.
+      </p>
+    </div>
+  </section>
+{%- endif -%}
+
+{% style %}
+  .luxo-editor-note {
+    margin: 24px 0 0;
+    padding: 14px 18px;
+    border: 1px dashed var(--luxo-line);
+    color: var(--luxo-ink-soft);
+    font-size: 1.25rem;
+    line-height: 1.5;
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Luxo — Esenciales",
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Antetítulo", "default": "MÁS ELEGIDOS" },
+    { "type": "inline_richtext", "id": "heading", "label": "Título", "default": "Los esenciales que no fallan" },
+    { "type": "collection", "id": "collection", "label": "Colección" },
+    { "type": "range", "id": "products_to_show", "label": "Productos a mostrar", "min": 2, "max": 12, "step": 1, "default": 4 },
+    { "type": "range", "id": "columns", "label": "Columnas en escritorio", "min": 2, "max": 5, "step": 1, "default": 4 },
+    { "type": "text", "id": "view_all_label", "label": "Texto de ver colección", "default": "VER TODO" }
+  ],
+  "presets": [{ "name": "Luxo — Esenciales" }]
+}
+{% endschema %}

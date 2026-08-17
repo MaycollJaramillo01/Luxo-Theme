@@ -1,0 +1,426 @@
+{{ 'luxo-hair-removal-campaign.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+  assign selected_product = section.settings.product
+  assign current_variant = blank
+  assign product_url = section.settings.primary_url
+  assign compare_price = blank
+  assign price = blank
+  assign featured_media = section.settings.hero_image
+
+  if selected_product != blank
+    assign current_variant = selected_product.selected_or_first_available_variant
+
+    if price == blank
+      assign price = current_variant.price
+    endif
+
+    if current_variant.compare_at_price > current_variant.price
+      assign compare_price = current_variant.compare_at_price
+    endif
+
+    if product_url == blank
+      assign product_url = selected_product.url
+    endif
+
+    if featured_media == blank and selected_product.featured_image != blank
+      assign featured_media = selected_product.featured_image
+    endif
+  endif
+
+  assign secondary_url = section.settings.secondary_url
+  if secondary_url == blank
+    assign secondary_url = product_url
+  endif
+
+  assign sticky_url = section.settings.sticky_url
+  if sticky_url == blank
+    assign sticky_url = product_url
+  endif
+%}
+
+<section
+  class="lxhr {% if section.settings.show_mobile_sticky_cta %}has-mobile-sticky{% endif %}"
+  style="
+    --lxhr-bg: {{ section.settings.bg_color }};
+    --lxhr-surface: {{ section.settings.surface_color }};
+    --lxhr-surface-soft: {{ section.settings.surface_soft_color }};
+    --lxhr-text: {{ section.settings.text_color }};
+    --lxhr-muted: {{ section.settings.muted_color }};
+    --lxhr-accent: {{ section.settings.accent_color }};
+    --lxhr-accent-soft: {{ section.settings.accent_soft_color }};
+    --lxhr-border: {{ section.settings.border_color }};
+    --lxhr-dark: {{ section.settings.dark_color }};
+    --lxhr-radius: {{ section.settings.radius }}px;
+    --lxhr-max: {{ section.settings.page_width }}px;
+    --lxhr-space: {{ section.settings.section_spacing }}px;
+  "
+>
+  <div class="lxhr-wrap">
+    <div class="lxhr-section">
+      <div class="lxhr-hero-grid">
+
+        <div class="lxhr-hero-card medium-hide large-up-hide">
+          <div class="lxhr-hero-image-shell">
+            {% if featured_media != blank %}
+              {{
+                featured_media
+                | image_url: width: 1800
+                | image_tag:
+                  loading: 'eager',
+                  widths: '550, 750, 900, 1200, 1500, 1800',
+                  sizes: '(max-width: 749px) 100vw, 52vw',
+                  alt: section.settings.image_alt | escape
+              }}
+            {% else %}
+              <div class="lxhr-video-placeholder">Agrega la imagen principal del pack.</div>
+            {% endif %}
+          </div>
+
+          <div class="lxhr-mini-list">
+            <div class="lxhr-mini-item">{{ section.settings.mini_1 }}</div>
+            <div class="lxhr-mini-item">{{ section.settings.mini_2 }}</div>
+            <div class="lxhr-mini-item">{{ section.settings.mini_3 }}</div>
+          </div>
+        </div>
+
+        <div class="lxhr-hero-copy">
+          {% if section.settings.eyebrow != blank %}
+            <div class="lxhr-eyebrow">{{ section.settings.eyebrow }}</div>
+          {% endif %}
+
+          <h1 class="lxhr-hero-title">
+            {{ section.settings.title_top }}<br>
+            <em>{{ section.settings.title_accent }}</em>
+          </h1>
+
+          {% if section.settings.text != blank %}
+            <div class="lxhr-hero-text rte">{{ section.settings.text }}</div>
+          {% endif %}
+
+          <div class="lxhr-price-row">
+            {% if price != blank %}
+              <p class="lxhr-price">{{ price | money }}</p>
+            {% else %}
+              <p class="lxhr-price">{{ section.settings.manual_price }}</p>
+            {% endif %}
+
+            {% if compare_price != blank %}
+              <div class="lxhr-compare-price">{{ compare_price | money }}</div>
+            {% elsif section.settings.manual_compare_price != blank %}
+              <div class="lxhr-compare-price">{{ section.settings.manual_compare_price }}</div>
+            {% endif %}
+          </div>
+
+          {% if section.settings.offer_tag != blank %}
+            <div style="margin-top: 16px;">
+              <span class="lxhr-tag">{{ section.settings.offer_tag }}</span>
+            </div>
+          {% endif %}
+
+          <div class="lxhr-hero-actions">
+            {% if section.settings.primary_label != blank and product_url != blank %}
+              <a class="lxhr-btn lxhr-btn-primary" href="{{ product_url }}">{{ section.settings.primary_label }}</a>
+            {% endif %}
+
+            {% if section.settings.secondary_label != blank and secondary_url != blank %}
+              <a class="lxhr-btn lxhr-btn-secondary" href="{{ secondary_url }}">{{ section.settings.secondary_label }}</a>
+            {% endif %}
+          </div>
+
+          {% if section.settings.note != blank %}
+            <div class="lxhr-note" style="margin-top: 12px;">{{ section.settings.note }}</div>
+          {% endif %}
+
+          <div class="lxhr-hero-trust">
+            {% if section.settings.trust_1 != blank %}
+              <div class="lxhr-hero-trust-item">{{ section.settings.trust_1 }}</div>
+            {% endif %}
+            {% if section.settings.trust_2 != blank %}
+              <div class="lxhr-hero-trust-item">{{ section.settings.trust_2 }}</div>
+            {% endif %}
+            {% if section.settings.trust_3 != blank %}
+              <div class="lxhr-hero-trust-item">{{ section.settings.trust_3 }}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="lxhr-hero-card small-hide">
+          <div class="lxhr-hero-image-shell">
+            {% if featured_media != blank %}
+              {{
+                featured_media
+                | image_url: width: 1800
+                | image_tag:
+                  loading: 'eager',
+                  widths: '550, 750, 900, 1200, 1500, 1800',
+                  sizes: '(max-width: 749px) 100vw, 52vw',
+                  alt: section.settings.image_alt | escape
+              }}
+            {% else %}
+              <div class="lxhr-video-placeholder">Agrega la imagen principal del pack.</div>
+            {% endif %}
+          </div>
+
+          <div class="lxhr-mini-list">
+            <div class="lxhr-mini-item">{{ section.settings.mini_1 }}</div>
+            <div class="lxhr-mini-item">{{ section.settings.mini_2 }}</div>
+            <div class="lxhr-mini-item">{{ section.settings.mini_3 }}</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {% if section.settings.show_mobile_sticky_cta and section.settings.sticky_label != blank and sticky_url != blank %}
+    <div class="lxhr-mobile-sticky">
+      <div class="lxhr-mobile-sticky-inner">
+        <div class="lxhr-mobile-sticky-note">{{ section.settings.sticky_note }}</div>
+        <a class="lxhr-btn lxhr-btn-primary" href="{{ sticky_url }}">{{ section.settings.sticky_label }}</a>
+      </div>
+    </div>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Luxo Hair Removal Hero",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Producto"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Imagen principal manual"
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Alt de imagen",
+      "default": "Pack de 5 cremas depiladoras Luxo Beauty"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Rutina premium de depilación en casa"
+    },
+    {
+      "type": "text",
+      "id": "title_top",
+      "label": "Título línea 1",
+      "default": "Depílate fácil"
+    },
+    {
+      "type": "text",
+      "id": "title_accent",
+      "label": "Título línea 2",
+      "default": "y con más comodidad"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Texto",
+      "default": "<p>Descubre nuestro pack de <strong>5 cremas depiladoras premium</strong>, pensado para una rutina práctica, elegante y cómoda. Ideal para mantener tu piel suave desde casa con una mejor relación cantidad-precio.</p>"
+    },
+    {
+      "type": "text",
+      "id": "manual_price",
+      "label": "Precio manual",
+      "default": "$89.99"
+    },
+    {
+      "type": "text",
+      "id": "manual_compare_price",
+      "label": "Precio anterior manual",
+      "default": "$100.00"
+    },
+    {
+      "type": "text",
+      "id": "offer_tag",
+      "label": "Franja de oferta",
+      "default": "5 cremas depiladoras por $89.99"
+    },
+    {
+      "type": "text",
+      "id": "primary_label",
+      "label": "Botón principal",
+      "default": "Comprar ahora"
+    },
+    {
+      "type": "url",
+      "id": "primary_url",
+      "label": "URL botón principal manual"
+    },
+    {
+      "type": "text",
+      "id": "secondary_label",
+      "label": "Botón secundario",
+      "default": "Ver detalles del pack"
+    },
+    {
+      "type": "url",
+      "id": "secondary_url",
+      "label": "URL botón secundario"
+    },
+    {
+      "type": "text",
+      "id": "note",
+      "label": "Texto pequeño",
+      "default": "Pago seguro y opciones de pago disponibles en Shopify."
+    },
+    {
+      "type": "text",
+      "id": "trust_1",
+      "label": "Sello 1",
+      "default": "Pack de 5 unidades"
+    },
+    {
+      "type": "text",
+      "id": "trust_2",
+      "label": "Sello 2",
+      "default": "Compra segura"
+    },
+    {
+      "type": "text",
+      "id": "trust_3",
+      "label": "Sello 3",
+      "default": "Rutina práctica en casa"
+    },
+    {
+      "type": "text",
+      "id": "mini_1",
+      "label": "Micro bloque 1",
+      "default": "Pack conveniente"
+    },
+    {
+      "type": "text",
+      "id": "mini_2",
+      "label": "Micro bloque 2",
+      "default": "Uso cómodo en casa"
+    },
+    {
+      "type": "text",
+      "id": "mini_3",
+      "label": "Micro bloque 3",
+      "default": "Oferta actual del pack"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_mobile_sticky_cta",
+      "label": "Mostrar CTA sticky mobile",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "sticky_note",
+      "label": "Texto sticky mobile",
+      "default": "Oferta actual del pack"
+    },
+    {
+      "type": "text",
+      "id": "sticky_label",
+      "label": "Botón sticky mobile",
+      "default": "Comprar ahora"
+    },
+    {
+      "type": "url",
+      "id": "sticky_url",
+      "label": "URL sticky mobile"
+    },
+    {
+      "type": "range",
+      "id": "page_width",
+      "label": "Ancho máximo",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1240
+    },
+    {
+      "type": "range",
+      "id": "section_spacing",
+      "label": "Espaciado vertical",
+      "min": 40,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "default": 88
+    },
+    {
+      "type": "range",
+      "id": "radius",
+      "label": "Radio visual",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fondo",
+      "default": "#fbf5f4"
+    },
+    {
+      "type": "color",
+      "id": "surface_color",
+      "label": "Tarjeta",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "surface_soft_color",
+      "label": "Tarjeta suave",
+      "default": "#fff9f8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Texto principal",
+      "default": "#1b1718"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Texto secundario",
+      "default": "#6d6265"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Acento",
+      "default": "#d7c56f"
+    },
+    {
+      "type": "color",
+      "id": "accent_soft_color",
+      "label": "Acento suave",
+      "default": "#d8e7af"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Bordes",
+      "default": "#eadfdf"
+    },
+    {
+      "type": "color",
+      "id": "dark_color",
+      "label": "Color oscuro",
+      "default": "#111111"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo Hair Removal Hero"
+    }
+  ]
+}
+{% endschema %}

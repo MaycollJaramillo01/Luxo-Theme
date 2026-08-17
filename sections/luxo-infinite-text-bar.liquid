@@ -1,0 +1,347 @@
+{% liquid
+  assign section_id = 'luxo-infinite-text-bar-' | append: section.id
+  assign has_blocks = false
+
+  if section.blocks.size > 0
+    assign has_blocks = true
+  endif
+%}
+
+<section
+  id="{{ section_id }}"
+  class="luxo-infinite-text-bar"
+  style="
+    --luxo-bar-bg: {{ section.settings.background_color }};
+    --luxo-bar-text: {{ section.settings.text_color }};
+    --luxo-bar-highlight: {{ section.settings.highlight_color }};
+    --luxo-bar-font-size-desktop: {{ section.settings.font_size_desktop }}px;
+    --luxo-bar-font-size-mobile: {{ section.settings.font_size_mobile }}px;
+    --luxo-bar-padding-y: {{ section.settings.padding_y }}px;
+    --luxo-bar-gap: {{ section.settings.item_gap }}px;
+    --luxo-bar-speed: {{ section.settings.animation_speed }}s;
+    --luxo-bar-letter-spacing: {{ section.settings.letter_spacing }}px;
+  "
+>
+  {% if section.settings.link != blank %}
+    <a href="{{ section.settings.link }}" class="luxo-infinite-text-bar__link" aria-label="{{ section.settings.accessibility_label | escape }}">
+  {% endif %}
+
+    <div class="luxo-infinite-text-bar__viewport">
+      <div class="luxo-infinite-text-bar__track">
+        {% for i in (1..2) %}
+          <div class="luxo-infinite-text-bar__group" aria-hidden="{% if i == 2 %}true{% else %}false{% endif %}">
+            {% if has_blocks %}
+              {% for block in section.blocks %}
+                <div class="luxo-infinite-text-bar__item" {{ block.shopify_attributes }}>
+                  {% if block.settings.highlight_text != blank %}
+                    <span class="luxo-infinite-text-bar__highlight">
+                      {{ block.settings.highlight_text | escape }}
+                    </span>
+                  {% endif %}
+
+                  {% if block.settings.message != blank %}
+                    <span class="luxo-infinite-text-bar__message">
+                      {{ block.settings.message | escape }}
+                    </span>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="luxo-infinite-text-bar__item">
+                <span class="luxo-infinite-text-bar__highlight">20% de descuento</span>
+                <span class="luxo-infinite-text-bar__message">en toda la tienda. Aplican restricciones.</span>
+              </div>
+
+              <div class="luxo-infinite-text-bar__item">
+                <span class="luxo-infinite-text-bar__highlight">Especial Día de las Madres</span>
+                <span class="luxo-infinite-text-bar__message">productos seleccionados por tiempo limitado.</span>
+              </div>
+
+              <div class="luxo-infinite-text-bar__item">
+                <span class="luxo-infinite-text-bar__highlight">Compra hoy</span>
+                <span class="luxo-infinite-text-bar__message">y aprovecha el descuento antes de finalizar la promoción.</span>
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  {% if section.settings.link != blank %}
+    </a>
+  {% endif %}
+</section>
+
+<style>
+  #{{ section_id }} {
+    width: 100%;
+    overflow: hidden;
+    background: var(--luxo-bar-bg);
+    color: var(--luxo-bar-text);
+    border-top: {% if section.settings.show_border %}1px solid rgba(0, 0, 0, 0.08){% else %}0{% endif %};
+    border-bottom: {% if section.settings.show_border %}1px solid rgba(0, 0, 0, 0.08){% else %}0{% endif %};
+  }
+
+  #{{ section_id }} .luxo-infinite-text-bar__link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  #{{ section_id }} .luxo-infinite-text-bar__viewport {
+    width: 100%;
+    overflow: hidden;
+    padding: var(--luxo-bar-padding-y) 0;
+  }
+
+  #{{ section_id }} .luxo-infinite-text-bar__track {
+    display: flex;
+    width: max-content;
+    animation: luxo-marquee-{{ section.id }} var(--luxo-bar-speed) linear infinite;
+    will-change: transform;
+  }
+
+  {% if section.settings.pause_on_hover %}
+    #{{ section_id }}:hover .luxo-infinite-text-bar__track {
+      animation-play-state: paused;
+    }
+  {% endif %}
+
+  #{{ section_id }} .luxo-infinite-text-bar__group {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: var(--luxo-bar-gap);
+    padding-right: var(--luxo-bar-gap);
+  }
+
+  #{{ section_id }} .luxo-infinite-text-bar__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    font-size: var(--luxo-bar-font-size-desktop);
+    line-height: 1.2;
+    font-weight: 500;
+    letter-spacing: var(--luxo-bar-letter-spacing);
+    text-transform: {% if section.settings.uppercase_text %}uppercase{% else %}none{% endif %};
+  }
+
+  #{{ section_id }} .luxo-infinite-text-bar__item::after {
+    content: "•";
+    color: var(--luxo-bar-highlight);
+    font-size: 14px;
+    line-height: 1;
+    margin-left: calc(var(--luxo-bar-gap) / 2);
+  }
+
+  #{{ section_id }} .luxo-infinite-text-bar__highlight {
+    color: var(--luxo-bar-highlight);
+    font-weight: 700;
+  }
+
+  #{{ section_id }} .luxo-infinite-text-bar__message {
+    color: var(--luxo-bar-text);
+  }
+
+  @keyframes luxo-marquee-{{ section.id }} {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    #{{ section_id }} .luxo-infinite-text-bar__item {
+      font-size: var(--luxo-bar-font-size-mobile);
+      gap: 6px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #{{ section_id }} .luxo-infinite-text-bar__track {
+      animation: none;
+      transform: none;
+    }
+
+    #{{ section_id }} .luxo-infinite-text-bar__group:nth-child(2) {
+      display: none;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Luxo texto infinito",
+  "tag": "section",
+  "class": "section-luxo-infinite-text-bar",
+  "settings": [
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Enlace del banner",
+      "info": "Opcional. Puedes enlazarlo a la landing del 20%."
+    },
+    {
+      "type": "text",
+      "id": "accessibility_label",
+      "label": "Texto accesible del enlace",
+      "default": "Ver productos con 20% de descuento"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "highlight_color",
+      "label": "Color destacado",
+      "default": "#e3bd24"
+    },
+    {
+      "type": "range",
+      "id": "font_size_desktop",
+      "label": "Tamaño de texto en desktop",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "label": "Tamaño de texto en mobile",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_y",
+      "label": "Espaciado vertical",
+      "min": 6,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "item_gap",
+      "label": "Separación entre textos",
+      "min": 20,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 46
+    },
+    {
+      "type": "range",
+      "id": "animation_speed",
+      "label": "Velocidad del carrusel",
+      "min": 10,
+      "max": 80,
+      "step": 1,
+      "unit": "s",
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing",
+      "label": "Espaciado entre letras",
+      "min": 0,
+      "max": 3,
+      "step": 0.1,
+      "unit": "px",
+      "default": 0.6
+    },
+    {
+      "type": "checkbox",
+      "id": "uppercase_text",
+      "label": "Mostrar texto en mayúsculas",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pausar al pasar el mouse",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_border",
+      "label": "Mostrar bordes superior e inferior",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text_item",
+      "name": "Texto del carrusel",
+      "settings": [
+        {
+          "type": "text",
+          "id": "highlight_text",
+          "label": "Texto destacado",
+          "default": "20% de descuento"
+        },
+        {
+          "type": "text",
+          "id": "message",
+          "label": "Mensaje",
+          "default": "en toda la tienda. Aplican restricciones."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo texto infinito",
+      "blocks": [
+        {
+          "type": "text_item",
+          "settings": {
+            "highlight_text": "20% de descuento",
+            "message": "en toda la tienda. Aplican restricciones."
+          }
+        },
+        {
+          "type": "text_item",
+          "settings": {
+            "highlight_text": "Especial Día de las Madres",
+            "message": "productos seleccionados por tiempo limitado."
+          }
+        },
+        {
+          "type": "text_item",
+          "settings": {
+            "highlight_text": "No acumulable",
+            "message": "con otras promociones, bundles o descuentos especiales."
+          }
+        },
+        {
+          "type": "text_item",
+          "settings": {
+            "highlight_text": "Compra ahora",
+            "message": "y aprovecha el 20% antes de finalizar la promoción."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

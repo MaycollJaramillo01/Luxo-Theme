@@ -1,0 +1,64 @@
+{{ 'luxo-landing.css' | asset_url | stylesheet_tag }}
+
+<section
+  class="luxo-block"
+  style="
+    --lb-bg: {{ section.settings.bg_color }};
+    --lb-text: {{ section.settings.text_color }};
+    --lb-dark: {{ section.settings.dark_color }};
+    --lb-max: {{ section.settings.page_width }}px;
+  "
+>
+  <div class="lb-notice">
+    <div class="lb-wrap">
+      <div class="lb-notice-inner">{{ section.settings.text }}</div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxo - Franja superior",
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Texto",
+      "default": "Envío rápido • Compra segura • Atención personalizada"
+    },
+    {
+      "type": "range",
+      "id": "page_width",
+      "label": "Ancho máximo",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1280
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color base",
+      "default": "#f7f4ef"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color texto",
+      "default": "#181511"
+    },
+    {
+      "type": "color",
+      "id": "dark_color",
+      "label": "Color fondo franja",
+      "default": "#13110f"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo - Franja superior"
+    }
+  ]
+}
+{% endschema %}

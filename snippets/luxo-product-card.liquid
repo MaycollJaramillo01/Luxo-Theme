@@ -1,0 +1,86 @@
+{%- comment -%}
+  Product card owned by the Luxo commerce system.
+  It reads Shopify product data only and never fabricates titles, prices or media.
+{%- endcomment -%}
+
+{%- liquid
+  assign card_product = product
+  assign primary_media = card_product.featured_media.preview_image | default: card_product.featured_image
+  assign secondary_media = card_product.media[1].preview_image
+  assign selected_variant = card_product.selected_or_first_available_variant
+  assign is_on_sale = false
+  if card_product.compare_at_price_max > card_product.price
+    assign is_on_sale = true
+  endif
+  assign card_form_id = 'LuxoCardForm-' | append: section.id | append: '-' | append: card_product.id
+-%}
+
+{%- if card_product != blank -%}
+  <article class="luxo-card">
+    <a class="luxo-card__media" href="{{ card_product.url }}" aria-label="{{ card_product.title | escape }}">
+      {%- if primary_media != blank -%}
+        {{ primary_media | image_url: width: 1200 | image_tag:
+          class: 'luxo-card__image luxo-card__image--primary',
+          widths: '360, 540, 720, 900, 1200',
+          sizes: '(max-width: 749px) 78vw, (max-width: 1100px) 42vw, 25vw',
+          loading: 'lazy',
+          alt: primary_media.alt | default: card_product.title
+        }}
+        {%- if secondary_media != blank -%}
+          {{ secondary_media | image_url: width: 1200 | image_tag:
+            class: 'luxo-card__image luxo-card__image--secondary',
+            widths: '360, 540, 720, 900, 1200',
+            sizes: '(max-width: 749px) 78vw, (max-width: 1100px) 42vw, 25vw',
+            loading: 'lazy',
+            alt: secondary_media.alt | default: card_product.title
+          }}
+        {%- endif -%}
+      {%- else -%}
+        <span class="luxo-card__media-empty" aria-hidden="true"></span>
+      {%- endif -%}
+
+      <span class="luxo-card__badges">
+        {%- if card_product.available == false -%}
+          <span class="luxo-card__badge">Agotado</span>
+        {%- elsif is_on_sale -%}
+          <span class="luxo-card__badge">Oferta</span>
+        {%- endif -%}
+      </span>
+    </a>
+
+    <div class="luxo-card__content">
+      <div class="luxo-card__meta">
+        <a class="luxo-card__title" href="{{ card_product.url }}">{{ card_product.title | escape }}</a>
+        <div class="luxo-card__price">
+          {%- if card_product.price_varies -%}
+            <span>Desde {{ card_product.price_min | money }}</span>
+          {%- else -%}
+            <span>{{ card_product.price | money }}</span>
+          {%- endif -%}
+          {%- if is_on_sale -%}
+            <s>{{ card_product.compare_at_price_max | money }}</s>
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- comment -%} Slot fijo: reserva el alto aunque el producto no tenga colores {%- endcomment -%}
+      <div class="luxo-card__colors">{% render 'luxo-card-color-options', product: card_product %}</div>
+
+      {%- if card_product.available -%}
+        {%- if card_product.has_only_default_variant and selected_variant != blank -%}
+          <product-form data-hide-errors="true">
+            {%- form 'product', card_product, id: card_form_id, novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+              <input type="hidden" name="id" value="{{ selected_variant.id }}">
+              <button class="luxo-card__quick-add" type="submit" name="add">
+                <span>Agregar rápido</span>
+                {%- render 'loading-spinner' -%}
+              </button>
+            {%- endform -%}
+          </product-form>
+        {%- else -%}
+          <a class="luxo-card__quick-add" href="{{ card_product.url }}">Elegir opciones</a>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+  </article>
+{%- endif -%}

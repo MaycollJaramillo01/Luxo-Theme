@@ -1,0 +1,742 @@
+{% comment %}
+  Luxo Dual Dinámico - Editorial / inspiración SKIMS
+  Corregido:
+  - Elimina el problema visual "DEMO" en títulos con números
+  - No depende de color_scheme
+  - No necesita settings_data / settings_schema para esquemas de color
+  - Texto introductorio editable desde el editor
+  - Productos dinámicos desde metafields de colección
+  - NUEVO: Lógica de descuento visual global.
+  - NUEVO: Excluye descuento visual para el producto '5-cremas-depiladoras'
+{% endcomment %}
+
+<section
+  class="lux-skims-dual"
+  id="LuxSection-{{ section.id }}"
+  style="
+    --section-bg: {{ section.settings.bg_color }};
+    --surface: {{ section.settings.card_bg_color }};
+    --text: {{ section.settings.text_color }};
+    --muted: {{ section.settings.muted_color }};
+    --border: {{ section.settings.border_color }};
+    --d-h: {{ section.settings.desktop_height }}px;
+    --m-h: {{ section.settings.mobile_height }}px;
+    --gap: {{ section.settings.card_gap }}px;
+    --radius: {{ section.settings.card_radius }}px;
+  "
+>
+  {%- liquid
+    assign source_collection = section.settings.source_collection
+    assign product_one = blank
+    assign product_two = blank
+    assign product_count = 0
+
+    if source_collection == blank and collection != blank
+      assign source_collection = collection
+    endif
+
+    if source_collection != blank
+      assign product_count = source_collection.products.size
+
+      if product_count > 0
+        assign section_seed = section.id | size
+        assign random_seed = 'now' | date: '%s' | plus: section_seed
+        assign product_one_index = random_seed | modulo: product_count
+        assign product_two_index = random_seed | divided_by: 7 | plus: 1 | modulo: product_count
+
+        if product_count > 1 and product_two_index == product_one_index
+          assign product_two_index = product_two_index | plus: 1 | modulo: product_count
+        endif
+
+        for candidate_product in source_collection.products
+          if forloop.index0 == product_one_index
+            assign product_one = candidate_product
+          endif
+
+          if product_count > 1 and forloop.index0 == product_two_index
+            assign product_two = candidate_product
+          endif
+        endfor
+      endif
+    endif
+
+    assign single_layout = false
+    if product_one != blank and product_two == blank
+      assign single_layout = true
+    endif
+
+    assign global_discount = section.settings.global_discount
+  -%}
+
+  <div class="lux-skims-dual__inner">
+    {%- if section.settings.title != blank or section.settings.intro != blank or section.settings.eyebrow != blank -%}
+      <div class="lux-skims-dual__header">
+        <div class="lux-skims-dual__header-main">
+          {%- if section.settings.eyebrow != blank -%}
+            <p class="lux-skims-dual__eyebrow">{{ section.settings.eyebrow }}</p>
+          {%- endif -%}
+
+          {%- if section.settings.title != blank -%}
+            <h2 class="lux-skims-dual__title">{{ section.settings.title }}</h2>
+          {%- endif -%}
+        </div>
+
+        {%- if section.settings.intro != blank -%}
+          <div class="lux-skims-dual__intro">{{ section.settings.intro }}</div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if product_one != blank or product_two != blank -%}
+      <div class="lux-skims-dual__grid{% if single_layout %} is-single{% endif %}">
+
+        {% comment %} ================= PRODUCTO UNO ================= {% endcomment %}
+        {%- if product_one != blank -%}
+          {%- liquid
+            assign product_one_copy = section.settings.default_card_copy
+
+            if product_one.metafields.custom.card_caption != blank
+              assign product_one_copy = product_one.metafields.custom.card_caption.value
+            elsif product_one.metafields.custom.short_description != blank
+              assign product_one_copy = product_one.metafields.custom.short_description.value
+            elsif product_one.type != blank
+              assign product_one_copy = product_one.type
+            endif
+
+            assign exclude_discount_one = false
+            if product_one.handle == '5-cremas-depiladoras'
+              assign exclude_discount_one = true
+            endif
+          -%}
+
+          <a class="lux-skims-card" href="{{ product_one.url }}" aria-label="{{ product_one.title | escape }}">
+            <div class="lux-skims-card__media">
+              {%- if product_one.featured_image != blank -%}
+                <img
+                  class="lux-skims-card__image"
+                  src="{{ product_one.featured_image | image_url: width: 2000 }}"
+                  srcset="
+                    {{ product_one.featured_image | image_url: width: 700 }} 700w,
+                    {{ product_one.featured_image | image_url: width: 1100 }} 1100w,
+                    {{ product_one.featured_image | image_url: width: 1600 }} 1600w,
+                    {{ product_one.featured_image | image_url: width: 2000 }} 2000w
+                  "
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  width="{{ product_one.featured_image.width }}"
+                  height="{{ product_one.featured_image.height }}"
+                  alt="{{ product_one.title | escape }}"
+                  loading="lazy"
+                >
+              {%- else -%}
+                {{ 'product-1' | placeholder_svg_tag: 'lux-skims-card__placeholder' }}
+              {%- endif -%}
+            </div>
+
+            <div class="lux-skims-card__body">
+              <div class="lux-skims-card__top">
+                {%- if section.settings.card_eyebrow != blank -%}
+                  <p class="lux-skims-card__eyebrow">{{ section.settings.card_eyebrow }}</p>
+                {%- endif -%}
+
+                <h3 class="lux-skims-card__title">{{ product_one.title | escape }}</h3>
+
+                {%- if product_one_copy != blank -%}
+                  <p class="lux-skims-card__copy">{{ product_one_copy }}</p>
+                {%- endif -%}
+              </div>
+
+              <div class="lux-skims-card__bottom">
+                <div class="lux-skims-card__meta">
+                  {%- if section.settings.show_price and product_one.price != blank -%}
+
+                    {%- if global_discount > 0 and exclude_discount_one == false -%}
+                      {%- assign discount_multiplier = 100 | minus: global_discount | divided_by: 100.0 -%}
+                      {%- assign sale_price = product_one.price | times: discount_multiplier -%}
+                      <span class="lux-skims-card__price lux-price--sale">{{ sale_price | money }}</span>
+                      <s class="lux-skims-card__price lux-price--compare">{{ product_one.price | money }}</s>
+                    {%- elsif product_one.compare_at_price > product_one.price -%}
+                      <span class="lux-skims-card__price lux-price--sale">{{ product_one.price | money }}</span>
+                      <s class="lux-skims-card__price lux-price--compare">{{ product_one.compare_at_price | money }}</s>
+                    {%- else -%}
+                      <span class="lux-skims-card__price">{{ product_one.price | money }}</span>
+                    {%- endif -%}
+
+                  {%- endif -%}
+                </div>
+
+                <span class="lux-skims-card__cta">
+                  <span class="lux-skims-card__cta-text">{{ section.settings.cta_text }}</span>
+                  <span class="lux-skims-card__cta-arrow" aria-hidden="true">→</span>
+                </span>
+              </div>
+            </div>
+          </a>
+        {%- endif -%}
+
+        {% comment %} ================= PRODUCTO DOS ================= {% endcomment %}
+        {%- if product_two != blank -%}
+          {%- liquid
+            assign product_two_copy = section.settings.default_card_copy
+
+            if product_two.metafields.custom.card_caption != blank
+              assign product_two_copy = product_two.metafields.custom.card_caption.value
+            elsif product_two.metafields.custom.short_description != blank
+              assign product_two_copy = product_two.metafields.custom.short_description.value
+            elsif product_two.type != blank
+              assign product_two_copy = product_two.type
+            endif
+
+            assign exclude_discount_two = false
+            if product_two.handle == '5-cremas-depiladoras'
+              assign exclude_discount_two = true
+            endif
+          -%}
+
+          <a class="lux-skims-card" href="{{ product_two.url }}" aria-label="{{ product_two.title | escape }}">
+            <div class="lux-skims-card__media">
+              {%- if product_two.featured_image != blank -%}
+                <img
+                  class="lux-skims-card__image"
+                  src="{{ product_two.featured_image | image_url: width: 2000 }}"
+                  srcset="
+                    {{ product_two.featured_image | image_url: width: 700 }} 700w,
+                    {{ product_two.featured_image | image_url: width: 1100 }} 1100w,
+                    {{ product_two.featured_image | image_url: width: 1600 }} 1600w,
+                    {{ product_two.featured_image | image_url: width: 2000 }} 2000w
+                  "
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  width="{{ product_two.featured_image.width }}"
+                  height="{{ product_two.featured_image.height }}"
+                  alt="{{ product_two.title | escape }}"
+                  loading="lazy"
+                >
+              {%- else -%}
+                {{ 'product-1' | placeholder_svg_tag: 'lux-skims-card__placeholder' }}
+              {%- endif -%}
+            </div>
+
+            <div class="lux-skims-card__body">
+              <div class="lux-skims-card__top">
+                {%- if section.settings.card_eyebrow != blank -%}
+                  <p class="lux-skims-card__eyebrow">{{ section.settings.card_eyebrow }}</p>
+                {%- endif -%}
+
+                <h3 class="lux-skims-card__title">{{ product_two.title | escape }}</h3>
+
+                {%- if product_two_copy != blank -%}
+                  <p class="lux-skims-card__copy">{{ product_two_copy }}</p>
+                {%- endif -%}
+              </div>
+
+              <div class="lux-skims-card__bottom">
+                <div class="lux-skims-card__meta">
+                  {%- if section.settings.show_price and product_two.price != blank -%}
+
+                    {%- if global_discount > 0 and exclude_discount_two == false -%}
+                      {%- assign discount_multiplier = 100 | minus: global_discount | divided_by: 100.0 -%}
+                      {%- assign sale_price = product_two.price | times: discount_multiplier -%}
+                      <span class="lux-skims-card__price lux-price--sale">{{ sale_price | money }}</span>
+                      <s class="lux-skims-card__price lux-price--compare">{{ product_two.price | money }}</s>
+                    {%- elsif product_two.compare_at_price > product_two.price -%}
+                      <span class="lux-skims-card__price lux-price--sale">{{ product_two.price | money }}</span>
+                      <s class="lux-skims-card__price lux-price--compare">{{ product_two.compare_at_price | money }}</s>
+                    {%- else -%}
+                      <span class="lux-skims-card__price">{{ product_two.price | money }}</span>
+                    {%- endif -%}
+
+                  {%- endif -%}
+                </div>
+
+                <span class="lux-skims-card__cta">
+                  <span class="lux-skims-card__cta-text">{{ section.settings.cta_text }}</span>
+                  <span class="lux-skims-card__cta-arrow" aria-hidden="true">→</span>
+                </span>
+              </div>
+            </div>
+          </a>
+        {%- endif -%}
+      </div>
+    {%- else -%}
+      <div class="lux-skims-dual__empty">
+        <p>Selecciona una coleccion con productos para mostrar dos recomendaciones aleatorias.</p>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<style>
+  #LuxSection-{{ section.id }}{
+    background: var(--section-bg);
+    padding: 72px 0;
+    width: 100%;
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-dual__inner{
+    max-width: 1680px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-dual__header{
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+    gap: 24px;
+    align-items: end;
+    margin-bottom: 28px;
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-dual__eyebrow{
+    margin: 0 0 10px;
+    font-family: "Poppins", sans-serif !important;
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--text);
+    opacity: 0.72;
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-dual__title,
+  #LuxSection-{{ section.id }} .lux-skims-card__title{
+    font-family: "Poppins", sans-serif !important;
+    font-style: normal !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.02em !important;
+    font-variant-ligatures: none !important;
+    font-feature-settings: "liga" 0, "dlig" 0, "clig" 0, "calt" 0 !important;
+    text-transform: none;
+    color: var(--text);
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-dual__title{
+    margin: 0;
+    font-size: clamp(28px, 4vw, 58px);
+    line-height: 0.98;
+    max-width: 12ch;
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-dual__intro{
+    margin: 0;
+    font-family: "Poppins", sans-serif !important;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--muted);
+    max-width: 42ch;
+    justify-self: end;
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-dual__grid{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--gap);
+    align-items: stretch;
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-dual__grid.is-single{
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 920px;
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-card{
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    text-decoration: none;
+    color: inherit;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 240ms ease, transform 240ms ease;
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-card:hover{
+    transform: translateY(-2px);
+    border-color: rgba(17,17,17,0.28);
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-card__media{
+    position: relative;
+    height: var(--d-h);
+    background: #ede7df;
+    overflow: hidden;
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-card__image,
+  #LuxSection-{{ section.id }} .lux-skims-card__placeholder{
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-card__image{
+    object-fit: cover;
+    object-position: center;
+    transform: scale(1.001);
+    transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-card:hover .lux-skims-card__image{
+    transform: scale(1.035);
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-card__body{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 22px 22px 20px;
+    min-height: 170px;
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-card__top{
+    min-width: 0;
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-card__eyebrow{
+    margin: 0 0 8px;
+    font-family: "Poppins", sans-serif !important;
+    font-size: 10px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text);
+    opacity: 0.68;
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-card__title{
+    margin: 0;
+    font-size: clamp(22px, 2.3vw, 38px);
+    line-height: 1.02;
+    max-width: 12ch;
+    word-break: break-word;
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-card__copy{
+    margin: 12px 0 0;
+    font-family: "Poppins", sans-serif !important;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--muted);
+    max-width: 34ch;
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-card__bottom{
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 18px;
+    min-width: 0;
+  }
+
+  /* === ESTILOS PARA EL PRECIO CON DESCUENTO === */
+  #LuxSection-{{ section.id }} .lux-skims-card__meta{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    min-width: 0;
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-card__price{
+    font-family: "Poppins", sans-serif !important;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  #LuxSection-{{ section.id }} .lux-price--sale{
+    color: #c02b2b;
+  }
+
+  #LuxSection-{{ section.id }} .lux-price--compare{
+    opacity: 0.5;
+    font-weight: 400;
+    font-size: 12px;
+    text-decoration: line-through;
+  }
+  /* ============================================ */
+
+  #LuxSection-{{ section.id }} .lux-skims-card__cta{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-card__cta-text{
+    position: relative;
+    font-family: "Poppins", sans-serif !important;
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text);
+    padding-bottom: 6px;
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-card__cta-text::after{
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0.72);
+    transform-origin: left center;
+    transition: transform 220ms ease;
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-card__cta-arrow{
+    font-size: 14px;
+    line-height: 1;
+    color: var(--text);
+    transition: transform 220ms ease;
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-card:hover .lux-skims-card__cta-text::after{
+    transform: scaleX(1);
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-card:hover .lux-skims-card__cta-arrow{
+    transform: translateX(4px);
+  }
+
+  #LuxSection-{{ section.id }} .lux-skims-dual__empty{
+    padding: 32px 24px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--muted);
+    font-family: "Poppins", sans-serif !important;
+  }
+
+  @media (max-width: 990px){
+    #LuxSection-{{ section.id }} .lux-skims-dual__header{
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    #LuxSection-{{ section.id }} .lux-skims-dual__intro{
+      justify-self: start;
+      max-width: 50ch;
+    }
+
+    #LuxSection-{{ section.id }} .lux-skims-dual__title{
+      max-width: 14ch;
+    }
+  }
+
+  @media (max-width: 768px){
+    #LuxSection-{{ section.id }}{
+      padding: 44px 0;
+    }
+
+    #LuxSection-{{ section.id }} .lux-skims-dual__inner{
+      padding: 0 14px;
+    }
+
+    #LuxSection-{{ section.id }} .lux-skims-dual__grid{
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    #LuxSection-{{ section.id }} .lux-skims-card__media{
+      height: var(--m-h);
+    }
+
+    #LuxSection-{{ section.id }} .lux-skims-card__body{
+      padding: 18px 16px 16px;
+      min-height: 148px;
+    }
+
+    #LuxSection-{{ section.id }} .lux-skims-card__title{
+      max-width: 100%;
+      font-size: clamp(22px, 7vw, 32px);
+    }
+
+    #LuxSection-{{ section.id }} .lux-skims-card__copy{
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    #LuxSection-{{ section.id }} .lux-skims-card__bottom{
+      align-items: center;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    #LuxSection-{{ section.id }} *{
+      transition: none !important;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Luxo Dual Editorial",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow superior",
+      "default": "Featured edit"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Shop by category"
+    },
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "Texto introductorio editable",
+      "default": "Descubre una selección editorial con imágenes amplias, tonos neutros y una experiencia de compra limpia y premium."
+    },
+
+    {
+      "type": "header",
+      "content": "Fuente de productos"
+    },
+    {
+      "type": "collection",
+      "id": "source_collection",
+      "label": "Coleccion para productos aleatorios",
+      "info": "La seccion mostrara dos productos aleatorios de esta coleccion. Si no seleccionas una, usara la coleccion actual cuando exista."
+    },
+
+    {
+      "type": "header",
+      "content": "Promociones"
+    },
+    {
+      "type": "range",
+      "id": "global_discount",
+      "label": "Descuento visual global (%)",
+      "info": "Calcula y muestra un descuento matemático para estos productos (0 para desactivar).",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "default": 0
+    },
+
+    {
+      "type": "range",
+      "id": "desktop_height",
+      "min": 360,
+      "max": 900,
+      "step": 10,
+      "unit": "px",
+      "label": "Altura imagen escritorio",
+      "default": 640
+    },
+    {
+      "type": "range",
+      "id": "mobile_height",
+      "min": 260,
+      "max": 700,
+      "step": 10,
+      "unit": "px",
+      "label": "Altura imagen móvil",
+      "default": 440
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Separación entre cards",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Radio del borde",
+      "default": 4
+    },
+
+    {
+      "type": "header",
+      "content": "Contenido card"
+    },
+    {
+      "type": "text",
+      "id": "card_eyebrow",
+      "label": "Eyebrow de card",
+      "default": "Shop"
+    },
+    {
+      "type": "text",
+      "id": "default_card_copy",
+      "label": "Texto fallback de card",
+      "default": "Diseñado para usarse todos los días."
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Texto CTA",
+      "default": "Shop now"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Mostrar precio",
+      "default": true
+    },
+
+    {
+      "type": "header",
+      "content": "Colores locales de la sección"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fondo de sección",
+      "default": "#f5f1eb"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Fondo de card",
+      "default": "#f8f5f0"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color de texto principal",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Color de texto secundario",
+      "default": "#6b645d"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Color de borde",
+      "default": "#ddd4ca"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo Dual Editorial"
+    }
+  ]
+}
+{% endschema %}

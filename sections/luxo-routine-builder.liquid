@@ -1,0 +1,124 @@
+{%- liquid
+  assign routine_collection = section.settings.collection
+  if routine_collection == blank or routine_collection.products.size == 0
+    assign routine_collection = collections.all
+  endif
+  assign routine_image = section.settings.image
+  if routine_image == blank and routine_collection.image != blank
+    assign routine_image = routine_collection.image
+  endif
+  if routine_image == blank and routine_collection.products.first.featured_media != blank
+    assign routine_image = routine_collection.products.first.featured_media.preview_image
+  endif
+  assign routine_total = 0
+-%}
+
+{%- if routine_collection != blank and routine_collection.products.size > 0 -%}
+  <section class="luxo-routine" id="LuxoRoutine-{{ section.id }}">
+    <div class="luxo-routine__campaign">
+      {%- if routine_image != blank -%}
+        {{ routine_image | image_url: width: 1800 | image_tag:
+          widths: '720, 960, 1200, 1500, 1800',
+          sizes: '(max-width: 899px) 100vw, 58vw',
+          loading: 'lazy',
+          alt: routine_image.alt | default: section.settings.heading
+        }}
+      {%- else -%}
+        <img src="{{ 'luxo-campaign-hero.webp' | asset_url }}" width="1680" height="945" loading="lazy" alt="{{ section.settings.heading | escape }}">
+      {%- endif -%}
+      <div class="luxo-routine__campaign-copy">
+        <p class="luxo-kicker">{{ section.settings.kicker | escape }}</p>
+        <h2>{{ section.settings.heading }}</h2>
+        {%- if section.settings.copy != blank -%}<div>{{ section.settings.copy }}</div>{%- endif -%}
+        <a class="luxo-text-link luxo-text-link--light" href="{{ routine_collection.url }}">{{ section.settings.cta_label | escape }} <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+
+    <div class="luxo-routine__panel">
+      <header>
+        <p class="luxo-kicker">VENTA CRUZADA</p>
+        <h3>{{ section.settings.panel_heading | escape }}</h3>
+      </header>
+      <div class="luxo-routine__items">
+        {%- for product in routine_collection.products limit: 3 -%}
+          {%- assign variant = product.selected_or_first_available_variant -%}
+          {%- if variant != blank -%}
+            {%- assign routine_total = routine_total | plus: variant.price -%}
+            {%- assign product_image = variant.featured_media.preview_image | default: product.featured_media.preview_image -%}
+            <label class="luxo-routine-item">
+              <input type="checkbox" checked data-routine-variant="{{ variant.id }}"{% unless variant.available %} disabled{% endunless %}>
+              <span class="luxo-routine-item__check" aria-hidden="true"></span>
+              <a class="luxo-routine-item__image" href="{{ product.url }}" tabindex="-1">
+                {%- if product_image != blank -%}
+                  {{ product_image | image_url: width: 320 | image_tag: width: 160, height: 190, loading: 'lazy', alt: product_image.alt | default: product.title }}
+                {%- else -%}
+                  <span aria-hidden="true"></span>
+                {%- endif -%}
+              </a>
+              <span class="luxo-routine-item__info">
+                <a href="{{ product.url }}">{{ product.title | escape }}</a>
+                <span>{{ variant.price | money }}</span>
+                {%- unless variant.available -%}<small>Agotado</small>{%- endunless -%}
+              </span>
+            </label>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+      <div class="luxo-routine__total"><span>Total de la selección</span><strong>{{ routine_total | money }}</strong></div>
+      <button class="luxo-button luxo-button--dark luxo-routine__add" type="button" data-routine-add>AGREGAR SELECCIÓN AL CARRITO</button>
+      <p class="luxo-routine__status" data-routine-status aria-live="polite">Cambios fáciles · Pago seguro</p>
+    </div>
+  </section>
+
+  <script>
+    (() => {
+      const root = document.getElementById('LuxoRoutine-{{ section.id }}');
+      if (!root || root.dataset.ready === 'true') return;
+      root.dataset.ready = 'true';
+      const button = root.querySelector('[data-routine-add]');
+      const status = root.querySelector('[data-routine-status]');
+      if (!button) return;
+
+      button.addEventListener('click', async () => {
+        const items = [...root.querySelectorAll('[data-routine-variant]:checked:not(:disabled)')]
+          .map((input) => ({ id: Number(input.dataset.routineVariant), quantity: 1 }));
+        if (!items.length) {
+          status.textContent = 'Selecciona al menos un producto.';
+          return;
+        }
+        button.disabled = true;
+        button.textContent = 'AGREGANDO…';
+        status.textContent = 'Preparando tu selección…';
+        try {
+          const response = await fetch(`${window.Shopify.routes.root}cart/add.js`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify({ items })
+          });
+          if (!response.ok) throw new Error('No se pudo agregar la selección');
+          window.location.assign('{{ routes.cart_url }}');
+        } catch (error) {
+          status.textContent = 'No pudimos agregar todo. Inténtalo de nuevo.';
+          button.disabled = false;
+          button.textContent = 'AGREGAR SELECCIÓN AL CARRITO';
+        }
+      });
+    })();
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Luxo — Rutina",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Imagen de campaña" },
+    { "type": "text", "id": "kicker", "label": "Antetítulo", "default": "MEJOR JUNTAS" },
+    { "type": "inline_richtext", "id": "heading", "label": "Título", "default": "Tu rutina, completa." },
+    { "type": "richtext", "id": "copy", "label": "Descripción", "default": "<p>Combina soporte, cuidado y bienestar en una sola selección.</p>" },
+    { "type": "collection", "id": "collection", "label": "Colección para venta cruzada" },
+    { "type": "text", "id": "panel_heading", "label": "Título del selector", "default": "Combínalos a tu manera" },
+    { "type": "text", "id": "cta_label", "label": "Texto del enlace", "default": "DESCUBRIR BUNDLES" }
+  ],
+  "presets": [{ "name": "Luxo — Rutina" }]
+}
+{% endschema %}

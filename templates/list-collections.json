@@ -1,0 +1,158 @@
+{
+  "sections": {
+    "hero": {
+      "type": "luxo-commerce-hero",
+      "settings": {
+        "image_position": "center center",
+        "kicker": "TIENDA LUXO",
+        "heading": "Colecciones",
+        "copy": "<p>Compresión, soporte y bienestar. Elige por lo que necesitas hoy.</p>",
+        "primary_label": "EXPLORAR COLECCIONES",
+        "primary_link": "#collection-directory",
+        "secondary_label": "ARMAR MI COMBO",
+        "secondary_link": "#luxo-combos"
+      }
+    },
+    "trust": {
+      "type": "luxo-commerce-trust",
+      "blocks": {
+        "trust-1": {
+          "type": "item",
+          "settings": {
+            "title": "Asesoría de talla",
+            "text": "Te ayudamos a elegir compresión y medida"
+          }
+        },
+        "trust-2": {
+          "type": "item",
+          "settings": {
+            "title": "Pagos protegidos",
+            "text": "Checkout seguro en cada compra"
+          }
+        },
+        "trust-3": {
+          "type": "item",
+          "settings": {
+            "title": "Entrega rastreable",
+            "text": "Sigue tu pedido de principio a fin"
+          }
+        },
+        "trust-4": {
+          "type": "item",
+          "settings": {
+            "title": "Atención humana",
+            "text": "Estamos antes y después de tu compra"
+          }
+        }
+      },
+      "block_order": ["trust-1", "trust-2", "trust-3", "trust-4"],
+      "settings": {}
+    },
+    "directory": {
+      "type": "luxo-collections-directory",
+      "settings": {
+        "kicker": "DIRECTORIO",
+        "title": "Encuentra tu colección",
+        "heading_tag": "h2",
+        "copy": "<p>Cada colección reúne las prendas y productos que mejor funcionan juntos. Empieza por lo más vendido y completa tu rutina.</p>",
+        "show_total": true,
+        "anchor_id": "collection-directory",
+        "show_nav": true,
+        "columns_desktop": 4,
+        "image_ratio": "portrait",
+        "show_count": true,
+        "show_peek": true,
+        "fallback_heading": "Todas las colecciones",
+        "fallback_note": "Ordenadas por catálogo disponible.",
+        "sort": "products_high",
+        "exclude_handles": "",
+        "hide_empty": true
+      }
+    },
+    "bundles": {
+      "type": "luxo-bundles-rail",
+      "blocks": {
+        "bundle-aclarante": {
+          "type": "bundle",
+          "settings": {
+            "title": "Combo Aclarante",
+            "tag": "Más pedido",
+            "proof": "73 pedidos ya llevan esta combinación.",
+            "discount_percent": 0
+          }
+        },
+        "bundle-wellness": {
+          "type": "bundle",
+          "settings": {
+            "title": "Wellness Básico",
+            "tag": "Rutina diaria",
+            "proof": "56 pedidos ya llevan esta combinación.",
+            "discount_percent": 0
+          }
+        },
+        "bundle-wellness-3": {
+          "type": "bundle",
+          "settings": {
+            "title": "Wellness 3 en 1",
+            "tag": "Rutina completa",
+            "proof": "22 pedidos ya llevan esta combinación.",
+            "discount_percent": 0
+          }
+        },
+        "bundle-faja-brasier": {
+          "type": "bundle",
+          "settings": {
+            "title": "Faja + Brasier",
+            "tag": "Conjunto",
+            "proof": "19 pedidos ya llevan esta combinación.",
+            "discount_percent": 0
+          }
+        },
+        "bundle-shapewear": {
+          "type": "bundle",
+          "settings": {
+            "title": "Shapewear Total",
+            "tag": "Doble compresión",
+            "proof": "17 pedidos ya llevan esta combinación.",
+            "discount_percent": 0
+          }
+        },
+        "bundle-detox": {
+          "type": "bundle",
+          "settings": {
+            "title": "Detox + Thermogenic",
+            "tag": "Prueba limitada",
+            "proof": "13 pedidos ya llevan esta combinación.",
+            "discount_percent": 0
+          }
+        }
+      },
+      "block_order": [
+        "bundle-aclarante",
+        "bundle-wellness",
+        "bundle-wellness-3",
+        "bundle-faja-brasier",
+        "bundle-shapewear",
+        "bundle-detox"
+      ],
+      "settings": {
+        "kicker": "COMBINAN MEJOR JUNTOS",
+        "title": "Combos Luxo",
+        "copy": "<p>Combinaciones que nuestras clientas ya compran juntas. Un solo clic agrega todo al carrito.</p>",
+        "button_label": "Agregar el combo"
+      }
+    },
+    "cta": {
+      "type": "luxo-final-cta",
+      "settings": {
+        "title": "¿No sabes por dónde empezar?",
+        "text": "<p>Cuéntanos qué buscas y te recomendamos la faja y la rutina correcta para ti.</p>",
+        "primary_label": "VER MÁS VENDIDOS",
+        "secondary_label": "Hablar por WhatsApp",
+        "page_width": 1280,
+        "dark_color": "#13110f"
+      }
+    }
+  },
+  "order": ["hero", "trust", "directory", "bundles", "cta"]
+}

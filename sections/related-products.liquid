@@ -1,0 +1,255 @@
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'section-related-products.css' | asset_url | stylesheet_tag }}
+
+{% if section.settings.image_shape == 'blob' %}
+  {{ 'mask-blobs.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  /* === DISEÑO EXACTO DE TU IMAGEN === */
+  .related-slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .related-slider-header h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+  }
+  .slider-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .slider-arrow {
+    width: 40px;
+    height: 40px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    font-size: 18px;
+    color: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .slider-arrow:hover {
+    background: #f8f8f8;
+    border-color: #999;
+  }
+  .slider-fraction {
+    color: #000;
+    min-width: 50px;
+    text-align: center;
+  }
+
+  .slider-container { overflow: hidden; }
+  .slider-track { 
+    display: flex; 
+    gap: 20px; 
+    transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1); 
+  }
+  .slider-slide { 
+    flex: 0 0 calc(50% - 10px); 
+    min-width: 0; 
+  }
+
+  @media (min-width: 640px)  { .slider-slide { flex: 0 0 calc(33.333% - 13.33px); } }
+  @media (min-width: 768px)  { .slider-slide { flex: 0 0 calc(25% - 15px); } }
+  @media (min-width: 992px)  { .slider-slide { flex: 0 0 calc(20% - 16px); } }
+  @media (min-width: 1200px) { .slider-slide { flex: 0 0 calc(16.666% - 16.67px); } } /* 6 productos */
+{%- endstyle -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <product-recommendations 
+    class="related-products page-width section-{{ section.id }}-padding isolate"
+    data-url="{{ routes.product_recommendations_url }}?limit=24"
+    data-section-id="{{ section.id }}"
+    data-product-id="{{ product.id }}"
+  >
+    {% if recommendations.performed and recommendations.products_count > 0 %}
+
+      {% assign products = recommendations.products %}
+
+      <!-- SLIDER 1: SIMILAR STYLES -->
+      <div class="related-slider-header">
+        <h2 class="related-products__heading inline-richtext {{ section.settings.heading_size }}">{{ section.settings.heading_similar }}</h2>
+        <div class="slider-controls">
+          <button class="slider-arrow" id="prev-1">‹</button>
+          <div class="slider-fraction"><span id="curr-1">1</span> / <span id="tot-1">1</span></div>
+          <button class="slider-arrow" id="next-1">›</button>
+        </div>
+      </div>
+      <div class="slider-container">
+        <div class="slider-track" id="track-1">
+          {% for product in products limit: 12 %}
+            <div class="slider-slide">
+              {% render 'card-product',
+                card_product: product,
+                media_aspect_ratio: section.settings.image_ratio,
+                image_shape: section.settings.image_shape,
+                show_secondary_image: section.settings.show_secondary_image,
+                show_vendor: section.settings.show_vendor,
+                show_rating: section.settings.show_rating
+              %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- SLIDER 2: EXPLORE COLLECTION (solo si hay suficientes productos) -->
+      {% if products.size >= 12 %}
+        <div class="related-slider-header">
+          <h2 class="related-products__heading inline-richtext {{ section.settings.heading_size }}">{{ section.settings.heading_explore }}</h2>
+          <div class="slider-controls">
+            <button class="slider-arrow" id="prev-2">‹</button>
+            <div class="slider-fraction"><span id="curr-2">1</span> / <span id="tot-2">1</span></div>
+            <button class="slider-arrow" id="next-2">›</button>
+          </div>
+        </div>
+        <div class="slider-container">
+          <div class="slider-track" id="track-2">
+            {% for product in products offset: 6 limit: 12 %}
+              <div class="slider-slide">
+                {% render 'card-product',
+                  card_product: product,
+                  media_aspect_ratio: section.settings.image_ratio,
+                  image_shape: section.settings.image_shape,
+                  show_secondary_image: section.settings.show_secondary_image,
+                  show_vendor: section.settings.show_vendor,
+                  show_rating: section.settings.show_rating
+                %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+    {% endif %}
+  </product-recommendations>
+</div>
+
+<script>
+  function initSlider(n) {
+    const track = document.getElementById('track-' + n);
+    if (!track) return;
+
+    const prev = document.getElementById('prev-' + n);
+    const next = document.getElementById('next-' + n);
+    const currEl = document.getElementById('curr-' + n);
+    const totEl = document.getElementById('tot-' + n);
+
+    let index = 0;
+    let slideWidth = 0;
+
+    function updateMetrics() {
+      const slide = track.children[0];
+      if (!slide) return;
+      slideWidth = slide.offsetWidth + 20;
+      const visible = Math.max(1, Math.floor(track.parentElement.offsetWidth / slideWidth));
+      totEl.textContent = Math.max(1, Math.ceil(track.children.length / visible));
+    }
+
+    function move() {
+      track.style.transform = `translateX(-${index * slideWidth}px)`;
+      currEl.textContent = index + 1;
+    }
+
+    prev.addEventListener('click', () => { if (index > 0) { index--; move(); } });
+    next.addEventListener('click', () => {
+      const visible = Math.floor(track.parentElement.offsetWidth / slideWidth);
+      const max = track.children.length - visible;
+      if (index < max) { index++; move(); }
+    });
+
+    // Espera a que Shopify cargue las tarjetas
+    const observer = new MutationObserver(() => {
+      if (track.children.length > 0) {
+        updateMetrics();
+        move();
+        observer.disconnect();
+      }
+    });
+    observer.observe(track, { childList: true, subtree: true });
+
+    setTimeout(() => {
+      if (track.children.length > 0) {
+        updateMetrics();
+        move();
+      }
+    }, 800);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initSlider(1);
+    if (document.getElementById('track-2')) initSlider(2);
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Productos relacionados",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading_similar",
+      "default": "SIMILAR STYLES",
+      "label": "Título primer slider"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading_explore",
+      "default": "EXPLORE COLLECTION",
+      "label": "Título segundo slider"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        { "value": "h2", "label": "Grande" },
+        { "value": "h1", "label": "Muy grande" }
+      ],
+      "default": "h2",
+      "label": "Tamaño del título"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding superior",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding inferior",
+      "default": 60
+    }
+  ]
+}
+{% endschema %}

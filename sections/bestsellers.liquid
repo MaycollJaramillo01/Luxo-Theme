@@ -1,0 +1,291 @@
+{% comment %}
+  File: sections/skims-bestseller-tabs.liquid
+  V6.7 CORREGIDO Y SINCRONIZADO: 
+  - Productos ahora se muestran SOLO en su pestaña correspondiente.
+  - Vuelve el "Descuento Visual" global desde el editor.
+  - EXCEPCIONES INTELIGENTES: El descuento visual NO se aplica a los productos excluidos 
+    en tus reglas (Cafe, 3 Gotas, stock <=1, etc.) para que coincida con tu checkout.
+{% endcomment %}
+
+<section class="skims-bs-minimal luxe--{{ section.id }}" id="SkimsBS-{{ section.id }}" data-section-id="{{ section.id }}">
+  <style>
+    #SkimsBS-{{ section.id }} {
+      --s-bg: {{ section.settings.bg }};
+      --s-text: {{ section.settings.text_color }};
+      --s-line: {{ section.settings.border_color }};
+      --s-tab-active: {{ section.settings.tab_active_color }};
+      --s-tab-inactive: {{ section.settings.tab_inactive_color }};
+      --s-card-text: {{ section.settings.card_text_color }};
+      --s-card-price: {{ section.settings.card_price_color }};
+      --s-fs-card: {{ section.settings.fs_card }}px;
+      --s-img-ratio: {{ section.settings.img_ratio }};
+      --s-pt: {{ section.settings.padding_top }}px;
+      --s-pb: {{ section.settings.padding_bottom }}px;
+      --s-gap: {{ section.settings.grid_gap }}px;
+    }
+
+    .skims-bs-minimal { background: var(--s-bg); padding: var(--s-pt) 0 var(--s-pb); }
+    .skims-bs-minimal__inner { max-width: 1480px; margin: 0 auto; padding: 0 20px; }
+    .skims-bs-minimal__header { text-align: center; margin-bottom: 68px; }
+
+    .skims-bs-minimal__title { 
+      font-size: {{ section.settings.fs_h2 }}px; 
+      color: var(--s-text); 
+      font-weight: 700;
+      letter-spacing: -0.045em;
+      margin: 0;
+      text-transform: uppercase;
+      line-height: 1.05;
+    }
+
+    .skims-bs-minimal__nav-wrapper { border-bottom: 1px solid var(--s-line); margin-bottom: 56px; display: flex; justify-content: center; }
+    .skims-bs-minimal__nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 56px; }
+
+    .skims-bs-minimal__btn {
+      background: none; border: none; padding: 13px 0 11px;
+      font-size: 15px; font-weight: 600; text-transform: uppercase; 
+      letter-spacing: 0.16em; cursor: pointer; color: var(--s-tab-inactive);
+      position: relative; transition: color 0.3s ease;
+    }
+    .skims-bs-minimal__btn::after {
+      content: ""; position: absolute; bottom: -1px; left: 0; width: 0; height: 2px;
+      background: var(--s-tab-active); transition: width 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .skims-bs-minimal__btn.is-active { color: var(--s-tab-active); }
+    .skims-bs-minimal__btn.is-active::after { width: 100%; }
+
+    .skims-bs-minimal__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s-gap); }
+
+    .skims-bs-minimal__pane { display: none; }
+    .skims-bs-minimal__pane.is-active { display: block; }
+
+    .skims-card-minimal { text-decoration: none; display: flex; flex-direction: column; }
+    .skims-card-minimal__media { position: relative; width: 100%; aspect-ratio: var(--s-img-ratio); overflow: hidden; }
+    .skims-card-minimal__img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.85s cubic-bezier(0.23, 1, 0.32, 1); }
+    .skims-card-minimal:hover .skims-card-minimal__img { transform: scale(1.06); }
+
+    .skims-card-minimal__footer { padding: 26px 0 0; text-align: center; }
+    .skims-card-minimal__title {
+      font-size: var(--s-fs-card); font-weight: 700; text-transform: uppercase; 
+      letter-spacing: 0.075em; line-height: 1.35; color: var(--s-card-text); margin-bottom: 6px;
+    }
+
+    .skims-card-minimal__price { 
+      font-size: 15px; color: var(--s-card-price); font-weight: 500; 
+      display: flex; justify-content: center; align-items: center; gap: 8px;
+    }
+    .skims-price--sale { color: #c02b2b; }
+    .skims-price--compare { color: var(--s-card-price); opacity: 0.5; font-size: 0.9em; text-decoration: line-through; }
+
+    @media (max-width: 768px) {
+      .skims-bs-minimal__grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+      .skims-bs-minimal__title { font-size: calc({{ section.settings.fs_h2 }}px * 0.78); }
+      .skims-bs-minimal__nav { gap: 32px; }
+      .skims-card-minimal__footer { padding: 20px 0 0; }
+    }
+  </style>
+
+  <div class="skims-bs-minimal__inner">
+    {% if section.settings.title != blank %}
+      <header class="skims-bs-minimal__header">
+        <h2 class="skims-bs-minimal__title">{{ section.settings.title }}</h2>
+      </header>
+    {% endif %}
+
+    <div class="skims-bs-minimal__nav-wrapper">
+      <nav class="skims-bs-minimal__nav" role="tablist">
+        {% for block in section.blocks %}
+          <button class="skims-bs-minimal__btn {% if forloop.first %}is-active{% endif %}" 
+                  data-tab="tab-{{ block.id }}-{{ section.id }}" 
+                  role="tab" {{ block.shopify_attributes }}>
+            {{ block.settings.tab_label | default: block.settings.collection.title | default: 'Pestaña' }}
+          </button>
+        {% endfor %}
+      </nav>
+    </div>
+
+    <div class="skims-bs-minimal__content">
+      {%- assign global_discount = section.settings.global_discount -%}
+
+      {% for block in section.blocks %}
+        {% assign collection = block.settings.collection %}
+        <div class="skims-bs-minimal__pane {% if forloop.first %}is-active{% endif %}" 
+             id="tab-{{ block.id }}-{{ section.id }}" role="tabpanel">
+          
+          <div class="skims-bs-minimal__grid">
+            {% if collection != blank and collection.products_count > 0 %}
+              {% for product in collection.products limit: 4 %}
+                
+                {% comment %} === LÓGICA DE EXCLUSIÓN PARA DESCUENTO VISUAL === {% endcomment %}
+                {%- assign apply_custom_discount = true -%}
+
+                {%- if product.title contains '2 desodorantes y 3 crema' -%} {%- assign apply_custom_discount = false -%} {%- endif -%}
+                {%- if product.title contains '3 Gotas para la Ansiedad' -%} {%- assign apply_custom_discount = false -%} {%- endif -%}
+                {%- if product.title contains 'Cafe' -%} {%- assign apply_custom_discount = false -%} {%- endif -%}
+                {%- if product.title contains 'Jugo y Thermogenics' -%} {%- assign apply_custom_discount = false -%} {%- endif -%}
+                {%- if product.title contains 'Detox' -%} {%- assign apply_custom_discount = false -%} {%- endif -%}
+                {%- if product.title contains '3 thermogenics' -%} {%- assign apply_custom_discount = false -%} {%- endif -%}
+                
+                {%- if product.price <= 0 -%} {%- assign apply_custom_discount = false -%} {%- endif -%}
+
+                {% comment %} Calcular inventario total de todas las variantes {% endcomment %}
+                {%- assign total_inventory = 0 -%}
+                {%- for variant in product.variants -%}
+                  {%- assign total_inventory = total_inventory | plus: variant.inventory_quantity -%}
+                {%- endfor -%}
+                
+                {% comment %} Si el inventario es 1 o menos, se le niega el descuento {% endcomment %}
+                {%- if total_inventory <= 1 -%}
+                  {%- assign apply_custom_discount = false -%}
+                {%- endif -%}
+                {% comment %} === FIN DE LÓGICA DE EXCLUSIÓN === {% endcomment %}
+
+
+                <a href="{{ product.url }}" class="skims-card-minimal">
+                  <div class="skims-card-minimal__media">
+                    {% if product.featured_image %}
+                      <img 
+                        src="{{ product.featured_image | image_url: width: 800 }}" 
+                        alt="{{ product.title | escape }}" 
+                        class="skims-card-minimal__img" 
+                        loading="lazy"
+                        width="800"
+                        height="auto">
+                    {% else %}
+                      {{ 'product-1' | placeholder_svg_tag: 'skims-card-minimal__img' }}
+                    {% endif %}
+                  </div>
+                  <div class="skims-card-minimal__footer">
+                    <h3 class="skims-card-minimal__title">{{ product.title }}</h3>
+                    
+                    <span class="skims-card-minimal__price">
+                      {%- if global_discount > 0 and apply_custom_discount -%}
+                        {% comment %} Si hay descuento global Y el producto pasó los filtros de exclusión {% endcomment %}
+                        {%- assign discount_multiplier = 100 | minus: global_discount | divided_by: 100.0 -%}
+                        {%- assign sale_price = product.price | times: discount_multiplier -%}
+                        <span class="skims-price--sale">{{ sale_price | money }}</span>
+                        <s class="skims-price--compare">{{ product.price | money }}</s>
+
+                      {%- elsif product.compare_at_price > product.price -%}
+                        {% comment %} Descuento manual nativo del producto {% endcomment %}
+                        <span class="skims-price--sale">{{ product.price | money }}</span>
+                        <s class="skims-price--compare">{{ product.compare_at_price | money }}</s>
+
+                      {%- else -%}
+                        {% comment %} Precio regular para los productos excluidos o sin descuento {% endcomment %}
+                        <span class="skims-price--regular">{{ product.price | money }}</span>
+                      {%- endif -%}
+                    </span>
+                  </div>
+                </a>
+              {% endfor %}
+            {% else %}
+              {% for i in (1..4) %}
+                <a href="#" class="skims-card-minimal">
+                  <div class="skims-card-minimal__media">
+                    {{ 'product-' | append: i | placeholder_svg_tag: 'skims-card-minimal__img' }}
+                  </div>
+                  <div class="skims-card-minimal__footer">
+                    <h3 class="skims-card-minimal__title">Producto Ejemplo {{ i }}</h3>
+                    <span class="skims-card-minimal__price">
+                      <span class="skims-price--regular">$98.00</span>
+                    </span>
+                  </div>
+                </a>
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    const initTabs = (sectionId) => {
+      const section = document.querySelector(`#SkimsBS-${sectionId}`);
+      if (!section) return;
+
+      const btns = section.querySelectorAll('.skims-bs-minimal__btn');
+      const panes = section.querySelectorAll('.skims-bs-minimal__pane');
+
+      btns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          if (this.classList.contains('is-active')) return;
+
+          btns.forEach(b => b.classList.remove('is-active'));
+          panes.forEach(p => p.classList.remove('is-active'));
+          
+          this.classList.add('is-active');
+          const targetId = this.getAttribute('data-tab');
+          const activePane = section.querySelector(`#${targetId}`);
+          if (activePane) activePane.classList.add('is-active');
+        });
+      });
+    };
+
+    initTabs('{{ section.id }}');
+
+    document.addEventListener('shopify:section:load', (e) => {
+      if (e.detail.sectionId === '{{ section.id }}') initTabs('{{ section.id }}');
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Bestsellers",
+  "max_blocks": 4,
+  "settings": [
+    { "type": "header", "content": "General" },
+    { "type": "text", "id": "title", "label": "Título Sección", "default": "BESTSELLERS" },
+    { "type": "range", "id": "fs_h2", "min": 28, "max": 72, "step": 2, "label": "Tamaño Título (px)", "default": 46 },
+    { "type": "color", "id": "bg", "label": "Fondo Sección", "default": "#ffffff" },
+    { "type": "color", "id": "text_color", "label": "Color Título", "default": "#111111" },
+
+    { "type": "header", "content": "Promociones" },
+    {
+      "type": "range",
+      "id": "global_discount",
+      "label": "Descuento visual global (%)",
+      "info": "Se aplicará visualmente, EXCEPTO a: Cafe, Detox, Jugo, Gotas Ansiedad, Thermogenics, inventario <= 1 o precios en $0.",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "default": 0
+    },
+
+    { "type": "header", "content": "Pestañas" },
+    { "type": "color", "id": "border_color", "label": "Color Línea", "default": "#e5e5e5" },
+    { "type": "color", "id": "tab_active_color", "label": "Color Activa", "default": "#000000" },
+    { "type": "color", "id": "tab_inactive_color", "label": "Color Inactiva", "default": "#777777" },
+
+    { "type": "header", "content": "Tarjetas de Producto" },
+    { "type": "color", "id": "card_text_color", "label": "Color Nombre", "default": "#111111" },
+    { "type": "color", "id": "card_price_color", "label": "Color Precio", "default": "#111111" },
+    { "type": "range", "id": "fs_card", "min": 10, "max": 18, "step": 0.5, "label": "Tamaño Nombre (px)", "default": 15 },
+    { "type": "select", "id": "img_ratio", "label": "Proporción Imagen", "options": [
+      {"value":"3/4","label":"3:4 (SKIMS)"},
+      {"value":"4/5","label":"4:5"},
+      {"value":"1/1","label":"1:1"}
+    ], "default":"3/4" },
+    { "type": "range", "id": "grid_gap", "min": 0, "max": 40, "step": 2, "label": "Espacio entre tarjetas", "default": 20, "unit": "px" },
+
+    { "type": "header", "content": "Espaciado" },
+    { "type": "range", "id": "padding_top", "min": 40, "max": 140, "step": 5, "label": "Padding Superior", "default": 80 },
+    { "type": "range", "id": "padding_bottom", "min": 40, "max": 140, "step": 5, "label": "Padding Inferior", "default": 90 }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Pestaña",
+      "settings": [
+        { "type": "text", "id": "tab_label", "label": "Nombre de Pestaña" },
+        { "type": "collection", "id": "collection", "label": "Colección" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Bestsellers - SKIMS Minimal (Fix Tabs)" }]
+}
+{% endschema %}

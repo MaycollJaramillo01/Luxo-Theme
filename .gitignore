@@ -1,0 +1,15 @@
+# Paquetes del tema: se generan con build-theme.py y pesan ~18 MB cada uno.
+# Para distribuirlos usa Releases de GitHub, no el historial del repo.
+*.zip
+
+# Shopify CLI
+.shopify/
+*.log
+
+# Sistema / editores
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp

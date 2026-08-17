@@ -1,0 +1,616 @@
+/* LUXO — Página de colecciones (directorio + combos)
+   Depende de los tokens de luxo-commerce.css */
+
+/* ---------- Directorio ---------- */
+
+.luxo-cols {
+  padding: 72px 0 96px;
+  background: var(--luxo-paper);
+}
+
+.luxo-cols__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+  align-items: end;
+  gap: 32px;
+  padding-bottom: 40px;
+}
+
+.luxo-cols__title {
+  max-width: 12ch;
+  margin: 0;
+  font-size: clamp(3.6rem, 5vw, 7.2rem);
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+}
+
+.luxo-cols__copy {
+  max-width: 46ch;
+  color: var(--luxo-ink-soft);
+  font-size: 1.5rem;
+  line-height: 1.55;
+}
+
+.luxo-cols__copy p {
+  margin: 0;
+}
+
+.luxo-cols__count {
+  display: block;
+  margin-top: 16px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Nav de grupos (sticky, scroll horizontal en móvil) */
+.luxo-cols__nav {
+  position: sticky;
+  z-index: 6;
+  top: 0;
+  border-top: 1px solid var(--luxo-line);
+  border-bottom: 1px solid var(--luxo-line);
+  background: rgba(251, 250, 248, 0.96);
+  backdrop-filter: blur(10px);
+}
+
+.luxo-cols__nav-track {
+  display: flex;
+  gap: 10px;
+  padding: 12px 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.luxo-cols__nav-track::-webkit-scrollbar {
+  display: none;
+}
+
+.luxo-cols__chip {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  height: 36px;
+  padding: 0 18px;
+  border: 1px solid var(--luxo-line);
+  color: var(--luxo-ink);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: color 200ms ease, background 200ms ease, border-color 200ms ease;
+}
+
+.luxo-cols__chip:hover,
+.luxo-cols__chip:focus-visible {
+  color: var(--luxo-white);
+  border-color: var(--luxo-ink);
+  background: var(--luxo-ink);
+}
+
+/* Grupos */
+.luxo-cols__group {
+  padding-top: 64px;
+  scroll-margin-top: 72px;
+}
+
+.luxo-cols__group-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--luxo-line);
+  margin-bottom: 32px;
+}
+
+.luxo-cols__group-title {
+  margin: 0;
+  font-size: clamp(2rem, 2.4vw, 2.8rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.luxo-cols__group-note {
+  margin: 6px 0 0;
+  color: var(--luxo-ink-soft);
+  font-size: 1.3rem;
+  line-height: 1.5;
+}
+
+.luxo-cols__group-link {
+  flex: 0 0 auto;
+  color: var(--luxo-ink);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-decoration: none;
+  text-transform: uppercase;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 4px;
+}
+
+/* Grilla */
+.luxo-cols__grid {
+  display: grid;
+  grid-template-columns: repeat(var(--luxo-cols-desktop, 4), minmax(0, 1fr));
+  column-gap: 6px;
+  row-gap: 44px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.luxo-col-card {
+  position: relative;
+  min-width: 0;
+}
+
+.luxo-col-card__link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.luxo-col-card__media {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: var(--luxo-col-ratio, 4 / 5);
+  background: #ebe7e1;
+}
+
+.luxo-col-card__media img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 900ms var(--luxo-ease);
+}
+
+.luxo-col-card__media--empty {
+  background: linear-gradient(150deg, #ded6cc, #b4a598);
+}
+
+.luxo-col-card:hover .luxo-col-card__media img {
+  transform: scale(1.04);
+}
+
+.luxo-col-card__badge {
+  position: absolute;
+  z-index: 3;
+  top: 12px;
+  left: 12px;
+  padding: 7px 10px;
+  color: var(--luxo-white);
+  background: var(--luxo-ink);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.luxo-col-card__badge--soft {
+  color: var(--luxo-ink);
+  background: var(--luxo-white);
+}
+
+/* Vista previa de productos al hover */
+.luxo-col-card__peek {
+  position: absolute;
+  z-index: 2;
+  right: 10px;
+  bottom: 10px;
+  left: 10px;
+  display: flex;
+  gap: 6px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 260ms ease, transform 260ms var(--luxo-ease);
+}
+
+.luxo-col-card:hover .luxo-col-card__peek,
+.luxo-col-card:focus-within .luxo-col-card__peek {
+  opacity: 1;
+  transform: none;
+}
+
+.luxo-col-card__peek img {
+  width: 46px;
+  height: 58px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  object-fit: cover;
+  background: var(--luxo-white);
+}
+
+.luxo-col-card__body {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 2px 0;
+}
+
+.luxo-col-card__title {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.luxo-col-card__meta {
+  flex: 0 0 auto;
+  color: var(--luxo-ink-soft);
+  font-size: 1.15rem;
+  white-space: nowrap;
+}
+
+.luxo-col-card__desc {
+  margin: 6px 2px 0;
+  color: var(--luxo-ink-soft);
+  font-size: 1.25rem;
+  line-height: 1.5;
+}
+
+/* Tarjeta destacada: ocupa 2 columnas, rótulo sobre la imagen */
+.luxo-col-card--feature {
+  grid-column: span 2;
+}
+
+.luxo-col-card--feature .luxo-col-card__media {
+  aspect-ratio: 8 / 5;
+}
+
+.luxo-col-card--feature .luxo-col-card__media::after {
+  position: absolute;
+  inset: 40% 0 0;
+  background: linear-gradient(transparent, rgba(14, 12, 11, 0.7));
+  content: "";
+}
+
+.luxo-col-card--feature .luxo-col-card__overlay {
+  position: absolute;
+  z-index: 2;
+  right: 24px;
+  bottom: 22px;
+  left: 24px;
+  color: var(--luxo-white);
+}
+
+.luxo-col-card--feature .luxo-col-card__overlay h3 {
+  margin: 0;
+  font-size: clamp(2.2rem, 2.6vw, 3.4rem);
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: -0.015em;
+  text-transform: none;
+}
+
+.luxo-col-card--feature .luxo-col-card__overlay span {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.luxo-col-card--feature .luxo-col-card__overlay span i {
+  font-style: normal;
+  transition: transform 240ms var(--luxo-ease);
+}
+
+.luxo-col-card--feature:hover .luxo-col-card__overlay span i {
+  transform: translateX(6px);
+}
+
+.luxo-col-card--feature .luxo-col-card__body {
+  display: none;
+}
+
+.luxo-cols__empty {
+  padding: 48px 0;
+  color: var(--luxo-ink-soft);
+  font-size: 1.4rem;
+}
+
+/* ---------- Combos / ventas cruzadas ---------- */
+
+.luxo-bundles {
+  padding: 88px 0;
+  color: var(--luxo-white);
+  background: var(--luxo-ink);
+}
+
+.luxo-bundles__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+  align-items: end;
+  gap: 32px;
+  padding-bottom: 44px;
+}
+
+.luxo-bundles__title {
+  margin: 0;
+  max-width: 16ch;
+  font-size: clamp(3rem, 3.8vw, 5.2rem);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+}
+
+.luxo-bundles__copy {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 1.45rem;
+  line-height: 1.55;
+}
+
+.luxo-bundles__copy p {
+  margin: 0;
+}
+
+.luxo-bundles__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.luxo-bundle {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.luxo-bundle__stack {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.luxo-bundle__shot {
+  position: relative;
+  flex: 1 1 0;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: #efece7;
+}
+
+.luxo-bundle__shot img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.luxo-bundle__plus {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.6rem;
+}
+
+.luxo-bundle__tag {
+  display: inline-block;
+  align-self: flex-start;
+  margin-top: 18px;
+  padding: 6px 9px;
+  color: var(--luxo-ink);
+  background: var(--luxo-white);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.luxo-bundle__title {
+  margin: 12px 0 0;
+  font-size: 2.1rem;
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.luxo-bundle__items {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.25rem;
+  line-height: 1.6;
+}
+
+.luxo-bundle__items li {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.luxo-bundle__items a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.luxo-bundle__items span {
+  flex: 0 0 auto;
+}
+
+.luxo-bundle__pricing {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 18px;
+}
+
+.luxo-bundle__total {
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+}
+
+.luxo-bundle__was {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 1.3rem;
+}
+
+.luxo-bundle__save {
+  margin-left: auto;
+  padding: 5px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.luxo-bundle__note {
+  margin: 10px 0 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.15rem;
+  line-height: 1.5;
+}
+
+.luxo-bundle__btn {
+  display: flex;
+  width: 100%;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 14px;
+  border: 1px solid var(--luxo-white);
+  border-radius: 0;
+  color: var(--luxo-ink);
+  background: var(--luxo-white);
+  font: 600 1.05rem/1 var(--luxo-font);
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 200ms ease, background 200ms ease;
+}
+
+.luxo-bundle__btn:hover {
+  color: var(--luxo-white);
+  background: transparent;
+}
+
+.luxo-bundle__btn[disabled] {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.55);
+  background: transparent;
+  cursor: not-allowed;
+}
+
+.luxo-bundle__link {
+  display: inline-block;
+  margin-top: 12px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 3px;
+}
+
+/* ---------- Responsive ---------- */
+
+@media screen and (max-width: 1100px) {
+  .luxo-cols__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .luxo-bundles__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .luxo-cols {
+    padding: 44px 0 64px;
+  }
+
+  .luxo-cols__head,
+  .luxo-bundles__head {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 18px;
+  }
+
+  .luxo-cols__title {
+    max-width: none;
+  }
+
+  .luxo-cols__group {
+    padding-top: 44px;
+  }
+
+  .luxo-cols__group-head {
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .luxo-cols__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 4px;
+    row-gap: 32px;
+  }
+
+  .luxo-col-card__body {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .luxo-col-card__peek {
+    display: none;
+  }
+
+  .luxo-col-card--feature .luxo-col-card__media {
+    aspect-ratio: 4 / 3;
+  }
+
+  .luxo-col-card--feature .luxo-col-card__overlay {
+    right: 16px;
+    bottom: 16px;
+    left: 16px;
+  }
+
+  .luxo-bundles {
+    padding: 56px 0;
+  }
+
+  .luxo-bundles__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .luxo-col-card__media img,
+  .luxo-col-card__peek,
+  .luxo-col-card__overlay span i {
+    transition: none;
+  }
+
+  .luxo-col-card:hover .luxo-col-card__media img {
+    transform: none;
+  }
+}

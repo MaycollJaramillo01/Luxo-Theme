@@ -1,0 +1,170 @@
+{{ 'luxo-landing.css' | asset_url | stylesheet_tag }}
+
+<section
+  class="luxo-block"
+  style="
+    --lb-bg: {{ section.settings.bg_color }};
+    --lb-text: {{ section.settings.text_color }};
+    --lb-muted: {{ section.settings.muted_color }};
+    --lb-accent: {{ section.settings.accent_color }};
+    --lb-dark: {{ section.settings.dark_color }};
+    --lb-border: {{ section.settings.border_color }};
+    --lb-max: {{ section.settings.page_width }}px;
+    --lb-radius: {{ section.settings.card_radius }}px;
+    --lb-section-space: {{ section.settings.section_spacing }}px;
+  "
+>
+  <div class="lb-section">
+    <div class="lb-wrap">
+      <div class="lb-brand-grid">
+        <div class="lb-brand-image">
+          {% if section.settings.image != blank %}
+            {{
+              section.settings.image
+              | image_url: width: 1200
+              | image_tag:
+                loading: 'lazy',
+                widths: '375, 550, 750, 1100, 1200',
+                sizes: '(max-width: 989px) 100vw, 50vw',
+                alt: section.settings.title | escape
+            }}
+          {% else %}
+            <div class="lb-empty-image">Imagen de marca</div>
+          {% endif %}
+        </div>
+
+        <div>
+          {% if section.settings.eyebrow != blank %}
+            <span class="lb-eyebrow">{{ section.settings.eyebrow }}</span>
+          {% endif %}
+
+          {% if section.settings.title != blank %}
+            <h2 class="lb-title">{{ section.settings.title }}</h2>
+          {% endif %}
+
+          {% if section.settings.text != blank %}
+            <div class="lb-copy lb-rte" style="margin-top:18px;">{{ section.settings.text }}</div>
+          {% endif %}
+
+          {% if section.settings.button_label != blank and section.settings.button_url != blank %}
+            <div style="margin-top:24px;">
+              <a class="lb-btn lb-btn-primary" href="{{ section.settings.button_url }}">{{ section.settings.button_label }}</a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxo - Marca / Historia",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "RESULTADOS REALES EN MUJERES REALES"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Texto",
+      "default": "<p>Mira cómo nuestras fajas transforman la figura en segundos.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Imagen"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Texto botón",
+      "default": "Ver mis opciones"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "URL botón"
+    },
+    {
+      "type": "range",
+      "id": "page_width",
+      "label": "Ancho máximo",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1280
+    },
+    {
+      "type": "range",
+      "id": "section_spacing",
+      "label": "Espaciado",
+      "min": 40,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Radio",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fondo",
+      "default": "#f7f4ef"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Texto",
+      "default": "#181511"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Texto secundario",
+      "default": "#6f675d"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Acento",
+      "default": "#b89057"
+    },
+    {
+      "type": "color",
+      "id": "dark_color",
+      "label": "Color botón",
+      "default": "#13110f"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Borde",
+      "default": "#ddd5cb"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo - Marca / Historia"
+    }
+  ]
+}
+{% endschema %}

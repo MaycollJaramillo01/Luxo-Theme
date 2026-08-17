@@ -1,0 +1,38 @@
+<section class="luxo-trust" aria-label="Beneficios de compra">
+  <div class="luxo-trust__grid luxo-container">
+    {%- for block in section.blocks -%}
+      <div class="luxo-trust__item" {{ block.shopify_attributes }}>
+        <strong>{{ block.settings.title | escape }}</strong>
+        <span>{{ block.settings.text | escape }}</span>
+      </div>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxo — Confianza",
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Beneficio",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Título", "default": "Asesoría de talla" },
+        { "type": "text", "id": "text", "label": "Texto", "default": "Te ayudamos a elegir mejor" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo — Confianza",
+      "blocks": [
+        { "type": "item", "settings": { "title": "Asesoría de talla", "text": "Te ayudamos a elegir mejor" } },
+        { "type": "item", "settings": { "title": "Pagos protegidos", "text": "Checkout seguro en cada compra" } },
+        { "type": "item", "settings": { "title": "Entrega rastreable", "text": "Sigue tu pedido de principio a fin" } },
+        { "type": "item", "settings": { "title": "Atención humana", "text": "Estamos antes y después de tu compra" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

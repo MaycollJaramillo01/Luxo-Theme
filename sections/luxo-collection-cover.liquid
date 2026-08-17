@@ -1,0 +1,508 @@
+{%- comment -%}
+  Portada editorial para páginas de colección.
+
+  Prioridad de imagen:
+  1. Metafield collection.metafields.custom.banner
+  2. Imagen destacada de la colección
+  3. Imagen de respaldo configurada en el editor
+
+  Para móvil se puede usar collection.metafields.custom.banner_mobile. La imagen
+  móvil del editor solo se usa cuando la colección no aporta una portada propia.
+{%- endcomment -%}
+
+{%- liquid
+  assign cover_image = blank
+  assign mobile_cover_image = blank
+  assign uses_collection_image = false
+
+  if collection.metafields.custom.banner != blank
+    assign cover_image = collection.metafields.custom.banner.value
+    if cover_image == blank
+      assign cover_image = collection.metafields.custom.banner
+    endif
+    if cover_image != blank
+      assign uses_collection_image = true
+    endif
+  endif
+
+  if cover_image == blank and collection.image != blank
+    assign cover_image = collection.image
+    assign uses_collection_image = true
+  endif
+
+  if cover_image == blank
+    assign cover_image = section.settings.fallback_image
+  endif
+
+  if collection.metafields.custom.banner_mobile != blank
+    assign mobile_cover_image = collection.metafields.custom.banner_mobile.value
+    if mobile_cover_image == blank
+      assign mobile_cover_image = collection.metafields.custom.banner_mobile
+    endif
+  endif
+
+  if mobile_cover_image == blank and uses_collection_image == false and section.settings.mobile_fallback_image != blank
+    assign mobile_cover_image = section.settings.mobile_fallback_image
+  endif
+
+  if mobile_cover_image == blank
+    assign mobile_cover_image = cover_image
+  endif
+
+  assign cover_title = section.settings.custom_title | strip
+  if cover_title == blank
+    assign cover_title = collection.title
+  endif
+
+  assign cover_description = section.settings.custom_description
+  if cover_description == blank and collection.description != blank
+    assign cover_description = collection.description
+  endif
+  if cover_description == blank
+    assign cover_description = section.settings.fallback_copy
+  endif
+  assign cover_description_text = cover_description | strip_html | strip | truncatewords: 30
+
+  assign cover_alt = section.settings.image_alt | strip
+  if cover_alt == blank
+    assign cover_alt = collection.title | prepend: 'Portada de '
+  endif
+
+  assign product_count = collection.products_count | default: collection.all_products_count
+  assign has_cover_image = false
+  if cover_image != blank
+    assign has_cover_image = true
+  endif
+-%}
+
+<section
+  class="luxo-collection-cover{% unless has_cover_image %} luxo-collection-cover--no-image{% endunless %}"
+  style="
+    --cover-height: {{ section.settings.desktop_height }}px;
+    --cover-mobile-height: {{ section.settings.mobile_height }}px;
+    --cover-position: {{ section.settings.image_position_desktop }};
+    --cover-mobile-position: {{ section.settings.image_position_mobile }};
+    --cover-overlay: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    --cover-tint: {{ section.settings.overlay_color.rgb | default: '17, 13, 11' }};
+    --cover-blur: {{ section.settings.overlay_blur | default: 0 }}px;
+    --cover-scrim: {{ section.settings.scrim_opacity | divided_by: 100.0 }};
+  "
+>
+  {%- if has_cover_image -%}
+    <picture class="luxo-collection-cover__media">
+      {%- if mobile_cover_image != blank -%}
+        <source
+          media="(max-width: 749px)"
+          srcset="
+            {{ mobile_cover_image | image_url: width: 480 }} 480w,
+            {{ mobile_cover_image | image_url: width: 750 }} 750w,
+            {{ mobile_cover_image | image_url: width: 1000 }} 1000w
+          "
+          sizes="100vw"
+        >
+      {%- endif -%}
+      <img
+        src="{{ cover_image | image_url: width: 2000 }}"
+        srcset="
+          {{ cover_image | image_url: width: 900 }} 900w,
+          {{ cover_image | image_url: width: 1200 }} 1200w,
+          {{ cover_image | image_url: width: 1600 }} 1600w,
+          {{ cover_image | image_url: width: 2000 }} 2000w,
+          {{ cover_image | image_url: width: 2400 }} 2400w
+        "
+        sizes="100vw"
+        width="{{ cover_image.width | default: 2000 }}"
+        height="{{ cover_image.height | default: 1200 }}"
+        alt="{{ cover_alt | escape }}"
+        loading="eager"
+        fetchpriority="high"
+      >
+    </picture>
+    <div class="luxo-collection-cover__overlay" aria-hidden="true"></div>
+  {%- endif -%}
+
+  <div class="luxo-collection-cover__layout luxo-container luxo-container--wide">
+    {%- if section.settings.show_breadcrumb -%}
+      <nav class="luxo-collection-cover__breadcrumb" aria-label="Ruta de navegación">
+        <a href="{{ routes.root_url }}">Inicio</a>
+        <span aria-hidden="true">/</span>
+        <a href="{{ routes.collections_url }}">Colecciones</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{{ collection.title | escape }}</span>
+      </nav>
+    {%- endif -%}
+
+    <div class="luxo-collection-cover__body">
+      <div class="luxo-collection-cover__content">
+        <div class="luxo-collection-cover__meta">
+          {%- if section.settings.kicker != blank -%}
+            <span>{{ section.settings.kicker | escape }}</span>
+          {%- endif -%}
+          {%- if section.settings.show_product_count -%}
+            <span>
+              {{ product_count }}
+              {%- if product_count == 1 %} producto{% else %} productos{% endif -%}
+            </span>
+          {%- endif -%}
+        </div>
+
+        <h1 class="luxo-collection-cover__title">{{ cover_title | escape }}</h1>
+
+        {%- if section.settings.show_description and cover_description_text != blank -%}
+          <p class="luxo-collection-cover__description">{{ cover_description_text | escape }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.show_cta and product_count > 0 -%}
+          <a class="luxo-collection-cover__cta" href="#ProductGridContainer">
+            <span>{{ section.settings.cta_label | escape }}</span>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 4v15M6 13l6 6 6-6"/>
+            </svg>
+          </a>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.show_index -%}
+        <span class="luxo-collection-cover__index" aria-hidden="true">
+          {{ collection.handle | replace: '-', ' ' }}
+        </span>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% style %}
+  .luxo-collection-cover {
+    position: relative;
+    min-height: var(--cover-height);
+    overflow: hidden;
+    color: var(--luxo-white);
+    background: #756256;
+    isolation: isolate;
+  }
+
+  .luxo-collection-cover__media,
+  .luxo-collection-cover__media img {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .luxo-collection-cover__media img {
+    object-fit: cover;
+    object-position: var(--cover-position);
+  }
+
+  .luxo-collection-cover__overlay {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    backdrop-filter: blur(var(--cover-blur, 0px));
+    -webkit-backdrop-filter: blur(var(--cover-blur, 0px));
+    background:
+      linear-gradient(90deg, rgba(var(--cover-tint), calc(var(--cover-overlay) + 0.28)) 0%, rgba(var(--cover-tint), var(--cover-overlay)) 48%, rgba(var(--cover-tint), 0.08) 78%),
+      linear-gradient(0deg, rgba(var(--cover-tint), 0.28), transparent 42%);
+  }
+
+  /* Panel oscuro y difuminado detrás del texto: legibilidad sin tapar la foto */
+  .luxo-collection-cover__content::before {
+    position: absolute;
+    z-index: -1;
+    inset: -32px -48px -32px -50vw;
+    backdrop-filter: blur(calc(var(--cover-blur, 0px) * 1.6));
+    -webkit-backdrop-filter: blur(calc(var(--cover-blur, 0px) * 1.6));
+    background: linear-gradient(90deg, rgba(var(--cover-tint), var(--cover-scrim, 0)) 55%, rgba(var(--cover-tint), 0) 100%);
+    content: "";
+    pointer-events: none;
+  }
+
+  .luxo-collection-cover__layout {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    min-height: var(--cover-height);
+    flex-direction: column;
+    padding-block: 24px 46px;
+  }
+
+  .luxo-collection-cover__breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    max-width: 100%;
+    color: rgba(255, 255, 255, 0.76);
+    font-size: 1.2rem;
+    line-height: 1.4;
+  }
+
+  .luxo-collection-cover__breadcrumb a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .luxo-collection-cover__breadcrumb a:hover {
+    color: var(--luxo-white);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .luxo-collection-cover__body {
+    display: flex;
+    flex: 1;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 48px;
+    padding-top: 70px;
+  }
+
+  .luxo-collection-cover__content {
+    position: relative;
+    width: min(720px, 70vw);
+  }
+
+  .luxo-collection-cover__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 18px;
+    margin-bottom: 18px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .luxo-collection-cover__meta span + span::before {
+    display: inline-block;
+    width: 22px;
+    height: 1px;
+    margin: 0 12px 3px 0;
+    background: currentColor;
+    content: "";
+    opacity: 0.65;
+  }
+
+  .luxo-collection-cover__title {
+    max-width: 12ch;
+    margin: 0;
+    color: inherit;
+    font-size: clamp(5rem, 7vw, 10rem);
+    font-weight: 500;
+    line-height: 0.94;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  .luxo-collection-cover__description {
+    max-width: 58ch;
+    margin: 24px 0 0;
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 1.55rem;
+    line-height: 1.6;
+  }
+
+  .luxo-collection-cover__cta {
+    display: inline-flex;
+    min-height: 48px;
+    align-items: center;
+    gap: 14px;
+    margin-top: 30px;
+    padding: 0 22px;
+    border: 1px solid rgba(255, 255, 255, 0.74);
+    color: var(--luxo-white);
+    background: rgba(18, 15, 13, 0.14);
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 220ms ease, background 220ms ease, border-color 220ms ease;
+  }
+
+  .luxo-collection-cover__cta svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    transition: transform 220ms var(--luxo-ease);
+  }
+
+  .luxo-collection-cover__cta:hover {
+    color: var(--luxo-ink);
+    border-color: var(--luxo-white);
+    background: var(--luxo-white);
+  }
+
+  .luxo-collection-cover__cta:hover svg {
+    transform: translateY(3px);
+  }
+
+  .luxo-collection-cover__index {
+    max-width: 30ch;
+    padding-bottom: 8px;
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 1.1rem;
+    letter-spacing: 0.12em;
+    text-align: right;
+    text-transform: uppercase;
+  }
+
+  .luxo-collection-cover--no-image {
+    color: var(--luxo-ink);
+    background:
+      radial-gradient(circle at 82% 28%, rgba(108, 91, 81, 0.19), transparent 28%),
+      linear-gradient(135deg, #eee8e1, #d9cfc5);
+  }
+
+  .luxo-collection-cover--no-image .luxo-collection-cover__breadcrumb,
+  .luxo-collection-cover--no-image .luxo-collection-cover__description,
+  .luxo-collection-cover--no-image .luxo-collection-cover__index {
+    color: var(--luxo-ink-soft);
+  }
+
+  .luxo-collection-cover--no-image .luxo-collection-cover__cta {
+    color: var(--luxo-white);
+    border-color: var(--luxo-ink);
+    background: var(--luxo-ink);
+  }
+
+  @media screen and (max-width: 899px) {
+    .luxo-collection-cover__content {
+      width: min(650px, 86vw);
+    }
+
+    .luxo-collection-cover__index {
+      display: none;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .luxo-collection-cover {
+      min-height: var(--cover-mobile-height);
+    }
+
+    .luxo-collection-cover__media img {
+      object-position: var(--cover-mobile-position);
+    }
+
+    .luxo-collection-cover__overlay {
+      background: linear-gradient(0deg, rgba(var(--cover-tint), calc(var(--cover-overlay) + 0.34)) 0%, rgba(var(--cover-tint), 0.12) 74%);
+    }
+
+    .luxo-collection-cover__content::before {
+      inset: -24px -24px -28px -24px;
+      background: linear-gradient(0deg, rgba(var(--cover-tint), var(--cover-scrim, 0)) 62%, rgba(var(--cover-tint), 0) 100%);
+    }
+
+    .luxo-collection-cover__layout {
+      min-height: var(--cover-mobile-height);
+      padding-block: 18px 28px;
+    }
+
+    .luxo-collection-cover__breadcrumb {
+      font-size: 1.15rem;
+    }
+
+    .luxo-collection-cover__body {
+      padding-top: 64px;
+    }
+
+    .luxo-collection-cover__content {
+      width: 100%;
+    }
+
+    .luxo-collection-cover__meta {
+      margin-bottom: 14px;
+      font-size: 1.1rem;
+    }
+
+    .luxo-collection-cover__title {
+      max-width: 11ch;
+      font-size: clamp(4.1rem, 14vw, 6.2rem);
+      line-height: 0.98;
+    }
+
+    .luxo-collection-cover__description {
+      max-width: 38ch;
+      margin-top: 18px;
+      font-size: 1.4rem;
+      line-height: 1.55;
+    }
+
+    .luxo-collection-cover__cta {
+      width: 100%;
+      justify-content: space-between;
+      margin-top: 24px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .luxo-collection-cover__cta,
+    .luxo-collection-cover__cta svg {
+      transition: none;
+    }
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Luxo — Portada colección",
+  "tag": "section",
+  "class": "section luxo-collection-cover-section",
+  "settings": [
+    { "type": "header", "content": "Contenido" },
+    { "type": "text", "id": "kicker", "label": "Antetítulo", "default": "COLECCIÓN LUXO" },
+    { "type": "text", "id": "custom_title", "label": "Título alternativo", "info": "Vacío usa el nombre de la colección." },
+    { "type": "checkbox", "id": "show_description", "label": "Mostrar descripción", "default": true },
+    { "type": "richtext", "id": "custom_description", "label": "Descripción alternativa", "info": "Vacía usa la descripción de la colección." },
+    { "type": "text", "id": "fallback_copy", "label": "Texto si no hay descripción", "default": "Una selección pensada para acompañarte con soporte, comodidad y confianza." },
+    { "type": "checkbox", "id": "show_breadcrumb", "label": "Mostrar ruta de navegación", "default": true },
+    { "type": "checkbox", "id": "show_product_count", "label": "Mostrar número de productos", "default": true },
+    { "type": "checkbox", "id": "show_index", "label": "Mostrar identificador editorial", "default": true },
+    { "type": "checkbox", "id": "show_cta", "label": "Mostrar botón para explorar", "default": true },
+    { "type": "text", "id": "cta_label", "label": "Texto del botón", "default": "EXPLORAR LA COLECCIÓN" },
+    { "type": "header", "content": "Imágenes de respaldo" },
+    { "type": "image_picker", "id": "fallback_image", "label": "Portada de respaldo", "info": "Solo se usa si la colección no tiene metafield custom.banner ni imagen destacada." },
+    { "type": "image_picker", "id": "mobile_fallback_image", "label": "Respaldo móvil", "info": "Para una portada móvil por colección usa el metafield custom.banner_mobile." },
+    { "type": "text", "id": "image_alt", "label": "Texto alternativo de la imagen" },
+    { "type": "header", "content": "Composición" },
+    {
+      "type": "select",
+      "id": "image_position_desktop",
+      "label": "Foco de imagen en escritorio",
+      "default": "center center",
+      "options": [
+        { "value": "left center", "label": "Izquierda" },
+        { "value": "center center", "label": "Centro" },
+        { "value": "right center", "label": "Derecha" },
+        { "value": "center top", "label": "Arriba" },
+        { "value": "center bottom", "label": "Abajo" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "image_position_mobile",
+      "label": "Foco de imagen en móvil",
+      "default": "center center",
+      "options": [
+        { "value": "left center", "label": "Izquierda" },
+        { "value": "center center", "label": "Centro" },
+        { "value": "right center", "label": "Derecha" },
+        { "value": "center top", "label": "Arriba" },
+        { "value": "center bottom", "label": "Abajo" }
+      ]
+    },
+    { "type": "range", "id": "desktop_height", "min": 460, "max": 820, "step": 20, "unit": "px", "label": "Altura en escritorio", "default": 620 },
+    { "type": "range", "id": "mobile_height", "min": 480, "max": 760, "step": 20, "unit": "px", "label": "Altura en móvil", "default": 620 },
+    { "type": "header", "content": "Legibilidad del texto" },
+    { "type": "color", "id": "overlay_color", "label": "Color del velo", "default": "#110D0B" },
+    { "type": "range", "id": "overlay_opacity", "min": 0, "max": 85, "step": 5, "unit": "%", "label": "Oscurecer imagen", "default": 35 },
+    { "type": "range", "id": "overlay_blur", "min": 0, "max": 30, "step": 1, "unit": "px", "label": "Desenfoque de la imagen", "default": 6 },
+    { "type": "range", "id": "scrim_opacity", "min": 0, "max": 90, "step": 5, "unit": "%", "label": "Panel oscuro detrás del texto", "info": "Refuerza el contraste solo en la zona del título.", "default": 45 }
+  ],
+  "presets": [{ "name": "Luxo — Portada colección" }]
+}
+{% endschema %}

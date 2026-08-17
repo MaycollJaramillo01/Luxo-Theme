@@ -1,0 +1,171 @@
+{
+  "sections": {
+    "luxo_hero": {
+      "type": "luxo-commerce-hero",
+      "settings": {
+        "image_position": "center center",
+        "kicker": "NUEVA EDICIÓN",
+        "heading": "Soporte que se siente tuyo.",
+        "copy": "<p>Diseñadas para cada etapa. Hechas para acompañar cómo te mueves, trabajas y vives.</p>",
+        "primary_label": "COMPRAR FAJAS",
+        "primary_link": "shopify://collections/fajas-de-mediana-compresion",
+        "secondary_label": "VER NOVEDADES",
+        "secondary_link": "/collections/all?sort_by=created-descending"
+      }
+    },
+    "luxo_trust": {
+      "type": "luxo-commerce-trust",
+      "blocks": {
+        "shipping": { "type": "item", "settings": { "title": "ENVÍOS A TODO EE. UU.", "text": "Entrega rápida y rastreable" } },
+        "changes": { "type": "item", "settings": { "title": "CAMBIOS FÁCILES", "text": "Te acompañamos con tu talla" } },
+        "secure": { "type": "item", "settings": { "title": "PAGO SEGURO", "text": "Checkout protegido" } },
+        "care": { "type": "item", "settings": { "title": "ATENCIÓN HUMANA", "text": "Antes y después de comprar" } }
+      },
+      "block_order": ["shipping", "changes", "secure", "care"],
+      "settings": {}
+    },
+    "luxo_categories": {
+      "type": "luxo-shop-by-intent",
+      "blocks": {
+        "daily": { "type": "category", "settings": { "collection": "fajas-de-mediana-compresion", "title": "COMPRESIÓN DIARIA" } },
+        "postpartum": { "type": "category", "settings": { "collection": "fajas-de-maxima-compresion", "title": "POSTPARTO" } },
+        "fashion": { "type": "category", "settings": { "collection": "top-picks", "title": "MODA QUE ACOMPAÑA" } }
+      },
+      "block_order": ["daily", "postpartum", "fashion"],
+      "settings": { "heading": "Comprar según tu momento" }
+    },
+    "luxo_products": {
+      "type": "luxo-product-edit",
+      "settings": {
+        "kicker": "MÁS ELEGIDAS",
+        "heading": "Las que siempre vuelven al carrito",
+        "collection": "top-picks",
+        "products_to_show": 4,
+        "view_all_label": "VER TODA LA SELECCIÓN"
+      }
+    },
+    "luxo_dual_edit": {
+      "type": "luxo-dual-promo",
+      "settings": {
+        "eyebrow": "EDICIÓN LUXO",
+        "title": "Dos esenciales para empezar.",
+        "intro": "Una selección corta y clara para descubrir soporte, comodidad y estilo sin perderte entre demasiadas opciones.",
+        "source_collection": "top-picks",
+        "global_discount": 0,
+        "desktop_height": 620,
+        "mobile_height": 430,
+        "card_gap": 16,
+        "card_radius": 0,
+        "card_eyebrow": "SELECCIÓN",
+        "default_card_copy": "Diseñado para acompañarte todos los días.",
+        "cta_text": "VER PRODUCTO",
+        "show_price": true,
+        "bg_color": "#FBFAF8",
+        "card_bg_color": "#F1EEE9",
+        "text_color": "#171513",
+        "muted_color": "#6F675D",
+        "border_color": "#D8D1C9"
+      }
+    },
+    "luxo_editorial": {
+      "type": "luxo-editorial-story",
+      "settings": {
+        "image_alt": "Prendas Luxo diseñadas para la vida real",
+        "kicker": "HECHO PARA TU RITMO",
+        "heading": "Soporte que se siente. Confianza que se nota.",
+        "copy": "<p>Piezas elegidas para acompañar tu cuerpo, tu rutina y la forma en la que quieres sentirte.</p>",
+        "link_label": "DESCUBRIR TODAS LAS FAJAS",
+        "link": "shopify://collections/fajas-de-mediana-compresion"
+      }
+    },
+    "luxo_support_edit": {
+      "type": "luxo-product-edit",
+      "settings": {
+        "kicker": "SOPORTE PARA CADA DÍA",
+        "heading": "Encuentra tu nivel de compresión",
+        "collection": "fajas-de-mediana-compresion",
+        "products_to_show": 4,
+        "view_all_label": "COMPRAR COMPRESIÓN MEDIA"
+      }
+    },
+    "luxo_routine": {
+      "type": "luxo-routine-builder",
+      "settings": {
+        "kicker": "MEJOR JUNTAS",
+        "heading": "Encuentra tu rutina de soporte.",
+        "copy": "<p>Combina prendas pensadas para tus días, tu nivel de soporte y tu bienestar.</p>",
+        "collection": "bundles",
+        "panel_heading": "Completa tu selección",
+        "cta_label": "VER BUNDLES"
+      }
+    },
+    "luxo_benefits": {
+      "type": "luxo-benefits",
+      "blocks": {
+        "fit": {
+          "type": "benefit",
+          "settings": {
+            "title": "Elige tu talla con confianza",
+            "text": "Guía clara y acompañamiento humano antes de comprar."
+          }
+        },
+        "comfort": {
+          "type": "benefit",
+          "settings": {
+            "title": "Comodidad real",
+            "text": "Diseños pensados para moverte y usarlos durante tu rutina."
+          }
+        },
+        "shipping": {
+          "type": "benefit",
+          "settings": {
+            "title": "Entrega rastreable",
+            "text": "Sigue tu pedido desde que sale hasta que llega a tus manos."
+          }
+        },
+        "changes": {
+          "type": "benefit",
+          "settings": {
+            "title": "Cambios acompañados",
+            "text": "Si necesitas ajustar tu elección, nuestro equipo te ayuda."
+          }
+        }
+      },
+      "block_order": ["fit", "comfort", "shipping", "changes"],
+      "settings": {
+        "eyebrow": "COMPRA SIN DUDAS",
+        "title": "TODO LO QUE NECESITAS PARA ELEGIR BIEN"
+      }
+    },
+    "luxo_final_cta": {
+      "type": "luxo-bottom-cta",
+      "settings": {
+        "final_title": "Tu próxima favorita está aquí.",
+        "final_text": "<p>Explora la colección completa y encuentra el soporte que encaja con tu momento.</p>",
+        "final_primary_label": "VER TODAS LAS COLECCIONES",
+        "final_primary_url": "shopify://collections/all",
+        "show_inner_footer": false,
+        "footer_brand_name": "Luxo Boutique",
+        "footer_copy": "",
+        "show_sticky_mobile_cta": false,
+        "sticky_mobile_label": "COMPRAR AHORA",
+        "sticky_mobile_url": "shopify://collections/all",
+        "dark_color": "#171513",
+        "border_color": "#D8D1C9",
+        "muted_color": "#6F675D"
+      }
+    }
+  },
+  "order": [
+    "luxo_hero",
+    "luxo_trust",
+    "luxo_categories",
+    "luxo_products",
+    "luxo_dual_edit",
+    "luxo_editorial",
+    "luxo_support_edit",
+    "luxo_routine",
+    "luxo_benefits",
+    "luxo_final_cta"
+  ]
+}

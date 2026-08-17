@@ -1,0 +1,85 @@
+{{ 'luxo-landing.css' | asset_url | stylesheet_tag }}
+
+<section
+  class="luxo-block"
+  style="
+    --lb-bg: {{ section.settings.bg_color }};
+    --lb-text: {{ section.settings.text_color }};
+    --lb-border: {{ section.settings.border_color }};
+    --lb-max: {{ section.settings.page_width }}px;
+  "
+>
+  <div class="lb-trust-bar">
+    <div class="lb-wrap">
+      <div class="lb-trust-grid">
+        {% for block in section.blocks %}
+          <div class="lb-trust-item" {{ block.shopify_attributes }}>
+            <div class="lb-trust-icon"></div>
+            <div class="lb-trust-title">{{ block.settings.title }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Luxo - Barra de confianza",
+  "settings": [
+    {
+      "type": "range",
+      "id": "page_width",
+      "label": "Ancho máximo",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1280
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fondo",
+      "default": "#f7f4ef"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Texto",
+      "default": "#181511"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Borde",
+      "default": "#ddd5cb"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "trust_item",
+      "name": "Ítem",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "Envío rápido"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Luxo - Barra de confianza",
+      "blocks": [
+        { "type": "trust_item", "settings": { "title": "Envío rápido en EE.UU." } },
+        { "type": "trust_item", "settings": { "title": "Pago 100% seguro" } },
+        { "type": "trust_item", "settings": { "title": "Atención personalizada" } },
+        { "type": "trust_item", "settings": { "title": "Seguimiento de pedido" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

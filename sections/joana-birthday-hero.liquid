@@ -1,0 +1,577 @@
+{% comment %}
+  Sección: joana-birthday-hero.liquid
+  Ubicación: sections/joana-birthday-hero.liquid
+  Uso: Agregar en el editor de temas -> Agregar sección -> "Cumpleaños Joana – Hero"
+{% endcomment %}
+
+{{ 'joana-birthday-hero.css' | asset_url | stylesheet_tag }}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<section
+  id="joana-hero-{{ section.id }}"
+  class="joana-hero"
+  data-start="{{ section.settings.evento_inicio }}"
+  data-end="{{ section.settings.evento_fin }}"
+>
+  {%- if section.settings.fondo_imagen != blank -%}
+    <div class="joana-hero__overlay"></div>
+    <div
+      class="joana-hero__bg"
+      style="background-image: url('{{ section.settings.fondo_imagen | image_url: width: 1920 }}');"
+    ></div>
+  {%- else -%}
+    <div class="joana-hero__bg joana-hero__bg--gradient"></div>
+  {%- endif -%}
+
+  <div class="joana-hero__content">
+
+    <!-- Eyebrow -->
+    <p class="joana-hero__eyebrow">
+      {%- if section.settings.eyebrow != blank -%}
+        {{ section.settings.eyebrow }}
+      {%- else -%}
+        Evento exclusivo · Solo hoy
+      {%- endif -%}
+    </p>
+
+    <!-- Título principal -->
+    <h1 class="joana-hero__title">
+      {%- if section.settings.titulo != blank -%}
+        {{ section.settings.titulo }}
+      {%- else -%}
+        El Cumpleaños<br><em>de Joana</em>
+      {%- endif -%}
+    </h1>
+
+    <!-- Badge de descuento -->
+    <div class="joana-hero__badge">
+      <span class="joana-hero__badge-number">42<span class="joana-hero__badge-percent">%</span></span>
+      <span class="joana-hero__badge-label">de<br>descuento</span>
+    </div>
+
+    <!-- Descripción -->
+    {%- if section.settings.descripcion != blank -%}
+      <p class="joana-hero__description">{{ section.settings.descripcion }}</p>
+    {%- else -%}
+      <p class="joana-hero__description">Colecciones seleccionadas con descuento especial<br>por el cumpleaños de Joana.</p>
+    {%- endif -%}
+
+    <!-- Contador -->
+    <div class="joana-hero__countdown-wrap" id="joana-countdown-{{ section.id }}">
+      <p class="joana-hero__countdown-label" id="joana-countdown-label-{{ section.id }}">El evento comienza en</p>
+      <div class="joana-hero__countdown" id="joana-countdown-timer-{{ section.id }}">
+        <div class="joana-hero__countdown-unit">
+          <span class="joana-hero__countdown-num" id="joana-h-{{ section.id }}">00</span>
+          <span class="joana-hero__countdown-text">horas</span>
+        </div>
+        <span class="joana-hero__countdown-sep">:</span>
+        <div class="joana-hero__countdown-unit">
+          <span class="joana-hero__countdown-num" id="joana-m-{{ section.id }}">00</span>
+          <span class="joana-hero__countdown-text">minutos</span>
+        </div>
+        <span class="joana-hero__countdown-sep">:</span>
+        <div class="joana-hero__countdown-unit">
+          <span class="joana-hero__countdown-num" id="joana-s-{{ section.id }}">00</span>
+          <span class="joana-hero__countdown-text">segundos</span>
+        </div>
+      </div>
+
+      <!-- Mensaje post-evento (oculto por defecto) -->
+      <p class="joana-hero__ended-msg" id="joana-ended-{{ section.id }}" style="display:none;">
+        Este evento exclusivo ha finalizado. ¡Gracias por celebrar con nosotras!
+      </p>
+    </div>
+
+    <!-- CTA -->
+    {%- if section.settings.cta_texto != blank and section.settings.cta_link != blank -%}
+      <a href="{{ section.settings.cta_link }}" class="joana-hero__cta">
+        {{ section.settings.cta_texto }}
+      </a>
+    {%- else -%}
+      <a href="#joana-colecciones" class="joana-hero__cta">Ver colecciones</a>
+    {%- endif -%}
+
+    <!-- Horario del evento -->
+    <p class="joana-hero__schedule">
+      {%- if section.settings.horario_texto != blank -%}
+        {{ section.settings.horario_texto }}
+      {%- else -%}
+        Miércoles 13 de mayo &nbsp;·&nbsp; 6:59 pm — 9:59 pm
+      {%- endif -%}
+    </p>
+
+  </div><!-- /.joana-hero__content -->
+</section>
+
+<!-- ===================== ESTILOS ===================== -->
+<style>
+  /* ---- Variables ---- */
+  #joana-hero-{{ section.id }} {
+    --jh-cream:       #FAF7F3;
+    --jh-nude:        #E8DCCF;
+    --jh-taupe:       #C9B99A;
+    --jh-brown:       #8B6F55;
+    --jh-gold:        #B8966E;
+    --jh-dark:        #1A1A1A;
+    --jh-charcoal:    #2C2C2C;
+    --jh-white:       #FFFFFF;
+    --jh-urgent:      #C0392B;
+    --font-serif:     'Cormorant Garamond', Georgia, serif;
+    --font-sans:      'Montserrat', Arial, sans-serif;
+  }
+
+  /* ---- Base ---- */
+  .joana-hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 80px 24px;
+    box-sizing: border-box;
+  }
+
+  .joana-hero__bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center top;
+    z-index: 0;
+  }
+
+  .joana-hero__bg--gradient {
+    background: linear-gradient(
+      160deg,
+      var(--jh-cream) 0%,
+      var(--jh-nude) 40%,
+      #D8CABC 70%,
+      var(--jh-taupe) 100%
+    );
+  }
+
+  .joana-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(26, 26, 26, 0.45);
+    z-index: 1;
+  }
+
+  .joana-hero__content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 760px;
+    width: 100%;
+  }
+
+  /* ---- Eyebrow ---- */
+  .joana-hero__eyebrow {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--jh-gold);
+    margin: 0 0 20px;
+  }
+
+  /* Con imagen de fondo */
+  .joana-hero:has(.joana-hero__overlay) .joana-hero__eyebrow {
+    color: var(--jh-taupe);
+  }
+
+  /* ---- Título ---- */
+  .joana-hero__title {
+    font-family: var(--font-serif);
+    font-size: clamp(52px, 10vw, 96px);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--jh-charcoal);
+    margin: 0 0 32px;
+  }
+
+  .joana-hero__title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--jh-brown);
+  }
+
+  .joana-hero:has(.joana-hero__overlay) .joana-hero__title {
+    color: var(--jh-white);
+  }
+
+  .joana-hero:has(.joana-hero__overlay) .joana-hero__title em {
+    color: var(--jh-taupe);
+  }
+
+  /* ---- Badge ---- */
+  .joana-hero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--jh-dark);
+    color: var(--jh-cream);
+    padding: 14px 28px;
+    margin: 0 0 28px;
+    border-radius: 2px;
+  }
+
+  .joana-hero__badge-number {
+    font-family: var(--font-serif);
+    font-size: 52px;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--jh-gold);
+  }
+
+  .joana-hero__badge-percent {
+    font-size: 28px;
+    vertical-align: super;
+  }
+
+  .joana-hero__badge-label {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    line-height: 1.4;
+    color: var(--jh-nude);
+  }
+
+  /* ---- Descripción ---- */
+  .joana-hero__description {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.8;
+    letter-spacing: 0.04em;
+    color: var(--jh-charcoal);
+    margin: 0 0 40px;
+  }
+
+  .joana-hero:has(.joana-hero__overlay) .joana-hero__description {
+    color: rgba(250, 247, 243, 0.85);
+  }
+
+  /* ---- Countdown wrapper ---- */
+  .joana-hero__countdown-wrap {
+    margin: 0 0 40px;
+  }
+
+  .joana-hero__countdown-label {
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--jh-brown);
+    margin: 0 0 16px;
+  }
+
+  .joana-hero:has(.joana-hero__overlay) .joana-hero__countdown-label {
+    color: var(--jh-taupe);
+  }
+
+  /* ---- Countdown timer ---- */
+  .joana-hero__countdown {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .joana-hero__countdown-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 70px;
+  }
+
+  .joana-hero__countdown-num {
+    font-family: var(--font-serif);
+    font-size: clamp(44px, 8vw, 68px);
+    font-weight: 300;
+    line-height: 1;
+    color: var(--jh-charcoal);
+    min-width: 70px;
+    text-align: center;
+    display: block;
+    background: rgba(250, 247, 243, 0.7);
+    padding: 8px 4px;
+    border-radius: 2px;
+    transition: color 0.3s;
+  }
+
+  .joana-hero:has(.joana-hero__overlay) .joana-hero__countdown-num {
+    background: rgba(26, 26, 26, 0.5);
+    color: var(--jh-cream);
+  }
+
+  /* Estado activo (evento en curso) */
+  .joana-hero__countdown--live .joana-hero__countdown-num {
+    color: var(--jh-urgent) !important;
+  }
+
+  .joana-hero__countdown--live + .joana-hero__countdown-label {
+    color: var(--jh-urgent) !important;
+  }
+
+  .joana-hero__countdown-text {
+    font-family: var(--font-sans);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--jh-brown);
+    margin-top: 6px;
+  }
+
+  .joana-hero:has(.joana-hero__overlay) .joana-hero__countdown-text {
+    color: var(--jh-taupe);
+  }
+
+  .joana-hero__countdown-sep {
+    font-family: var(--font-serif);
+    font-size: 48px;
+    font-weight: 300;
+    color: var(--jh-taupe);
+    line-height: 1.2;
+    margin-top: 8px;
+  }
+
+  /* ---- Mensaje de fin ---- */
+  .joana-hero__ended-msg {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.06em;
+    color: var(--jh-brown);
+    margin: 0;
+  }
+
+  /* ---- CTA ---- */
+  .joana-hero__cta {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--jh-cream);
+    background: var(--jh-dark);
+    padding: 16px 44px;
+    border: 1px solid var(--jh-dark);
+    border-radius: 1px;
+    transition: background 0.25s, color 0.25s, border-color 0.25s;
+    margin-bottom: 24px;
+  }
+
+  .joana-hero__cta:hover {
+    background: transparent;
+    color: var(--jh-dark);
+    border-color: var(--jh-dark);
+  }
+
+  .joana-hero:has(.joana-hero__overlay) .joana-hero__cta {
+    color: var(--jh-dark);
+    background: var(--jh-cream);
+    border-color: var(--jh-cream);
+  }
+
+  .joana-hero:has(.joana-hero__overlay) .joana-hero__cta:hover {
+    background: transparent;
+    color: var(--jh-cream);
+  }
+
+  /* ---- Horario ---- */
+  .joana-hero__schedule {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--jh-brown);
+    margin: 8px 0 0;
+    opacity: 0.8;
+  }
+
+  .joana-hero:has(.joana-hero__overlay) .joana-hero__schedule {
+    color: var(--jh-taupe);
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 600px) {
+    .joana-hero__countdown-unit {
+      min-width: 56px;
+    }
+    .joana-hero__countdown-num {
+      min-width: 56px;
+      padding: 6px 2px;
+    }
+    .joana-hero__badge-number {
+      font-size: 40px;
+    }
+    .joana-hero__badge {
+      padding: 12px 20px;
+    }
+  }
+</style>
+
+<!-- ===================== JAVASCRIPT COUNTDOWN ===================== -->
+<script>
+(function() {
+  var sectionId  = '{{ section.id }}';
+
+  var startISO   = '{{ section.settings.evento_inicio }}'.trim();
+  var endISO     = '{{ section.settings.evento_fin }}'.trim();
+
+  /* Fallback: 13 mayo 2026 18:59 – 21:59 hora local */
+  if (!startISO) startISO = '2026-05-13T18:59:00';
+  if (!endISO)   endISO   = '2026-05-13T21:59:00';
+
+  var startTime = new Date(startISO).getTime();
+  var endTime   = new Date(endISO).getTime();
+
+  var elH       = document.getElementById('joana-h-'  + sectionId);
+  var elM       = document.getElementById('joana-m-'  + sectionId);
+  var elS       = document.getElementById('joana-s-'  + sectionId);
+  var elLabel   = document.getElementById('joana-countdown-label-' + sectionId);
+  var elTimer   = document.getElementById('joana-countdown-timer-' + sectionId);
+  var elEnded   = document.getElementById('joana-ended-' + sectionId);
+  var elWrap    = document.getElementById('joana-countdown-' + sectionId);
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function tick() {
+    var now  = Date.now();
+    var diff, target;
+
+    if (now < startTime) {
+      /* Antes del evento */
+      target = startTime;
+      diff   = Math.floor((target - now) / 1000);
+      elLabel.textContent = 'El evento comienza en';
+      elTimer.classList.remove('joana-hero__countdown--live');
+
+    } else if (now >= startTime && now <= endTime) {
+      /* Durante el evento */
+      target = endTime;
+      diff   = Math.floor((target - now) / 1000);
+      elLabel.textContent = '¡Aprovecha! El evento termina en';
+      elTimer.classList.add('joana-hero__countdown--live');
+
+    } else {
+      /* Evento finalizado */
+      clearInterval(intervalId);
+      elTimer.style.display = 'none';
+      elLabel.style.display = 'none';
+      elEnded.style.display = 'block';
+      return;
+    }
+
+    if (diff <= 0) diff = 0;
+
+    var h = Math.floor(diff / 3600);
+    var m = Math.floor((diff % 3600) / 60);
+    var s = diff % 60;
+
+    elH.textContent = pad(h);
+    elM.textContent = pad(m);
+    elS.textContent = pad(s);
+  }
+
+  tick();
+  var intervalId = setInterval(tick, 1000);
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Cumpleaños Joana – Hero",
+  "tag": "div",
+  "class": "joana-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Textos"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Texto pequeño superior",
+      "default": "Evento exclusivo · Solo hoy"
+    },
+    {
+      "type": "richtext",
+      "id": "titulo",
+      "label": "Título principal",
+      "default": "<p>El Cumpleaños<br><em>de Joana</em></p>"
+    },
+    {
+      "type": "richtext",
+      "id": "descripcion",
+      "label": "Descripción",
+      "default": "<p>Colecciones seleccionadas con descuento especial por el cumpleaños de Joana.</p>"
+    },
+    {
+      "type": "text",
+      "id": "horario_texto",
+      "label": "Texto de horario",
+      "default": "Miércoles 13 de mayo  ·  6:59 pm — 9:59 pm"
+    },
+    {
+      "type": "header",
+      "content": "Contador de tiempo"
+    },
+    {
+      "type": "text",
+      "id": "evento_inicio",
+      "label": "Inicio del evento (ISO 8601)",
+      "info": "Formato: 2026-05-13T18:59:00  —  Hora local del servidor.",
+      "default": "2026-05-13T18:59:00"
+    },
+    {
+      "type": "text",
+      "id": "evento_fin",
+      "label": "Fin del evento (ISO 8601)",
+      "info": "Formato: 2026-05-13T21:59:00",
+      "default": "2026-05-13T21:59:00"
+    },
+    {
+      "type": "header",
+      "content": "Botón CTA"
+    },
+    {
+      "type": "text",
+      "id": "cta_texto",
+      "label": "Texto del botón",
+      "default": "Ver colecciones"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Enlace del botón"
+    },
+    {
+      "type": "header",
+      "content": "Fondo"
+    },
+    {
+      "type": "image_picker",
+      "id": "fondo_imagen",
+      "label": "Imagen de fondo (opcional)",
+      "info": "Si no se selecciona, se usa gradiente nude automático."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cumpleaños Joana – Hero"
+    }
+  ]
+}
+{% endschema %}
