@@ -22,46 +22,6 @@
         "secondary_link": "/collections/all?sort_by=created-descending"
       }
     },
-    "luxo_trust": {
-      "type": "luxo-commerce-trust",
-      "blocks": {
-        "shipping": {
-          "type": "item",
-          "settings": {
-            "title": "ENVÍOS A TODO EE. UU.",
-            "text": "Entrega rápida y rastreable"
-          }
-        },
-        "changes": {
-          "type": "item",
-          "settings": {
-            "title": "CAMBIOS FÁCILES",
-            "text": "Te acompañamos con tu talla"
-          }
-        },
-        "secure": {
-          "type": "item",
-          "settings": {
-            "title": "PAGO SEGURO",
-            "text": "Checkout protegido"
-          }
-        },
-        "care": {
-          "type": "item",
-          "settings": {
-            "title": "ATENCIÓN HUMANA",
-            "text": "Antes y después de comprar"
-          }
-        }
-      },
-      "block_order": [
-        "shipping",
-        "changes",
-        "secure",
-        "care"
-      ],
-      "settings": {}
-    },
     "luxo_categories": {
       "type": "luxo-shop-by-intent",
       "blocks": {
@@ -154,7 +114,6 @@
   },
   "order": [
     "luxo_hero",
-    "luxo_trust",
     "luxo_categories",
     "luxo_products",
     "luxo_support_edit",
