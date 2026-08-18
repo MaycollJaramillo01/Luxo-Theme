@@ -10,7 +10,10 @@
   --luxo-line: rgba(23, 21, 19, 0.18);
   --luxo-white: #fff;
   --luxo-font: "Hanken Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --luxo-display: "Bodoni Moda", Georgia, "Times New Roman", serif;
+  /* Hanken Grotesk es la fuente de todo el sitio, titulos incluidos.
+     Para recuperar el serif editorial basta devolver a esta linea su valor
+     anterior: "Bodoni Moda", Georgia, "Times New Roman", serif */
+  --luxo-display: var(--luxo-font);
   --luxo-wide: 1540px;
   --luxo-ease: cubic-bezier(0.22, 1, 0.36, 1);
 

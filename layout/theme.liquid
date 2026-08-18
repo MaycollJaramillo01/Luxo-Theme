@@ -259,14 +259,14 @@
     {% endstyle %}
 
     {% comment %}
-      Tipografía Luxo: Bodoni Moda para títulos (editorial) + Hanken Grotesk para texto e interfaz.
-      Ambas ya se usaban en secciones de campaña; aquí se vuelven la base del tema.
+      Tipografía Luxo: Hanken Grotesk en todo el sitio, títulos incluidos.
+      El peso 300 se mantiene porque lo usan los textos de apoyo.
     {% endcomment %}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap"
     >
 
     {{ 'base.css' | asset_url | stylesheet_tag }}

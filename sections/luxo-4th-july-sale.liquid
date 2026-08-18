@@ -24,7 +24,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
 
 <div
   id="{{ sid }}"
@@ -500,8 +500,8 @@
 
 <style>
   #{{ sid }} {
-    --j4-font-head: "Bodoni Moda", Georgia, "Times New Roman", serif;
     --j4-font-body: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --j4-font-head: var(--j4-font-body);
     background: var(--j4-bg);
     color: var(--j4-text);
     font-family: var(--j4-font-body);
