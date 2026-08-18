@@ -7,6 +7,7 @@
   --luxo-paper: #fbfaf8;
   --luxo-stone: #e8e3dc;
   --luxo-cocoa: #6c5b51;
+  --luxo-sale: #ab5236;
   --luxo-line: rgba(23, 21, 19, 0.18);
   --luxo-white: #fff;
   --luxo-font: "Hanken Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -500,19 +501,82 @@ img { color: transparent; }
 
 /* Dawn product cards on collection / related sections */
 .card-wrapper.product-card-wrapper .card { color: var(--luxo-ink); background: transparent; }
-.card-wrapper.product-card-wrapper .card__inner { overflow: hidden; border: 0; border-radius: 0; background: #eeebe6; }
+.card-wrapper.product-card-wrapper .card__inner { overflow: hidden; border: 0; border-radius: 0; background: #ece8e2; }
 .card-wrapper.product-card-wrapper .card__media,
 .card-wrapper.product-card-wrapper .media { border-radius: 0 !important; }
 .card-wrapper.product-card-wrapper .media img { display: block !important; width: 100% !important; height: 100% !important; object-fit: cover !important; opacity: 1 !important; visibility: visible !important; }
 .card-wrapper.product-card-wrapper .card__content { padding: 13px 0 0; }
 .card-wrapper.product-card-wrapper .card__information { padding: 0; }
-.card-wrapper.product-card-wrapper .card__heading { font-size: 1.35rem; line-height: 1.3; letter-spacing: 0; }
-.card-wrapper.product-card-wrapper .price { margin-top: 6px; font-size: 1.2rem; letter-spacing: 0; }
-.card-wrapper.product-card-wrapper .card__badge { top: 12px; right: auto; bottom: auto; left: 12px; }
-.card-wrapper.product-card-wrapper .badge { border: 0; border-radius: 0; color: var(--luxo-white); background: var(--luxo-ink); font-size: 0.95rem; letter-spacing: 0.08em; text-transform: uppercase; }
 .card-wrapper.product-card-wrapper .quick-add { margin: 13px 0 0; }
 .card-wrapper.product-card-wrapper .quick-add__submit { min-height: 42px; border-radius: 0; color: var(--luxo-white); background: var(--luxo-ink); font-size: 1rem; letter-spacing: 0.08em; text-transform: uppercase; }
 .card-wrapper.product-card-wrapper .quick-add__submit::after { box-shadow: 0 0 0 1px var(--luxo-ink); }
+
+/* Tarjeta de producto — insignia, muestras de color, título+rating, subtítulo y descuento.
+   .luxo-card__badges/.luxo-card__badge ya existen para snippets/luxo-product-card.liquid;
+   se reutilizan aquí y solo se añade la variante clara para "Bestseller". */
+.card-wrapper.product-card-wrapper .luxo-card__badge--light {
+  color: var(--luxo-ink);
+  background: var(--luxo-white);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.card-wrapper.product-card-wrapper .card__information > .card-color-options:first-child {
+  margin: 0 0 10px;
+}
+
+.card-wrapper.product-card-wrapper .luxo-card__title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.card-wrapper.product-card-wrapper .luxo-card__title-row .card__heading {
+  overflow: hidden;
+  min-width: 0;
+  flex: 1 1 auto;
+  margin: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.card-wrapper.product-card-wrapper .luxo-card__rating {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  color: var(--luxo-ink);
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.card-wrapper.product-card-wrapper .luxo-card__rating-icon {
+  display: inline-flex;
+  width: 12px;
+  height: 12px;
+}
+
+.card-wrapper.product-card-wrapper .luxo-card__rating-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: var(--luxo-ink);
+}
+
+.card-wrapper.product-card-wrapper .luxo-card__subtitle {
+  margin: 4px 0 0;
+  color: var(--luxo-ink-soft);
+  font-size: 1.15rem;
+  line-height: 1.4;
+}
+
+.card-wrapper.product-card-wrapper .luxo-card__discount {
+  display: block;
+  margin-top: 3px;
+  color: var(--luxo-sale);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
 
 /* Collection pages */
 .collection-hero { padding: 68px 0 58px; background: var(--luxo-chalk); }
@@ -725,7 +789,6 @@ img { color: transparent; }
   .collection-hero { padding: 46px 0 38px; }
   .collection-hero__title { font-size: clamp(4.8rem, 17vw, 7.4rem); }
   .product-grid { column-gap: 10px; row-gap: 36px; }
-  .card-wrapper.product-card-wrapper .card__heading { font-size: 1.15rem; }
   .card-wrapper.product-card-wrapper .quick-add__submit { min-width: 0; padding-inline: 8px; font-size: 0.9rem; }
   .product__info-wrapper { padding: 30px 4px 0 !important; }
   .product__info-container .product__title h1 { font-size: clamp(3.6rem, 11vw, 5.2rem); }
@@ -798,7 +861,6 @@ img { color: transparent; }
 .luxo-collection-grid .gradient { background: var(--luxo-paper); }
 .product-grid { column-gap: 16px; row-gap: 48px; }
 .product-grid-container .collection { padding-top: 28px; }
-.card-wrapper.product-card-wrapper .card__inner { background: #ece8e2; }
 .card-wrapper.product-card-wrapper .card__content { padding-top: 12px; }
 .card-wrapper.product-card-wrapper .quick-add { opacity: 0; transform: translateY(4px); transition: opacity 180ms ease, transform 180ms ease; }
 .card-wrapper.product-card-wrapper:hover .quick-add { opacity: 1; transform: none; }
