@@ -12,6 +12,8 @@
     "luxo_hero": {
       "type": "luxo-commerce-hero",
       "settings": {
+        "desktop_image": "shopify://shop_images/Luxo_boutique_web.png",
+        "mobile_image": "shopify://shop_images/Luxo_boutique_web.png",
         "image_position": "center top",
         "kicker": "NUEVA EDICIÓN",
         "heading": "Soporte que se siente tuyo.",
@@ -30,6 +32,7 @@
           "settings": {
             "collection": "fajas-de-mediana-compresion",
             "image": "shopify://shop_images/IMG_8358.png",
+            "image_position": "center top",
             "title": "COMPRESIÓN DIARIA",
             "link": ""
           }
@@ -39,6 +42,7 @@
           "settings": {
             "collection": "top-picks",
             "image": "shopify://shop_images/IMG_8360.png",
+            "image_position": "center top",
             "title": "MODA QUE ACOMPAÑA",
             "link": ""
           }
@@ -48,6 +52,7 @@
           "settings": {
             "collection": "fajas-de-maxima-compresion",
             "image": "shopify://shop_images/IMG_8359.png",
+            "image_position": "center top",
             "title": "POSTPARTO",
             "link": ""
           }
@@ -99,6 +104,7 @@
     "luxo_final_cta": {
       "type": "luxo-bottom-cta",
       "settings": {
+        "kicker": "",
         "final_title": "Encuentra tu talla y compra hoy.",
         "final_text": "<p>Compresión media, máxima y moda que acompaña. Envío rastreable y cambios acompañados.</p>",
         "final_primary_label": "COMPRAR FAJAS",
