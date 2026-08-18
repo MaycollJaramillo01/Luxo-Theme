@@ -115,7 +115,7 @@
       "settings": {
         "kicker": "SOPORTE PARA CADA DÍA",
         "heading": "Encuentra tu nivel de compresión",
-        "collection": "fajas-de-mediana-compresion",
+        "collection": "fajas-de-maxima-compresion",
         "products_to_show": 4,
         "columns": 4,
         "view_all_label": "COMPRAR COMPRESIÓN MEDIA"
@@ -124,6 +124,7 @@
     "luxo_routine": {
       "type": "luxo-routine-builder",
       "settings": {
+        "image": "shopify://shop_images/IAM.jpg",
         "kicker": "MEJOR JUNTAS",
         "heading": "Encuentra tu rutina de soporte.",
         "copy": "<p>Combina prendas pensadas para tus días, tu nivel de soporte y tu bienestar.</p>",
