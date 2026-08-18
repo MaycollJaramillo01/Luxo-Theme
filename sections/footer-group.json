@@ -1,47 +1,36 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "name": "Footer",
   "type": "footer",
   "sections": {
     "luxo_commerce_footer": {
       "type": "luxo-commerce-footer",
-      "blocks": {
-        "shop_menu": {
-          "type": "menu",
-          "settings": {
-            "heading": "COMPRAR",
-            "menu": "footer"
-          }
-        },
-        "help_menu": {
-          "type": "menu",
-          "settings": {
-            "heading": "AYUDA",
-            "menu": "main-menu"
-          }
-        },
-        "contact": {
-          "type": "contact",
-          "settings": {
-            "heading": "CONTACTO"
-          }
-        }
-      },
-      "block_order": ["shop_menu", "help_menu", "contact"],
       "settings": {
-        "show_newsletter": true,
-        "newsletter_kicker": "ACCESO LUXO",
-        "heading": "Acceso anticipado.",
+        "show_newsletter": false,
+        "newsletter_kicker": "",
+        "heading": "",
         "copy": "Lanzamientos, guías de talla y selecciones para tu rutina.",
         "newsletter_note": "Al suscribirte aceptas recibir correos de Luxo. Puedes darte de baja cuando quieras.",
         "brand_copy": "Fajas, moda y bienestar elegidos para acompañar tu cuerpo y tu vida.",
         "show_social": true,
-        "show_reassurance": true,
+        "show_reassurance": false,
         "reassurance_1": "ENVÍOS A TODO EE. UU.",
         "reassurance_2": "CAMBIOS ACOMPAÑADOS",
         "reassurance_3": "PAGO PROTEGIDO",
-        "show_payment_icons": true
+        "show_payment_icons": true,
+        "show_localization": true
       }
     }
   },
-  "order": ["luxo_commerce_footer"]
+  "order": [
+    "luxo_commerce_footer"
+  ]
 }
