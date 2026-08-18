@@ -355,6 +355,11 @@ if (!customElements.get('product-info')) {
         this.setQuantityBoundries();
 
         const quantityFormUpdated = html.getElementById(`Quantity-Form-${sectionId}`);
+        // Si la seccion no declara el contenedor, salir en vez de lanzar: la
+        // excepcion abortaba handleUpdateProductInfo y dejaba el boton de
+        // compra desactivado tras cambiar de variante.
+        if (!quantityFormUpdated) return;
+
         const selectors = ['.quantity__input', '.quantity__rules', '.quantity__label'];
         for (let selector of selectors) {
           const current = this.quantityForm.querySelector(selector);

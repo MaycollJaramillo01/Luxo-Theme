@@ -73,7 +73,16 @@
             {%- when 'variant_picker' -%}
               {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
             {%- when 'quantity_selector' -%}
-              <div class="product-form__input product-form__quantity" {{ block.shopify_attributes }}>
+              {%- comment -%}
+                El id lo necesita product-info.js (updateQuantityRules) al cambiar
+                de variante: sin él lanza una excepción y el botón de compra se
+                queda desactivado.
+              {%- endcomment -%}
+              <div
+                id="Quantity-Form-{{ section.id }}"
+                class="product-form__input product-form__quantity"
+                {{ block.shopify_attributes }}
+              >
                 <label class="form__label" for="Quantity-{{ section.id }}">Cantidad</label>
                 <quantity-input class="quantity" data-url="{{ product.url }}" data-section="{{ section.id }}">
                   <button class="quantity__button" name="minus" type="button" aria-label="Reducir cantidad">
