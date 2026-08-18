@@ -65,6 +65,7 @@
     "sale_badge_color_scheme": "scheme-5",
     "sold_out_badge_color_scheme": "scheme-3",
     "cart_color_scheme": "scheme-1",
+    "cart_type": "page",
     "predictive_search_enabled": true
   },
   "presets": {
