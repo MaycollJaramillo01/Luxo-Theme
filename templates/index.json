@@ -29,15 +29,8 @@
           "type": "category",
           "settings": {
             "collection": "fajas-de-mediana-compresion",
+            "image": "shopify://shop_images/IMG_8358.png",
             "title": "COMPRESIÓN DIARIA",
-            "link": ""
-          }
-        },
-        "postpartum": {
-          "type": "category",
-          "settings": {
-            "collection": "fajas-de-maxima-compresion",
-            "title": "POSTPARTO",
             "link": ""
           }
         },
@@ -45,15 +38,25 @@
           "type": "category",
           "settings": {
             "collection": "top-picks",
+            "image": "shopify://shop_images/IMG_8360.png",
             "title": "MODA QUE ACOMPAÑA",
+            "link": ""
+          }
+        },
+        "postpartum": {
+          "type": "category",
+          "settings": {
+            "collection": "fajas-de-maxima-compresion",
+            "image": "shopify://shop_images/IMG_8359.png",
+            "title": "POSTPARTO",
             "link": ""
           }
         }
       },
       "block_order": [
         "daily",
-        "postpartum",
-        "fashion"
+        "fashion",
+        "postpartum"
       ],
       "settings": {
         "heading": "Comprar según tu momento"
