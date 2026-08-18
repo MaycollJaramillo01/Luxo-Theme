@@ -13,6 +13,20 @@
     assign is_on_sale = true
   endif
   assign card_form_id = 'LuxoCardForm-' | append: section.id | append: '-' | append: card_product.id
+
+  assign is_bestseller = false
+  for product_tag in card_product.tags
+    assign normalized_tag = product_tag | downcase | strip
+    if normalized_tag == 'bestseller' or normalized_tag == 'best seller' or normalized_tag == 'best-seller'
+      assign is_bestseller = true
+      break
+    endif
+  endfor
+
+  assign discount_percent = 0
+  if card_product.compare_at_price_max > card_product.price and card_product.price > 0
+    assign discount_percent = card_product.compare_at_price_max | minus: card_product.price | times: 100 | divided_by: card_product.compare_at_price_max
+  endif
 -%}
 
 {%- if card_product != blank -%}
@@ -42,6 +56,8 @@
       <span class="luxo-card__badges">
         {%- if card_product.available == false -%}
           <span class="luxo-card__badge">Agotado</span>
+        {%- elsif is_bestseller -%}
+          <span class="luxo-card__badge luxo-card__badge--light">Bestseller</span>
         {%- elsif is_on_sale -%}
           <span class="luxo-card__badge">Oferta</span>
         {%- endif -%}
@@ -49,8 +65,26 @@
     </a>
 
     <div class="luxo-card__content">
+      {%- comment -%} Slot fijo: reserva el alto aunque el producto no tenga colores {%- endcomment -%}
+      <div class="luxo-card__colors">{% render 'luxo-card-color-options', product: card_product %}</div>
+
       <div class="luxo-card__meta">
-        <a class="luxo-card__title" href="{{ card_product.url }}">{{ card_product.title | escape }}</a>
+        <div class="luxo-card__title-row">
+          <a class="luxo-card__title" href="{{ card_product.url }}">{{ card_product.title | escape }}</a>
+          {%- if card_product.metafields.reviews.rating.value != blank -%}
+            <span
+              class="luxo-card__rating"
+              role="img"
+              aria-label="{{ 'accessibility.star_reviews_info' | t: rating_value: card_product.metafields.reviews.rating.value, rating_max: card_product.metafields.reviews.rating.value.scale_max }}"
+            >
+              <span aria-hidden="true" class="luxo-card__rating-icon">{{- 'icon-star.svg' | inline_asset_content -}}</span>
+              <span aria-hidden="true">{{ card_product.metafields.reviews.rating.value.rating | round: 1 }}</span>
+            </span>
+          {%- endif -%}
+        </div>
+        {%- if card_product.description != blank -%}
+          <p class="luxo-card__subtitle">{{ card_product.description | strip_html | truncatewords: 8 }}</p>
+        {%- endif -%}
         <div class="luxo-card__price">
           {%- if card_product.price_varies -%}
             <span>Desde {{ card_product.price_min | money }}</span>
@@ -61,10 +95,10 @@
             <s>{{ card_product.compare_at_price_max | money }}</s>
           {%- endif -%}
         </div>
+        {%- if discount_percent > 0 -%}
+          <span class="luxo-card__discount">-{{ discount_percent }}%</span>
+        {%- endif -%}
       </div>
-
-      {%- comment -%} Slot fijo: reserva el alto aunque el producto no tenga colores {%- endcomment -%}
-      <div class="luxo-card__colors">{% render 'luxo-card-color-options', product: card_product %}</div>
 
       {%- if card_product.available -%}
         {%- if card_product.has_only_default_variant and selected_variant != blank -%}
