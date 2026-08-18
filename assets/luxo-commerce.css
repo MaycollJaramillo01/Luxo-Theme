@@ -1512,9 +1512,6 @@ product-form { display: block; }
 
 .luxo-card__quick-add { margin-top: auto; }
 
-/* Aire entre la última sección y el footer */
-.luxo-footer { margin-top: clamp(28px, 3.5vw, 64px); }
-
 @media screen and (max-width: 1100px) {
   .luxo-product-rail,
   .luxo-recommendations__grid {

@@ -1,19 +1,25 @@
 {%- liquid
   assign routine_collection = section.settings.collection
-  if routine_collection == blank or routine_collection.products.size == 0
+  assign routine_products = routine_collection.products | where: 'available' | slice: 0, 3
+
+  # Si la colección configurada no tiene nada disponible para agregar, se usa
+  # todo el catálogo en su lugar: mejor eso que un selector sin nada elegible.
+  if routine_products.size == 0
     assign routine_collection = collections.all
+    assign routine_products = routine_collection.products | where: 'available' | slice: 0, 3
   endif
+
   assign routine_image = section.settings.image
   if routine_image == blank and routine_collection.image != blank
     assign routine_image = routine_collection.image
   endif
-  if routine_image == blank and routine_collection.products.first.featured_media != blank
-    assign routine_image = routine_collection.products.first.featured_media.preview_image
+  if routine_image == blank and routine_products.first.featured_media != blank
+    assign routine_image = routine_products.first.featured_media.preview_image
   endif
   assign routine_total = 0
 -%}
 
-{%- if routine_collection != blank and routine_collection.products.size > 0 -%}
+{%- if routine_products.size > 0 -%}
   <section class="luxo-routine" id="LuxoRoutine-{{ section.id }}">
     <div class="luxo-routine__campaign">
       {%- if routine_image != blank -%}
@@ -40,28 +46,25 @@
         <h3>{{ section.settings.panel_heading | escape }}</h3>
       </header>
       <div class="luxo-routine__items">
-        {%- for product in routine_collection.products limit: 3 -%}
+        {%- for product in routine_products -%}
           {%- assign variant = product.selected_or_first_available_variant -%}
-          {%- if variant != blank -%}
-            {%- assign routine_total = routine_total | plus: variant.price -%}
-            {%- assign product_image = variant.featured_media.preview_image | default: product.featured_media.preview_image -%}
-            <label class="luxo-routine-item">
-              <input type="checkbox" checked data-routine-variant="{{ variant.id }}"{% unless variant.available %} disabled{% endunless %}>
-              <span class="luxo-routine-item__check" aria-hidden="true"></span>
-              <a class="luxo-routine-item__image" href="{{ product.url }}" tabindex="-1">
-                {%- if product_image != blank -%}
-                  {{ product_image | image_url: width: 320 | image_tag: width: 160, height: 190, loading: 'lazy', alt: product_image.alt | default: product.title }}
-                {%- else -%}
-                  <span aria-hidden="true"></span>
-                {%- endif -%}
-              </a>
-              <span class="luxo-routine-item__info">
-                <a href="{{ product.url }}">{{ product.title | escape }}</a>
-                <span>{{ variant.price | money }}</span>
-                {%- unless variant.available -%}<small>Agotado</small>{%- endunless -%}
-              </span>
-            </label>
-          {%- endif -%}
+          {%- assign routine_total = routine_total | plus: variant.price -%}
+          {%- assign product_image = variant.featured_media.preview_image | default: product.featured_media.preview_image -%}
+          <label class="luxo-routine-item">
+            <input type="checkbox" checked data-routine-variant="{{ variant.id }}">
+            <span class="luxo-routine-item__check" aria-hidden="true"></span>
+            <a class="luxo-routine-item__image" href="{{ product.url }}" tabindex="-1">
+              {%- if product_image != blank -%}
+                {{ product_image | image_url: width: 320 | image_tag: width: 160, height: 190, loading: 'lazy', alt: product_image.alt | default: product.title }}
+              {%- else -%}
+                <span aria-hidden="true"></span>
+              {%- endif -%}
+            </a>
+            <span class="luxo-routine-item__info">
+              <a href="{{ product.url }}">{{ product.title | escape }}</a>
+              <span>{{ variant.price | money }}</span>
+            </span>
+          </label>
         {%- endfor -%}
       </div>
       <div class="luxo-routine__total"><span>Total de la selección</span><strong>{{ routine_total | money }}</strong></div>
