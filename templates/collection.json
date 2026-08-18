@@ -125,12 +125,61 @@
         "ratio": "16 / 11",
         "label_position": "bottom"
       }
+    },
+    "collection_editorial": {
+      "type": "luxo-editorial-story",
+      "settings": {
+        "image_alt": "Selección Luxo",
+        "kicker": "DISEÑADO PARA LA VIDA REAL",
+        "heading": "Soporte que se siente. Confianza que se nota.",
+        "copy": "<p>Cada pieza de esta selección se elige por cómo acompaña el cuerpo durante todo el día: costuras planas, compresión graduada y materiales que respiran.</p>",
+        "link_label": "VER GUÍA DE TALLAS",
+        "link": ""
+      }
+    },
+    "collection_reviews": {
+      "type": "luxo-social-proof",
+      "blocks": {
+        "r1": {
+          "type": "review",
+          "settings": {
+            "quote": "Amo sus fajas: son cómodas y la atención supera las expectativas.",
+            "author": "Genesis Luna"
+          }
+        },
+        "r2": {
+          "type": "review",
+          "settings": {
+            "quote": "Calidad excelente y un ajuste que sí puedo usar durante todo el día.",
+            "author": "Darling Rosales"
+          }
+        },
+        "r3": {
+          "type": "review",
+          "settings": {
+            "quote": "Me ayudaron a elegir la talla y compré con mucha más seguridad.",
+            "author": "Abigail Enamorado"
+          }
+        }
+      },
+      "block_order": [
+        "r1",
+        "r2",
+        "r3"
+      ],
+      "settings": {
+        "kicker": "DICHO POR ELLAS",
+        "heading": "La confianza se nota.",
+        "copy": "<p>Experiencias de clientas que encontraron comodidad y acompañamiento.</p>"
+      }
     }
   },
   "order": [
     "cover",
     "collection_trust",
     "main_collection_grid",
+    "collection_editorial",
+    "collection_reviews",
     "related_collections"
   ]
 }

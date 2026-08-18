@@ -139,12 +139,10 @@
                     >
                       <div>
                         <span class="facets__summary-label">
-                          {{- filter.label | escape }}
-                          {%- if filter_type == 'vertical' -%}
-                            <span class="facets__selected{% if filter.active_values.size == 0 %} hidden{% endif %}">
-                              ({{ filter.active_values.size }})</span
-                            >
-                          {%- endif -%}
+                          {{- filter.label | escape -}}
+                          <span class="facets__selected{% if filter.active_values.size == 0 %} hidden{% endif %}">
+                            {{- filter.active_values.size -}}
+                          </span>
                         </span>
                         {%- if filter_type == 'vertical' and filter.operator == 'AND' -%}
                           <span class="facets__and-helptext">
@@ -439,6 +437,12 @@
     </facet-filters-form>
   {%- endif -%}
   {% comment %}  Drawer and mobile filter {% endcomment %}
+  {%- liquid
+    assign mobile_active_count = 0
+    for filter in results.filters
+      assign mobile_active_count = mobile_active_count | plus: filter.active_values.size
+    endfor
+  -%}
   <menu-drawer
     class="mobile-facets__wrapper{% if filter_type == 'horizontal' or filter_type == 'vertical' %} medium-hide large-up-hide{% endif %}"
     data-breakpoint="mobile"
@@ -463,6 +467,9 @@
               {{ 'products.facets.filter_button' | t }}
             {%- endif -%}
           </span>
+          {%- if mobile_active_count > 0 -%}
+            <span class="mobile-facets__open-count" aria-hidden="true">{{ mobile_active_count }}</span>
+          {%- endif -%}
         </span>
         <span tabindex="0" class="mobile-facets__close">
           <span class="svg-wrapper">
@@ -763,7 +770,7 @@
                   class="button button--primary"
                   onclick="this.closest('.mobile-facets__wrapper').querySelector('summary').click()"
                 >
-                  {{ 'products.facets.apply' | t }}
+                  {{ 'products.facets.apply' | t }} ({{ results.products_count | default: results.results_count }})
                 </button>
               </div>
             </div>

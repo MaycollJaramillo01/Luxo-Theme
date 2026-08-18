@@ -164,44 +164,48 @@
         assign excluded_handles = section.settings.exclude_handles | remove: ' ' | downcase | prepend: ',' | append: ','
       -%}
 
-      {%- paginate sorted_collections by 24 -%}
-        <div class="luxo-cols__group">
-          {%- if section.settings.fallback_heading != blank -%}
-            <div class="luxo-cols__group-head">
-              <div>
-                <h2 class="luxo-cols__group-title">{{ section.settings.fallback_heading | escape }}</h2>
-                {%- if section.settings.fallback_note != blank -%}
-                  <p class="luxo-cols__group-note">{{ section.settings.fallback_note | escape }}</p>
-                {%- endif -%}
-              </div>
+      {%- comment -%}
+        Sin paginacion: `paginate` solo acepta objetos paginables y
+        `sorted_collections` es un array (lo devuelve el filtro `sort`).
+        Ordenar globalmente y paginar es incompatible en Liquid, y el directorio
+        se disena para recorrerse de una sola pasada.
+        ponytail: renderiza todas las colecciones; si el catalogo pasa de unos
+        cientos, pagina `collections` directamente y renuncia al orden propio.
+      {%- endcomment -%}
+      <div class="luxo-cols__group">
+        {%- if section.settings.fallback_heading != blank -%}
+          <div class="luxo-cols__group-head">
+            <div>
+              <h2 class="luxo-cols__group-title">{{ section.settings.fallback_heading | escape }}</h2>
+              {%- if section.settings.fallback_note != blank -%}
+                <p class="luxo-cols__group-note">{{ section.settings.fallback_note | escape }}</p>
+              {%- endif -%}
             </div>
-          {%- endif -%}
+          </div>
+        {%- endif -%}
 
-          <ul class="luxo-cols__grid" role="list">
-            {%- for directory_collection in sorted_collections -%}
-              {%- liquid
-                assign handle_needle = directory_collection.handle | prepend: ',' | append: ','
-                assign skip_collection = false
-                if excluded_handles contains handle_needle
-                  assign skip_collection = true
-                endif
-                if section.settings.hide_empty and directory_collection.all_products_count == 0
-                  assign skip_collection = true
-                endif
+        <ul class="luxo-cols__grid" role="list">
+          {%- for directory_collection in sorted_collections -%}
+            {%- liquid
+              assign handle_needle = directory_collection.handle | prepend: ',' | append: ','
+              assign skip_collection = false
+              if excluded_handles contains handle_needle
+                assign skip_collection = true
+              endif
+              if section.settings.hide_empty and directory_collection.all_products_count == 0
+                assign skip_collection = true
+              endif
+            -%}
+            {%- unless skip_collection -%}
+              {%- render 'luxo-collection-tile',
+                tile_collection: directory_collection,
+                tile_show_count: show_count,
+                tile_show_peek: show_peek
               -%}
-              {%- unless skip_collection -%}
-                {%- render 'luxo-collection-tile',
-                  tile_collection: directory_collection,
-                  tile_show_count: show_count,
-                  tile_show_peek: show_peek
-                -%}
-              {%- endunless -%}
-            {%- endfor -%}
-          </ul>
-        </div>
-
-        {%- render 'pagination', paginate: paginate -%}
-      {%- endpaginate -%}
+            {%- endunless -%}
+          {%- endfor -%}
+        </ul>
+      </div>
     {%- endif -%}
   </div>
 </section>

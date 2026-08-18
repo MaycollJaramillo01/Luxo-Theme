@@ -1,0 +1,574 @@
+/* LUXO — Barra de filtros y orden (colección y búsqueda)
+   Rediseño sobre el marcado de Dawn (snippets/facets.liquid).
+   Depende de los tokens de luxo-commerce.css */
+
+/* ---------- Barra ---------- */
+
+/* Fondo solido a proposito: backdrop-filter convertiria la barra en bloque
+   contenedor de sus hijos position:fixed (el cajon movil y la capa de cierre
+   de los desplegables), que dejarian de cubrir la ventana. */
+.facets-wrapper.page-width {
+  position: sticky;
+  z-index: 92; /* por encima de .luxo-header-section (90) */
+  top: 0;
+  border-bottom: 1px solid var(--luxo-line);
+  background: var(--luxo-paper);
+}
+
+.facets-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 0 !important;
+  border: 0 !important;
+}
+
+.facets {
+  width: 100%;
+  min-width: 0;
+}
+
+.facets__form {
+  display: flex;
+  min-height: 68px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0;
+  gap: 0 clamp(18px, 2vw, 32px);
+}
+
+/* "Filtrar:" queda solo para lectores de pantalla: la barra se explica sola */
+.facets__heading {
+  position: absolute !important;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  margin: 0 !important;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* absorbe el espacio libre: el conteo y el orden quedan siempre a la derecha
+   y los filtros se reparten en varias filas cuando no caben */
+.facets__wrapper {
+  display: flex;
+  flex: 1 1 0;
+  flex-wrap: wrap;
+  align-items: center;
+  min-width: 0;
+  gap: 0 clamp(16px, 1.8vw, 30px);
+}
+
+/* ---------- Disparador de cada filtro ---------- */
+
+.facets__disclosure {
+  margin: 0;
+}
+
+.facets__summary {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  padding: 0 !important;
+  margin: 0 !important;
+  color: var(--luxo-ink);
+  font-size: 1.15rem !important;
+  font-weight: 500;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.facets__summary > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.facets__summary:hover,
+.facets__disclosure[open] > .facets__summary {
+  color: var(--luxo-cocoa);
+}
+
+.facets__summary:hover .facets__summary-label {
+  text-decoration: none;
+}
+
+.facets__summary .icon-caret {
+  position: static;
+  width: 10px;
+  height: 6px;
+  flex-shrink: 0;
+  transition: transform 200ms var(--luxo-ease);
+}
+
+.facets__disclosure[open] > .facets__summary .icon-caret {
+  transform: rotate(180deg);
+}
+
+/* Contador de valores activos */
+.facets__summary .facets__selected {
+  display: inline-grid;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  margin-left: 7px;
+  color: var(--luxo-white);
+  background: var(--luxo-ink);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  place-items: center;
+}
+
+.facets__summary .facets__selected.hidden {
+  display: none;
+}
+
+/* ---------- Panel desplegable ---------- */
+
+.facets__display {
+  top: calc(100% + 10px);
+  left: -16px;
+  overflow: hidden auto;
+  width: min(340px, calc(100vw - 40px));
+  max-height: min(60vh, 520px);
+  border: 1px solid var(--luxo-line);
+  border-radius: 14px;
+  background: var(--luxo-white);
+  box-shadow: 0 26px 60px -26px rgba(23, 21, 19, 0.32);
+  overscroll-behavior: contain;
+}
+
+.facets__display .facets__header {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--luxo-line);
+  background: var(--luxo-white);
+  color: var(--luxo-ink-soft);
+  font-size: 1.05rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.facets__display .facets__reset {
+  color: var(--luxo-cocoa);
+}
+
+.facets__display .facets__list {
+  padding: 6px;
+}
+
+.facets__display .facets-layout-grid {
+  padding: 12px;
+}
+
+.facets__display .facets__item {
+  border-radius: 10px;
+  transition: background 150ms var(--luxo-ease);
+}
+
+.facets__display .facets__item:hover {
+  background: var(--luxo-chalk);
+}
+
+.facets__display .facet-checkbox {
+  align-items: center;
+  padding: 11px 14px;
+  font-size: 1.25rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* el check va posicionado en absoluto sobre el cuadro: se centra con la fila */
+.facets__display .facet-checkbox .svg-wrapper {
+  top: 50%;
+  left: 16.5px;
+  transform: translateY(-50%);
+}
+
+.facets__display .facets__label.active {
+  font-weight: 600;
+}
+
+.facets__display .facets__price {
+  padding: 16px;
+}
+
+/* ---------- Orden ---------- */
+
+.facet-filters.sorting {
+  order: 3;
+  padding: 0 !important;
+  margin: 0;
+}
+
+.facet-filters__field {
+  min-height: 40px;
+  flex: 0 0 auto;
+  align-items: center;
+  padding: 0 16px;
+  border: 1px solid var(--luxo-line);
+  border-radius: 999px;
+  background: var(--luxo-chalk);
+  gap: 6px;
+  transition: background 180ms var(--luxo-ease), border-color 180ms var(--luxo-ease);
+}
+
+.facet-filters__field:hover {
+  border-color: rgba(23, 21, 19, 0.32);
+  background: var(--luxo-stone);
+}
+
+.facet-filters__label {
+  margin: 0 !important;
+  color: var(--luxo-ink);
+  font-family: var(--luxo-font) !important; /* es un h2: gana al serif global */
+  font-size: 1.05rem !important;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.facet-filters__label label {
+  cursor: pointer;
+}
+
+.facet-filters__sort {
+  padding: 0 18px 0 0 !important;
+  color: var(--luxo-ink);
+  font-size: 1.1rem !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+/* ---------- Conteo de productos ---------- */
+
+.facets__form .product-count {
+  order: 2;
+  flex: 0 0 auto;
+  align-self: center;
+  margin: 0;
+  color: var(--luxo-ink-soft);
+  font-size: 1.05rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.product-count__text {
+  margin: 0;
+  font-family: var(--luxo-font) !important;
+  font-size: inherit;
+  letter-spacing: inherit;
+}
+
+/* ---------- Píldoras de filtros activos ---------- */
+
+.facets__form .active-facets-desktop {
+  display: flex;
+  order: 4;
+  flex: 0 0 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0;
+  gap: 8px;
+}
+
+.facets__form .active-facets-desktop:has(facet-remove + facet-remove) {
+  padding-bottom: 14px;
+}
+
+.active-facets__button,
+.active-facets__button-remove {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.active-facets__button-wrapper {
+  padding: 0;
+  margin: 0;
+}
+
+.active-facets__button-inner.button {
+  min-height: 34px !important;
+  padding: 0 12px !important;
+  border-radius: 999px;
+  color: var(--luxo-ink);
+  background: var(--luxo-white);
+  box-shadow: inset 0 0 0 1px var(--luxo-line);
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+.active-facets__button-inner.button::after {
+  box-shadow: none !important;
+}
+
+.active-facets__button:hover .active-facets__button-inner {
+  background: var(--luxo-chalk);
+}
+
+.active-facets__button-remove {
+  color: var(--luxo-cocoa);
+  font-size: 1.05rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ---------- Pantallas medianas ----------
+   Con muchos filtros el espacio no da para tres bloques en la misma linea:
+   los filtros ocupan una fila completa y el conteo + orden bajan a la siguiente. */
+
+@media screen and (max-width: 1099px) {
+  .facets__wrapper {
+    flex: 0 0 100%;
+    padding-top: 4px;
+  }
+
+  .facets__form .product-count {
+    margin-left: auto;
+  }
+
+  .facets__form .active-facets-desktop {
+    padding-top: 4px;
+  }
+}
+
+/* ---------- Estado vacío ---------- */
+
+.collection--empty .title-wrapper {
+  padding: 72px 0 88px;
+}
+
+/* ---------- Móvil ---------- */
+
+@media screen and (max-width: 749px) {
+  .facets-container {
+    min-height: 58px;
+    gap: 8px;
+  }
+
+  .mobile-facets__wrapper {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .mobile-facets__open-wrapper {
+    display: block;
+  }
+
+  .mobile-facets__open {
+    width: auto;
+    min-height: 42px;
+    justify-content: center;
+    padding: 0 14px;
+    border: 1px solid var(--luxo-line);
+    border-radius: 999px;
+    background: var(--luxo-chalk);
+    color: var(--luxo-ink);
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .mobile-facets__open .svg-wrapper {
+    width: 16px;
+  }
+
+  .mobile-facets__open > * + * {
+    margin-left: 8px;
+  }
+
+  .mobile-facets__open:hover .mobile-facets__open-label {
+    text-decoration: none;
+  }
+
+  .mobile-facets__open-count {
+    display: inline-grid;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    color: var(--luxo-white);
+    background: var(--luxo-ink);
+    font-size: 0.95rem;
+    letter-spacing: 0;
+    place-items: center;
+  }
+
+  .facets-container > .product-count {
+    order: 3;
+    margin: 0 0 0 auto;
+    color: var(--luxo-ink-soft);
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .active-facets-mobile {
+    display: flex;
+    overflow-x: auto;
+    order: 4;
+    flex: 0 0 100%;
+    flex-wrap: nowrap;
+    align-items: center;
+    padding-bottom: 12px;
+    margin: 0;
+    gap: 8px;
+    scrollbar-width: none;
+  }
+
+  .active-facets-mobile::-webkit-scrollbar {
+    display: none;
+  }
+
+  .active-facets-mobile facet-remove {
+    flex: 0 0 auto;
+  }
+
+  /* Cajón */
+  .mobile-facets__inner {
+    width: calc(100% - 40px);
+    max-width: 420px;
+    border: 0;
+    background: var(--luxo-paper);
+  }
+
+  .mobile-facets__header {
+    min-height: 62px;
+    align-items: center;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--luxo-line);
+    background: var(--luxo-paper);
+    text-align: left;
+  }
+
+  .mobile-facets__heading {
+    font-family: var(--luxo-font) !important;
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .mobile-facets__count {
+    margin-top: 3px;
+    color: var(--luxo-ink-soft);
+    font-size: 1.1rem;
+  }
+
+  .mobile-facets__main {
+    padding-top: 6px;
+  }
+
+  .mobile-facets__details {
+    border-bottom: 1px solid rgba(23, 21, 19, 0.08);
+  }
+
+  .mobile-facets__summary {
+    padding: 0 20px;
+  }
+
+  .mobile-facets__summary > div {
+    min-height: 58px;
+    font-size: 1.3rem;
+  }
+
+  .mobile-facets__sort {
+    min-height: 58px;
+    align-items: center;
+  }
+
+  .mobile-facets__sort label {
+    font-size: 1.3rem;
+  }
+
+  .mobile-facets__close-button {
+    min-height: 58px;
+    align-items: center;
+    padding: 0 20px;
+    margin-top: 0;
+    border-bottom: 1px solid rgba(23, 21, 19, 0.08);
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* Dawn le da width:100% y el tema usa content-box: sin border-box el
+     relleno lateral desbordaria el cajon. */
+  .mobile-facets__label {
+    box-sizing: border-box;
+    min-height: 52px;
+    align-items: center;
+    padding: 6px 20px;
+    font-size: 1.3rem;
+  }
+
+  .mobile-facets__label .icon-checkmark {
+    top: 50%;
+    left: 22.5px;
+    transform: translateY(-50%);
+  }
+
+  input.mobile-facets__checkbox {
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+  }
+
+  .mobile-facets__footer {
+    padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--luxo-line);
+    background: var(--luxo-paper);
+    gap: 12px;
+  }
+
+  .mobile-facets__footer > * {
+    width: auto;
+  }
+
+  .mobile-facets__footer > * + * {
+    margin-left: 0;
+  }
+
+  .mobile-facets__clear-wrapper {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+  }
+
+  .mobile-facets__clear {
+    color: var(--luxo-cocoa);
+    font-size: 1.15rem;
+  }
+
+  .mobile-facets__footer .button {
+    min-height: 48px;
+    flex: 1 1 auto;
+    border-radius: 999px;
+    color: var(--luxo-white);
+    background: var(--luxo-ink);
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .mobile-facets__footer .button::after {
+    box-shadow: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .facets__summary .icon-caret,
+  .facets__display .facets__item {
+    transition: none;
+  }
+}
