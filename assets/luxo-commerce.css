@@ -388,6 +388,34 @@ img { color: transparent; }
 .luxo-category:hover .luxo-category__media img { transform: scale(1.035); }
 .luxo-category:hover .luxo-category__label span:last-child { transform: translateX(6px); }
 
+/* Flechas del carrusel de categorías: solo existen para el modo de scroll
+   horizontal (≤899px, ver .luxo-categories__grid más abajo); en escritorio
+   se ven todas las categorías a la vez y no hacen falta. */
+.luxo-categories__wrap { position: relative; }
+.luxo-categories__nav {
+  display: none;
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: var(--luxo-ink);
+  background: rgba(251, 250, 248, 0.88);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: background 180ms var(--luxo-ease);
+}
+.luxo-categories__nav:hover { background: var(--luxo-white); }
+.luxo-categories__nav svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 1.6; }
+.luxo-categories__nav--prev { left: 12px; }
+.luxo-categories__nav--next { right: 12px; }
+
 /* Product cards */
 .luxo-section--products { background: var(--luxo-paper); }
 .luxo-product-rail {
@@ -750,6 +778,7 @@ img { color: transparent; }
   .luxo-trust__item:last-child { border-right: 0; }
   .luxo-categories__grid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
   .luxo-categories__grid::-webkit-scrollbar { display: none; }
+  .luxo-categories__nav { display: flex; }
   .luxo-category { min-width: 62vw; min-height: 560px; scroll-snap-align: start; }
   .luxo-section__head { align-items: start; }
   .luxo-editorial { min-height: 760px; }
