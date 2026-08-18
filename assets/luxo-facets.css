@@ -212,12 +212,17 @@
   border-radius: 999px;
   background: var(--luxo-chalk);
   gap: 6px;
-  transition: background 180ms var(--luxo-ease), border-color 180ms var(--luxo-ease);
+  transition: background 180ms var(--luxo-ease), border-color 180ms var(--luxo-ease), box-shadow 180ms var(--luxo-ease);
 }
 
 .facet-filters__field:hover {
   border-color: rgba(23, 21, 19, 0.32);
   background: var(--luxo-stone);
+}
+
+.facet-filters__field:has(.facet-filters__sort:focus-visible) {
+  border-color: var(--luxo-ink);
+  box-shadow: 0 0 0 2px var(--luxo-paper), 0 0 0 3px var(--luxo-ink);
 }
 
 .facet-filters__label {
@@ -241,6 +246,18 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   cursor: pointer;
+  /* Chrome/Edge/Firefox pintan el fondo/color de <option> con esto; el marco,
+     las esquinas y el resaltado de selección de la lista los pone el sistema
+     operativo y ningún CSS los cambia. */
+  color-scheme: light;
+}
+
+.facet-filters__sort option {
+  color: var(--luxo-ink);
+  background: var(--luxo-white);
+  font-family: var(--luxo-font);
+  letter-spacing: 0.02em;
+  text-transform: none;
 }
 
 /* ---------- Conteo de productos ---------- */

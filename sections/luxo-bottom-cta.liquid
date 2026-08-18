@@ -1,59 +1,246 @@
-<section id="luxo-bottom-{{ section.id }}" style="
-  --lb-dark: {{ section.settings.dark_color }};
-  --lb-border: {{ section.settings.border_color }};
-  --lb-muted: {{ section.settings.muted_color }};
-">
-  <style>
-    #luxo-bottom-{{ section.id }} * { box-sizing: border-box; font-family: sans-serif; }
-    #luxo-bottom-{{ section.id }} .lb-wrap { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
-    #luxo-bottom-{{ section.id }} .lb-dark-cta { background: var(--lb-dark); color: #fff; text-align: center; padding: 86px 24px; }
-    #luxo-bottom-{{ section.id }} .lb-dark-title { font-family: Georgia, serif; font-size: clamp(34px, 5vw, 64px); margin: 0 0 16px; color: #fff;}
-    #luxo-bottom-{{ section.id }} .lb-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 13px 22px; font-size: 11px; font-weight: bold; letter-spacing: .16em; text-transform: uppercase; border-radius: 10px; text-decoration: none; margin: 10px;}
-    #luxo-bottom-{{ section.id }} .lb-btn-light { background: #fff; color: var(--lb-dark); }
-    #luxo-bottom-{{ section.id }} .lb-inner-footer { background: rgba(255,255,255,.42); border-top: 1px solid var(--lb-border); padding: 20px 0; }
-    #luxo-bottom-{{ section.id }} .lb-footer-row { display: flex; justify-content: space-between; flex-wrap: wrap; align-items: center; }
-    #luxo-bottom-{{ section.id }} .lb-mobile-sticky { display: none; }
-    @media (max-width: 749px) {
-      #luxo-bottom-{{ section.id }} .lb-mobile-sticky { display: block; position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; padding: 15px; border-top: 1px solid var(--lb-border); z-index: 50; text-align:center; }
-      #luxo-bottom-{{ section.id }} .lb-mobile-sticky .lb-btn { width: 100%; background: var(--lb-dark); color: #fff; margin:0; }
-      #luxo-bottom-{{ section.id }} .lb-dark-cta { padding-bottom: 120px; } /* Espacio para el sticky */
-    }
-  </style>
-
-  <div class="lb-dark-cta">
-    <div class="lb-wrap">
-      <h2 class="lb-dark-title">{{ section.settings.final_title | newline_to_br }}</h2>
-      <div style="color: rgba(255,255,255,.76); margin-bottom: 20px;">{{ section.settings.final_text }}</div>
-      <a href="{{ section.settings.final_primary_url }}" class="lb-btn lb-btn-light">{{ section.settings.final_primary_label }}</a>
+<section
+  id="luxo-bottom-{{ section.id }}"
+  class="luxo-bottom-cta{% if section.settings.image != blank %} luxo-bottom-cta--has-image{% endif %}"
+  style="
+    --lb-dark: {{ section.settings.dark_color }};
+    --lb-border: {{ section.settings.border_color }};
+    --lb-muted: {{ section.settings.muted_color }};
+  "
+>
+  <div class="luxo-bottom-cta__band">
+    {%- if section.settings.image != blank -%}
+      {{ section.settings.image | image_url: width: 2600 | image_tag:
+        class: 'luxo-bottom-cta__media',
+        widths: '750, 1100, 1500, 2000, 2600',
+        sizes: '100vw',
+        loading: 'lazy',
+        alt: ''
+      }}
+      <span class="luxo-bottom-cta__overlay" aria-hidden="true"></span>
+    {%- endif -%}
+    <div class="luxo-bottom-cta__inner">
+      {%- if section.settings.kicker != blank -%}
+        <p class="luxo-bottom-cta__kicker">{{ section.settings.kicker | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.final_title != blank -%}
+        <h2 class="luxo-bottom-cta__title">{{ section.settings.final_title | newline_to_br }}</h2>
+      {%- endif -%}
+      {%- if section.settings.final_text != blank -%}
+        <div class="luxo-bottom-cta__text">{{ section.settings.final_text }}</div>
+      {%- endif -%}
+      {%- if section.settings.final_primary_label != blank -%}
+        <a href="{{ section.settings.final_primary_url | default: '#' }}" class="luxo-bottom-cta__button">
+          <span>{{ section.settings.final_primary_label }}</span>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M5 12h14M13 6l6 6-6 6"/>
+          </svg>
+        </a>
+      {%- endif -%}
     </div>
   </div>
 
-  {% if section.settings.show_inner_footer %}
-    <div class="lb-inner-footer">
-      <div class="lb-wrap lb-footer-row">
+  {%- if section.settings.show_inner_footer -%}
+    <div class="luxo-bottom-cta__footer">
+      <div class="luxo-bottom-cta__footer-row">
         <div>
-          <div style="font-family: Georgia, serif; font-size: 18px;">{{ section.settings.footer_brand_name }}</div>
-          <div style="font-size: 10px; color: var(--lb-muted); margin-top: 5px;">{{ section.settings.footer_copy }}</div>
+          {%- if section.settings.footer_brand_name != blank -%}
+            <p class="luxo-bottom-cta__footer-brand">{{ section.settings.footer_brand_name }}</p>
+          {%- endif -%}
+          {%- if section.settings.footer_copy != blank -%}
+            <p class="luxo-bottom-cta__footer-copy">{{ section.settings.footer_copy }}</p>
+          {%- endif -%}
         </div>
       </div>
     </div>
-  {% endif %}
+  {%- endif -%}
 
-  {% if section.settings.show_sticky_mobile_cta %}
-    <style>
-      /* la barra fija tapa el final del footer si no se reserva el espacio */
-      @media (max-width: 749px) { body { padding-bottom: 78px; } }
-    </style>
-    <div class="lb-mobile-sticky">
-      <a href="{{ section.settings.sticky_mobile_url }}" class="lb-btn">{{ section.settings.sticky_mobile_label }}</a>
+  {%- if section.settings.show_sticky_mobile_cta -%}
+    <div class="luxo-bottom-cta__sticky">
+      <a href="{{ section.settings.sticky_mobile_url | default: '#' }}" class="luxo-bottom-cta__sticky-button">
+        {{ section.settings.sticky_mobile_label }}
+      </a>
     </div>
-  {% endif %}
+  {%- endif -%}
 </section>
+
+{%- style -%}
+  .luxo-bottom-cta__band {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--lb-dark);
+    color: var(--luxo-white);
+    text-align: center;
+  }
+
+  .luxo-bottom-cta__media {
+    position: absolute;
+    z-index: -2;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  .luxo-bottom-cta__overlay {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.32), var(--lb-dark) 92%);
+  }
+
+  .luxo-bottom-cta__inner {
+    width: min(100% - 48px, 760px);
+    margin: 0 auto;
+    padding: 96px 0;
+  }
+
+  .luxo-bottom-cta--has-image .luxo-bottom-cta__inner {
+    padding: 140px 0 120px;
+  }
+
+  .luxo-bottom-cta__kicker {
+    margin: 0 0 16px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .luxo-bottom-cta__title {
+    margin: 0 0 18px;
+    color: var(--luxo-white);
+    font-size: clamp(3.4rem, 5vw, 6.4rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .luxo-bottom-cta__text {
+    max-width: 52ch;
+    margin: 0 auto 32px;
+    color: rgba(255, 255, 255, 0.76);
+    font-size: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .luxo-bottom-cta__text p {
+    margin: 0;
+  }
+
+  .luxo-bottom-cta__button {
+    display: inline-flex;
+    min-height: 54px;
+    align-items: center;
+    gap: 12px;
+    padding: 0 30px;
+    border: 1px solid var(--luxo-white);
+    color: var(--lb-dark);
+    background: var(--luxo-white);
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 220ms ease, background 220ms ease;
+  }
+
+  .luxo-bottom-cta__button svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    transition: transform 220ms ease;
+  }
+
+  .luxo-bottom-cta__button:hover {
+    color: var(--luxo-white);
+    background: transparent;
+  }
+
+  .luxo-bottom-cta__button:hover svg {
+    transform: translateX(3px);
+  }
+
+  .luxo-bottom-cta__footer {
+    border-top: 1px solid var(--lb-border);
+    background: rgba(255, 255, 255, 0.42);
+    padding: 20px 0;
+  }
+
+  .luxo-bottom-cta__footer-row {
+    width: min(100% - 48px, 1280px);
+    margin: 0 auto;
+  }
+
+  .luxo-bottom-cta__footer-brand {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+
+  .luxo-bottom-cta__footer-copy {
+    margin: 5px 0 0;
+    color: var(--lb-muted);
+    font-size: 1rem;
+  }
+
+  .luxo-bottom-cta__sticky {
+    display: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .luxo-bottom-cta__inner {
+      width: min(100% - 32px, 760px);
+      padding: 64px 0;
+    }
+
+    .luxo-bottom-cta--has-image .luxo-bottom-cta__inner {
+      padding: 100px 0 84px;
+    }
+
+    .luxo-bottom-cta__sticky {
+      position: fixed;
+      z-index: 50;
+      inset: auto 0 0;
+      display: block;
+      padding: 15px;
+      border-top: 1px solid var(--lb-border);
+      background: var(--luxo-white);
+      text-align: center;
+    }
+
+    .luxo-bottom-cta__sticky-button {
+      display: flex;
+      width: 100%;
+      min-height: 48px;
+      align-items: center;
+      justify-content: center;
+      color: var(--luxo-white);
+      background: var(--lb-dark);
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+  }
+
+  {%- if section.settings.show_sticky_mobile_cta -%}
+    @media screen and (max-width: 749px) {
+      body { padding-bottom: 78px; }
+    }
+  {%- endif -%}
+{%- endstyle -%}
 
 {% schema %}
 {
   "name": "Luxo - Footer & CTA",
   "settings": [
+    { "type": "image_picker", "id": "image", "label": "Imagen de fondo", "info": "Opcional. Sin imagen se usa el color de fondo." },
+    { "type": "text", "id": "kicker", "label": "Antetítulo" },
     { "type": "textarea", "id": "final_title", "label": "Título CTA", "default": "No necesitas esperar" },
     { "type": "richtext", "id": "final_text", "label": "Texto CTA" },
     { "type": "text", "id": "final_primary_label", "label": "Botón principal", "default": "QUIERO MI FAJA" },

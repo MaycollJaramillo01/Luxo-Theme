@@ -380,7 +380,7 @@ img { color: transparent; }
 .luxo-category__media,
 .luxo-category__media img,
 .luxo-category__empty { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
-.luxo-category__media img { object-fit: cover; transition: transform 900ms var(--luxo-ease); }
+.luxo-category__media img { object-fit: cover; object-position: var(--luxo-category-position, center top); transition: transform 900ms var(--luxo-ease); }
 .luxo-category__empty { background: linear-gradient(145deg, #83746a, #3f352f); }
 .luxo-category::after { position: absolute; inset: 48% 0 0; background: linear-gradient(transparent, rgba(0, 0, 0, 0.62)); content: ""; }
 .luxo-category__label { position: absolute; z-index: 2; right: 24px; bottom: 24px; left: 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; font-size: 1.3rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
@@ -528,7 +528,6 @@ img { color: transparent; }
   margin: 0 0 10px;
 }
 
-
 .luxo-card__title-row {
   display: flex;
   align-items: baseline;
@@ -541,6 +540,21 @@ img { color: transparent; }
   min-width: 0;
   flex: 1 1 auto;
   margin: 0;
+}
+
+/* El heading envuelve un <a class="full-unstyled-link">, que Dawn pone en
+   display:block: el recorte tiene que ir en el enlace, no en el <h3>, porque
+   el <h3> ya no desborda (su unico hijo en bloque lo llena por completo) y el
+   texto sin recortar se salia pisando lo que viniera despues (el rating). */
+.luxo-card__title-row .card__heading a {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.luxo-card__title-row .luxo-card__title {
+  overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
