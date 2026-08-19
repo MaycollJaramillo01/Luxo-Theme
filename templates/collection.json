@@ -29,7 +29,7 @@
         "desktop_height": 620,
         "mobile_height": 620,
         "overlay_color": "#171615",
-        "overlay_opacity": 55,
+        "overlay_opacity": 85,
         "overlay_blur": 0,
         "scrim_opacity": 50
       }
