@@ -5,13 +5,13 @@
     "luxo_commerce_header": {
       "type": "luxo-commerce-header",
       "blocks": {
-        "new": { "type": "nav_item", "settings": { "label": "COLECCIONES", "link": "/collections" } },
-        "shapewear": { "type": "nav_item", "settings": { "label": "FAJAS", "link": "shopify://collections/fajas-de-mediana-compresion" } },
-        "clothing": { "type": "nav_item", "settings": { "label": "ROPA", "link": "shopify://collections/all" } },
-        "wellness": { "type": "nav_item", "settings": { "label": "BIENESTAR", "link": "shopify://collections/productos-para-perder-peso" } },
-        "best": { "type": "nav_item", "settings": { "label": "BESTSELLERS", "link": "shopify://collections/top-picks" } }
+        "shapewear": { "type": "nav_item", "settings": { "label": "FAJAS", "link": "shopify://collections/todas-las-fajas" } },
+        "postpartum": { "type": "nav_item", "settings": { "label": "POSTPARTO", "link": "shopify://collections/fajas-postquirurgicas-colombianas" } },
+        "offers": { "type": "nav_item", "settings": { "label": "OFERTAS", "link": "shopify://collections/compra-una-faja-y-recibe-30-off-en-la-segunda-faja" } },
+        "wellness": { "type": "nav_item", "settings": { "label": "BIENESTAR", "link": "shopify://collections/suplementos-luxo" } },
+        "all": { "type": "nav_item", "settings": { "label": "COLECCIONES", "link": "/collections" } }
       },
-      "block_order": ["new", "shapewear", "clothing", "wellness", "best"],
+      "block_order": ["shapewear", "postpartum", "offers", "wellness", "all"],
       "settings": {
         "show_announcement": true,
         "announcement_text": "ENVÍOS A TODO EE. UU. · CAMBIOS FÁCILES",
