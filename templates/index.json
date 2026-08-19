@@ -15,13 +15,19 @@
         "desktop_image": "shopify://shop_images/Luxo_boutique_web.png",
         "mobile_image": "shopify://shop_images/Luxo_boutique_web.png",
         "image_position": "center top",
+        "desktop_height": 760,
+        "mobile_height": 620,
         "kicker": "NUEVA EDICIÓN",
         "heading": "Soporte que se siente tuyo.",
         "copy": "<p>Diseñadas para cada etapa. Hechas para acompañar cómo te mueves, trabajas y vives.</p>",
         "primary_label": "COMPRAR FAJAS",
         "primary_link": "shopify://collections/fajas-de-mediana-compresion",
         "secondary_label": "VER NOVEDADES",
-        "secondary_link": "/collections/all?sort_by=created-descending"
+        "secondary_link": "/collections/all?sort_by=created-descending",
+        "text_color": "light",
+        "overlay_color": "#110d0b",
+        "overlay_opacity": 85,
+        "gradient_opacity": 55
       }
     },
     "luxo_categories": {
