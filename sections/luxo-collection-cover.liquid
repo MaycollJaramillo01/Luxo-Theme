@@ -68,6 +68,15 @@
     assign cover_alt = collection.title | prepend: 'Portada de '
   endif
 
+  # El velo se arma con los canales por separado, como hace Dawn en theme.liquid.
+  # overlay_color.rgb puede devolver "23 22 21" (sin comas) y entonces
+  # rgba(23 22 21, .5) es invalido: el navegador descarta la declaracion entera
+  # y el velo desaparece pase lo que pase con los deslizadores.
+  assign cover_tint = '17, 13, 11'
+  if section.settings.overlay_color != blank
+    assign cover_tint = section.settings.overlay_color.red | append: ', ' | append: section.settings.overlay_color.green | append: ', ' | append: section.settings.overlay_color.blue
+  endif
+
   assign product_count = collection.products_count | default: collection.all_products_count
   assign has_cover_image = false
   if cover_image != blank
@@ -83,7 +92,7 @@
     --cover-position: {{ section.settings.image_position_desktop }};
     --cover-mobile-position: {{ section.settings.image_position_mobile }};
     --cover-overlay: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
-    --cover-tint: {{ section.settings.overlay_color.rgb | default: '17, 13, 11' }};
+    --cover-tint: {{ cover_tint }};
     --cover-blur: {{ section.settings.overlay_blur | default: 0 }}px;
     --cover-zoom: {% if section.settings.overlay_blur > 0 %}1.06{% else %}1{% endif %};
     --cover-scrim: {{ section.settings.scrim_opacity | divided_by: 100.0 }};
