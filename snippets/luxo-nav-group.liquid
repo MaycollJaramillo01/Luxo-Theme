@@ -1,0 +1,48 @@
+{%- comment -%}
+  Un grupo del menu de cabecera: el enlace principal y, si detras suyo vienen
+  bloques "nav_sublink", su desplegable. Los subenlaces pertenecen al
+  nav_item que tienen encima en el orden de bloques del editor.
+
+  Acepta:
+  - block:  el bloque nav_item
+  - blocks: section.blocks
+{%- endcomment -%}
+
+{%- capture children -%}
+  {%- assign started = false -%}
+  {%- for candidate in blocks -%}
+    {%- if candidate.type == 'nav_item' -%}
+      {%- if candidate.id == block.id -%}
+        {%- assign started = true -%}
+      {%- elsif started -%}
+        {%- break -%}
+      {%- endif -%}
+    {%- elsif started -%}
+      <a class="luxo-nav-panel__link" href="{{ candidate.settings.link | default: routes.all_products_collection_url }}" {{ candidate.shopify_attributes }}>{{ candidate.settings.label | escape }}</a>
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- assign has_children = false -%}
+{%- assign children_check = children | strip -%}
+{%- if children_check != blank -%}{%- assign has_children = true -%}{%- endif -%}
+
+<div class="luxo-nav-group{% if has_children %} luxo-nav-group--has-menu{% endif %}">
+  <a
+    class="luxo-header__link{% if block.settings.featured %} luxo-header__link--featured{% endif %}"
+    href="{{ block.settings.link | default: routes.all_products_collection_url }}"
+    {% if has_children %}aria-haspopup="true"{% endif %}
+    {{ block.shopify_attributes }}
+  >
+    {{- block.settings.label | escape -}}
+    {%- if has_children -%}
+      <svg class="luxo-nav-group__chevron" viewBox="0 0 12 8" aria-hidden="true">
+        <path d="m1 1 5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+    {%- endif -%}
+  </a>
+
+  {%- if has_children -%}
+    <div class="luxo-nav-panel">{{ children }}</div>
+  {%- endif -%}
+</div>
