@@ -334,6 +334,22 @@ img { color: transparent; }
     rgba(var(--luxo-hero-tint), var(--luxo-hero-overlay, 0));
 }
 
+/*
+  base.css de Dawn trae `div:empty { display: none }`. Todas las capas de velo
+  del tema son divs vacios a proposito: existen solo para pintarse con
+  background por encima de la foto. Resultado: llevaban ocultas desde siempre y
+  ningun ajuste del editor cambiaba nada en pantalla.
+
+  `:empty` en el selector sube la especificidad a (0,2,0), por encima del
+  (0,1,1) de `div:empty`, asi que se corrige sin tocar base.css ni el marcado.
+*/
+.luxo-hero__veil:empty,
+.luxo-collection-cover__overlay:empty,
+.lux-banner-overlay:empty,
+.ld__hero__overlay:empty {
+  display: block;
+}
+
 .luxo-hero__inner {
   position: relative;
   z-index: 2;
