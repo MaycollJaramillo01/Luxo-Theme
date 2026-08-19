@@ -6,26 +6,7 @@
 -%}
 
 <section class="luxo-hero" style="--luxo-hero-position: {{ section.settings.image_position }};">
-  <div class="luxo-hero__media" aria-hidden="true">
-    {%- if desktop_image != blank -%}
-      <picture>
-        {%- if mobile_image != blank -%}
-          <source media="(max-width: 749px)" srcset="{{ mobile_image | image_url: width: 900 }}" sizes="100vw">
-        {%- endif -%}
-        {{ desktop_image | image_url: width: 2400 | image_tag:
-          widths: '960, 1280, 1600, 2000, 2400',
-          sizes: '100vw',
-          loading: 'eager',
-          fetchpriority: 'high',
-          alt: ''
-        }}
-      </picture>
-    {%- else -%}
-      <img src="{{ 'luxo-campaign-hero.webp' | asset_url }}" width="1680" height="945" alt="" loading="eager" fetchpriority="high">
-    {%- endif -%}
-  </div>
-
-  <div class="luxo-hero__inner">
+  <div class="luxo-hero__panel">
     <div class="luxo-hero__content">
       {%- if section.settings.kicker != blank -%}<p class="luxo-kicker">{{ section.settings.kicker | escape }}</p>{%- endif -%}
       <h1 class="luxo-hero__title">{{ section.settings.heading }}</h1>
@@ -39,6 +20,25 @@
         {%- endif -%}
       </div>
     </div>
+  </div>
+
+  <div class="luxo-hero__media" aria-hidden="true">
+    {%- if desktop_image != blank -%}
+      <picture>
+        {%- if mobile_image != blank -%}
+          <source media="(max-width: 749px)" srcset="{{ mobile_image | image_url: width: 1100 }}" sizes="100vw">
+        {%- endif -%}
+        {{ desktop_image | image_url: width: 2000 | image_tag:
+          widths: '760, 1000, 1400, 1800, 2000',
+          sizes: '(max-width: 899px) 100vw, 57vw',
+          loading: 'eager',
+          fetchpriority: 'high',
+          alt: ''
+        }}
+      </picture>
+    {%- else -%}
+      <img src="{{ 'luxo-campaign-hero.webp' | asset_url }}" width="1680" height="945" alt="" loading="eager" fetchpriority="high">
+    {%- endif -%}
   </div>
 </section>
 
