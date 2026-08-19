@@ -85,6 +85,7 @@
     --cover-overlay: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
     --cover-tint: {{ section.settings.overlay_color.rgb | default: '17, 13, 11' }};
     --cover-blur: {{ section.settings.overlay_blur | default: 0 }}px;
+    --cover-zoom: {% if section.settings.overlay_blur > 0 %}1.06{% else %}1{% endif %};
     --cover-scrim: {{ section.settings.scrim_opacity | divided_by: 100.0 }};
   "
 >
@@ -177,7 +178,7 @@
     min-height: var(--cover-height);
     overflow: hidden;
     color: var(--luxo-white);
-    background: #756256;
+    background: #2b231e;
     isolation: isolate;
   }
 
@@ -193,38 +194,26 @@
   .luxo-collection-cover__media img {
     object-fit: cover;
     object-position: var(--cover-position);
-    /*
-      El desenfoque va sobre la imagen, no sobre el velo. backdrop-filter
-      depende del backdrop root y aqui no se aplicaba de forma fiable; filter
-      siempre funciona y cubre la portada entera por definicion.
-      El scale compensa los bordes translucidos que deja el desenfoque.
-    */
     filter: blur(var(--cover-blur, 0px));
-    transform: scale(1.06);
+    /* El zoom solo compensa los bordes translucidos que deja el desenfoque.
+       Con desenfoque 0 la imagen se ve entera, sin recorte gratuito. */
+    transform: scale(var(--cover-zoom, 1));
   }
 
+  /*
+    Un unico velo, con los dos deslizadores del editor aplicados tal cual:
+    "Oscurecer imagen" es un tinte plano sobre toda la portada y "Degradado
+    inferior" oscurece la franja donde va el texto. Antes cada capa llevaba
+    sumas fijas (+0.28) y un panel de -50vw que se salia de la pantalla: los
+    controles se movian y en pantalla no cambiaba nada.
+  */
   .luxo-collection-cover__overlay {
     position: absolute;
     z-index: 1;
     inset: 0;
     background:
-      linear-gradient(90deg, rgba(var(--cover-tint), calc(var(--cover-overlay) + 0.28)) 0%, rgba(var(--cover-tint), var(--cover-overlay)) 48%, rgba(var(--cover-tint), 0.08) 78%),
-      linear-gradient(0deg, rgba(var(--cover-tint), 0.28), transparent 42%);
-  }
-
-  /*
-    Panel oscuro detrás del texto: solo aporta contraste, sin desenfoque propio.
-    Llevaba su propio backdrop-filter y eso partía el hero en dos: la mitad del
-    texto salía más desenfocada que el resto de la foto. El único blur es el
-    del velo, que cubre la portada entera.
-  */
-  .luxo-collection-cover__content::before {
-    position: absolute;
-    z-index: -1;
-    inset: -32px -48px -32px -50vw;
-    background: linear-gradient(90deg, rgba(var(--cover-tint), var(--cover-scrim, 0)) 55%, rgba(var(--cover-tint), 0) 100%);
-    content: "";
-    pointer-events: none;
+      linear-gradient(0deg, rgba(var(--cover-tint), var(--cover-scrim, 0)) 0%, rgba(var(--cover-tint), 0) 68%),
+      rgba(var(--cover-tint), var(--cover-overlay, 0));
   }
 
   .luxo-collection-cover__layout {
@@ -233,17 +222,17 @@
     display: flex;
     min-height: var(--cover-height);
     flex-direction: column;
-    padding-block: 24px 46px;
+    padding-block: 26px 54px;
   }
 
   .luxo-collection-cover__breadcrumb {
     display: flex;
+    max-width: 100%;
     flex-wrap: wrap;
     align-items: center;
     gap: 8px;
-    max-width: 100%;
-    color: rgba(255, 255, 255, 0.76);
-    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 1.15rem;
     line-height: 1.4;
   }
 
@@ -264,12 +253,11 @@
     align-items: flex-end;
     justify-content: space-between;
     gap: 48px;
-    padding-top: 70px;
+    padding-top: 64px;
   }
 
   .luxo-collection-cover__content {
-    position: relative;
-    width: min(720px, 70vw);
+    width: min(640px, 62vw);
   }
 
   .luxo-collection-cover__meta {
@@ -277,10 +265,11 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 10px 18px;
-    margin-bottom: 18px;
-    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 1.1rem;
     font-weight: 600;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
   }
 
@@ -291,58 +280,57 @@
     margin: 0 12px 3px 0;
     background: currentColor;
     content: "";
-    opacity: 0.65;
+    opacity: 0.6;
   }
 
   .luxo-collection-cover__title {
-    max-width: 12ch;
+    max-width: 16ch;
     margin: 0;
     color: inherit;
-    font-size: clamp(5rem, 7vw, 10rem);
+    font-size: clamp(4.4rem, 5.4vw, 7.6rem);
     font-weight: 500;
-    line-height: 0.94;
-    letter-spacing: -0.025em;
+    line-height: 0.96;
+    letter-spacing: -0.03em;
     text-wrap: balance;
   }
 
   .luxo-collection-cover__description {
-    max-width: 58ch;
-    margin: 24px 0 0;
-    color: rgba(255, 255, 255, 0.86);
-    font-size: 1.55rem;
-    line-height: 1.6;
+    max-width: 52ch;
+    margin: 22px 0 0;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 1.5rem;
+    line-height: 1.55;
   }
 
   .luxo-collection-cover__cta {
     display: inline-flex;
-    min-height: 48px;
+    min-height: 50px;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
     margin-top: 30px;
-    padding: 0 22px;
-    border: 1px solid rgba(255, 255, 255, 0.74);
-    color: var(--luxo-white);
-    background: rgba(18, 15, 13, 0.14);
-    font-size: 1.2rem;
+    padding: 0 26px;
+    border: 1px solid var(--luxo-white);
+    color: var(--luxo-ink);
+    background: var(--luxo-white);
+    font-size: 1.1rem;
     font-weight: 600;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.11em;
     text-decoration: none;
     text-transform: uppercase;
-    transition: color 220ms ease, background 220ms ease, border-color 220ms ease;
+    transition: color 220ms ease, background 220ms ease;
   }
 
   .luxo-collection-cover__cta svg {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     stroke: currentColor;
-    stroke-width: 1.5;
+    stroke-width: 1.6;
     transition: transform 220ms var(--luxo-ease);
   }
 
   .luxo-collection-cover__cta:hover {
-    color: var(--luxo-ink);
-    border-color: var(--luxo-white);
-    background: var(--luxo-white);
+    color: var(--luxo-white);
+    background: transparent;
   }
 
   .luxo-collection-cover__cta:hover svg {
@@ -350,23 +338,26 @@
   }
 
   .luxo-collection-cover__index {
-    max-width: 30ch;
-    padding-bottom: 8px;
-    color: rgba(255, 255, 255, 0.58);
-    font-size: 1.1rem;
-    letter-spacing: 0.12em;
+    max-width: 22ch;
+    padding-bottom: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1rem;
+    letter-spacing: 0.18em;
     text-align: right;
     text-transform: uppercase;
   }
 
+  /* Sin imagen la portada va en claro con tinta: ni velo (no hay foto que
+     oscurecer) ni panel oscuro detras de un texto oscuro. */
   .luxo-collection-cover--no-image {
     color: var(--luxo-ink);
     background:
-      radial-gradient(circle at 82% 28%, rgba(108, 91, 81, 0.19), transparent 28%),
-      linear-gradient(135deg, #eee8e1, #d9cfc5);
+      radial-gradient(circle at 82% 24%, rgba(108, 91, 81, 0.16), transparent 30%),
+      linear-gradient(135deg, #efe9e2, #ded5cb);
   }
 
   .luxo-collection-cover--no-image .luxo-collection-cover__breadcrumb,
+  .luxo-collection-cover--no-image .luxo-collection-cover__meta,
   .luxo-collection-cover--no-image .luxo-collection-cover__description,
   .luxo-collection-cover--no-image .luxo-collection-cover__index {
     color: var(--luxo-ink-soft);
@@ -376,6 +367,11 @@
     color: var(--luxo-white);
     border-color: var(--luxo-ink);
     background: var(--luxo-ink);
+  }
+
+  .luxo-collection-cover--no-image .luxo-collection-cover__cta:hover {
+    color: var(--luxo-ink);
+    background: transparent;
   }
 
   @media screen and (max-width: 899px) {
@@ -398,25 +394,18 @@
     }
 
     .luxo-collection-cover__overlay {
-      background: linear-gradient(0deg, rgba(var(--cover-tint), calc(var(--cover-overlay) + 0.34)) 0%, rgba(var(--cover-tint), 0.12) 74%);
-    }
-
-    .luxo-collection-cover__content::before {
-      inset: -24px -24px -28px -24px;
-      background: linear-gradient(0deg, rgba(var(--cover-tint), var(--cover-scrim, 0)) 62%, rgba(var(--cover-tint), 0) 100%);
+      background:
+        linear-gradient(0deg, rgba(var(--cover-tint), var(--cover-scrim, 0)) 0%, rgba(var(--cover-tint), 0) 78%),
+        rgba(var(--cover-tint), var(--cover-overlay, 0));
     }
 
     .luxo-collection-cover__layout {
       min-height: var(--cover-mobile-height);
-      padding-block: 18px 28px;
-    }
-
-    .luxo-collection-cover__breadcrumb {
-      font-size: 1.15rem;
+      padding-block: 18px 32px;
     }
 
     .luxo-collection-cover__body {
-      padding-top: 64px;
+      padding-top: 56px;
     }
 
     .luxo-collection-cover__content {
@@ -425,20 +414,19 @@
 
     .luxo-collection-cover__meta {
       margin-bottom: 14px;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
     }
 
     .luxo-collection-cover__title {
-      max-width: 11ch;
-      font-size: clamp(4.1rem, 14vw, 6.2rem);
+      max-width: 14ch;
+      font-size: clamp(4rem, 12vw, 5.6rem);
       line-height: 0.98;
     }
 
     .luxo-collection-cover__description {
-      max-width: 38ch;
-      margin-top: 18px;
+      max-width: 44ch;
+      margin-top: 16px;
       font-size: 1.4rem;
-      line-height: 1.55;
     }
 
     .luxo-collection-cover__cta {
@@ -510,7 +498,7 @@
     { "type": "color", "id": "overlay_color", "label": "Color del velo", "default": "#110D0B" },
     { "type": "range", "id": "overlay_opacity", "min": 0, "max": 85, "step": 5, "unit": "%", "label": "Oscurecer imagen", "default": 35 },
     { "type": "range", "id": "overlay_blur", "min": 0, "max": 30, "step": 1, "unit": "px", "label": "Desenfoque de la imagen", "default": 6 },
-    { "type": "range", "id": "scrim_opacity", "min": 0, "max": 90, "step": 5, "unit": "%", "label": "Panel oscuro detrás del texto", "info": "Refuerza el contraste solo en la zona del título.", "default": 45 }
+    { "type": "range", "id": "scrim_opacity", "min": 0, "max": 90, "step": 5, "unit": "%", "label": "Degradado inferior", "info": "Oscurece la franja baja de la portada, donde va el título.", "default": 45 }
   ],
   "presets": [{ "name": "Luxo — Portada colección" }]
 }
