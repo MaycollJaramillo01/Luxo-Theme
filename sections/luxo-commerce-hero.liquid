@@ -3,34 +3,43 @@
   assign mobile_image = section.settings.mobile_image | default: desktop_image
   assign primary_link = section.settings.primary_link | default: routes.all_products_collection_url
   assign secondary_link = section.settings.secondary_link | default: routes.all_products_collection_url
+
+  # El color del velo se compone por canales, como theme.liquid con el resto
+  # de colores del tema: overlay_color.rgb puede salir sin comas y entonces
+  # rgba(...) es invalido y el navegador descarta el velo entero.
+  assign hero_tint = '17, 13, 11'
+  if section.settings.overlay_color != blank
+    assign hero_tint = section.settings.overlay_color.red | append: ', ' | append: section.settings.overlay_color.green | append: ', ' | append: section.settings.overlay_color.blue
+  endif
+
+  assign scheme = 'luxo-hero--light'
+  assign primary_button = 'luxo-button--light'
+  if section.settings.text_color == 'dark'
+    assign scheme = 'luxo-hero--dark'
+    assign primary_button = 'luxo-button--dark'
+  endif
 -%}
 
-<section class="luxo-hero" style="--luxo-hero-position: {{ section.settings.image_position }};">
-  <div class="luxo-hero__panel">
-    <div class="luxo-hero__content">
-      {%- if section.settings.kicker != blank -%}<p class="luxo-kicker">{{ section.settings.kicker | escape }}</p>{%- endif -%}
-      <h1 class="luxo-hero__title">{{ section.settings.heading }}</h1>
-      {%- if section.settings.copy != blank -%}<div class="luxo-hero__copy">{{ section.settings.copy }}</div>{%- endif -%}
-      <div class="luxo-hero__actions">
-        {%- if section.settings.primary_label != blank -%}
-          <a class="luxo-button luxo-button--dark" href="{{ primary_link }}">{{ section.settings.primary_label | escape }}</a>
-        {%- endif -%}
-        {%- if section.settings.secondary_label != blank -%}
-          <a class="luxo-hero__secondary" href="{{ secondary_link }}">{{ section.settings.secondary_label | escape }} <span aria-hidden="true">↗</span></a>
-        {%- endif -%}
-      </div>
-    </div>
-  </div>
-
+<section
+  class="luxo-hero {{ scheme }}"
+  style="
+    --luxo-hero-position: {{ section.settings.image_position }};
+    --luxo-hero-tint: {{ hero_tint }};
+    --luxo-hero-overlay: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    --luxo-hero-gradient: {{ section.settings.gradient_opacity | divided_by: 100.0 }};
+    --luxo-hero-height: {{ section.settings.desktop_height }}px;
+    --luxo-hero-mobile-height: {{ section.settings.mobile_height }}px;
+  "
+>
   <div class="luxo-hero__media" aria-hidden="true">
     {%- if desktop_image != blank -%}
       <picture>
         {%- if mobile_image != blank -%}
           <source media="(max-width: 749px)" srcset="{{ mobile_image | image_url: width: 1100 }}" sizes="100vw">
         {%- endif -%}
-        {{ desktop_image | image_url: width: 2000 | image_tag:
-          widths: '760, 1000, 1400, 1800, 2000',
-          sizes: '(max-width: 899px) 100vw, 57vw',
+        {{ desktop_image | image_url: width: 2400 | image_tag:
+          widths: '960, 1280, 1600, 2000, 2400',
+          sizes: '100vw',
           loading: 'eager',
           fetchpriority: 'high',
           alt: ''
@@ -40,6 +49,24 @@
       <img src="{{ 'luxo-campaign-hero.webp' | asset_url }}" width="1680" height="945" alt="" loading="eager" fetchpriority="high">
     {%- endif -%}
   </div>
+
+  <div class="luxo-hero__veil" aria-hidden="true"></div>
+
+  <div class="luxo-hero__inner">
+    <div class="luxo-hero__content">
+      {%- if section.settings.kicker != blank -%}<p class="luxo-kicker">{{ section.settings.kicker | escape }}</p>{%- endif -%}
+      <h1 class="luxo-hero__title">{{ section.settings.heading }}</h1>
+      {%- if section.settings.copy != blank -%}<div class="luxo-hero__copy">{{ section.settings.copy }}</div>{%- endif -%}
+      <div class="luxo-hero__actions">
+        {%- if section.settings.primary_label != blank -%}
+          <a class="luxo-button {{ primary_button }}" href="{{ primary_link }}">{{ section.settings.primary_label | escape }}</a>
+        {%- endif -%}
+        {%- if section.settings.secondary_label != blank -%}
+          <a class="luxo-hero__secondary" href="{{ secondary_link }}">{{ section.settings.secondary_label | escape }} <span aria-hidden="true">↗</span></a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
 </section>
 
 {% schema %}
@@ -47,24 +74,40 @@
   "name": "Luxo — Campaña principal",
   "tag": "section",
   "settings": [
+    { "type": "header", "content": "Imagen" },
     { "type": "image_picker", "id": "desktop_image", "label": "Imagen de campaña para escritorio" },
     { "type": "image_picker", "id": "mobile_image", "label": "Imagen de campaña para móvil" },
     {
-      "type": "select", "id": "image_position", "label": "Posición de imagen", "default": "center center",
+      "type": "select", "id": "image_position", "label": "Foco de la imagen", "default": "center center",
       "options": [
         { "value": "left center", "label": "Izquierda" },
         { "value": "center center", "label": "Centro" },
         { "value": "right center", "label": "Derecha" },
-        { "value": "center top", "label": "Arriba" }
+        { "value": "center top", "label": "Arriba" },
+        { "value": "center bottom", "label": "Abajo" }
       ]
     },
+    { "type": "range", "id": "desktop_height", "min": 480, "max": 900, "step": 20, "unit": "px", "label": "Altura en escritorio", "default": 760 },
+    { "type": "range", "id": "mobile_height", "min": 460, "max": 800, "step": 20, "unit": "px", "label": "Altura en móvil", "default": 620 },
+    { "type": "header", "content": "Contenido" },
     { "type": "text", "id": "kicker", "label": "Antetítulo", "default": "NUEVA COLECCIÓN" },
     { "type": "inline_richtext", "id": "heading", "label": "Título", "default": "La base de todo." },
     { "type": "richtext", "id": "copy", "label": "Descripción", "default": "<p>Esenciales que realzan tu figura, todos los días.</p>" },
     { "type": "text", "id": "primary_label", "label": "Botón principal", "default": "COMPRAR FAJAS" },
     { "type": "url", "id": "primary_link", "label": "Enlace principal" },
     { "type": "text", "id": "secondary_label", "label": "Botón secundario", "default": "VER BESTSELLERS" },
-    { "type": "url", "id": "secondary_link", "label": "Enlace secundario" }
+    { "type": "url", "id": "secondary_link", "label": "Enlace secundario" },
+    { "type": "header", "content": "Legibilidad del texto" },
+    {
+      "type": "select", "id": "text_color", "label": "Color del texto", "default": "light",
+      "options": [
+        { "value": "light", "label": "Claro (sobre velo oscuro)" },
+        { "value": "dark", "label": "Oscuro (sobre imagen clara)" }
+      ]
+    },
+    { "type": "color", "id": "overlay_color", "label": "Color del velo", "default": "#110D0B" },
+    { "type": "range", "id": "overlay_opacity", "min": 0, "max": 85, "step": 5, "unit": "%", "label": "Oscurecer imagen", "info": "Tiñe la foto entera.", "default": 25 },
+    { "type": "range", "id": "gradient_opacity", "min": 0, "max": 90, "step": 5, "unit": "%", "label": "Degradado tras el texto", "info": "Oscurece solo el lado donde va el texto (abajo en móvil).", "default": 55 }
   ],
   "presets": [{ "name": "Luxo — Campaña principal" }]
 }
