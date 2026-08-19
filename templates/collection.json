@@ -94,6 +94,39 @@
         "padding_bottom": 88
       }
     },
+    "related_collections": {
+      "type": "luxo-related-collections",
+      "blocks": {
+        "media": {
+          "type": "collection",
+          "settings": {
+            "collection": "fajas-de-mediana-compresion",
+            "label": "COMPRESIÓN MEDIA",
+            "link": ""
+          }
+        },
+        "max": {
+          "type": "collection",
+          "settings": {
+            "collection": "fajas-de-maxima-compresion",
+            "label": "MÁXIMA COMPRESIÓN",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "media",
+        "max"
+      ],
+      "settings": {
+        "kicker": "TAMBIÉN PARA TI",
+        "heading": "Colecciones similares",
+        "copy": "Otras selecciones pensadas para el mismo momento del día.",
+        "columns": 2,
+        "ratio": "1 / 1",
+        "label_position": "bottom"
+      }
+    },
     "collection_reviews": {
       "type": "luxo-social-proof",
       "blocks": {
@@ -129,46 +162,13 @@
         "heading": "La confianza se nota.",
         "copy": "<p>Experiencias de clientas que encontraron comodidad y acompañamiento.</p>"
       }
-    },
-    "related_collections": {
-      "type": "luxo-related-collections",
-      "blocks": {
-        "media": {
-          "type": "collection",
-          "settings": {
-            "collection": "fajas-de-mediana-compresion",
-            "label": "COMPRESIÓN MEDIA",
-            "link": ""
-          }
-        },
-        "max": {
-          "type": "collection",
-          "settings": {
-            "collection": "fajas-de-maxima-compresion",
-            "label": "MÁXIMA COMPRESIÓN",
-            "link": ""
-          }
-        }
-      },
-      "block_order": [
-        "media",
-        "max"
-      ],
-      "settings": {
-        "kicker": "TAMBIÉN PARA TI",
-        "heading": "Colecciones similares",
-        "copy": "Otras selecciones pensadas para el mismo momento del día.",
-        "columns": 2,
-        "ratio": "1 / 1",
-        "label_position": "bottom"
-      }
     }
   },
   "order": [
     "cover",
     "collection_trust",
     "main_collection_grid",
-    "collection_reviews",
-    "related_collections"
+    "related_collections",
+    "collection_reviews"
   ]
 }
