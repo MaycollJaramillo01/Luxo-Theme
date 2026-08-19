@@ -11,6 +11,7 @@
   "current": {
     "logo": "shopify://shop_images/IMG_4971.avif",
     "logo_width": 200,
+    "favicon": "shopify://shop_images/IMG_4971.avif",
     "card_style": "standard",
     "card_color_scheme": "scheme-1",
     "collection_card_color_scheme": "scheme-1",
