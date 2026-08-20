@@ -1,0 +1,130 @@
+{
+  "sections": {
+    "main": {
+      "type": "luxo-postoperatorio-landing",
+      "blocks": {
+        "trust_advice": {
+          "type": "trust",
+          "settings": {
+            "text": "4 niveles de broches"
+          }
+        },
+        "trust_payment": {
+          "type": "trust",
+          "settings": {
+            "text": "Máxima compresión"
+          }
+        },
+        "trust_shipping": {
+          "type": "trust",
+          "settings": {
+            "text": "Zipper íntimo"
+          }
+        },
+        "trust_support": {
+          "type": "trust",
+          "settings": {
+            "text": "Tirantes ajustables"
+          }
+        },
+        "benefit_compression": {
+          "type": "benefit",
+          "settings": {
+            "title": "Ajuste preciso",
+            "text": "Cuatro niveles de broches para adaptar cintura y caderas con más precisión."
+          }
+        },
+        "benefit_fit": {
+          "type": "benefit",
+          "settings": {
+            "title": "Abdomen definido",
+            "text": "Látex en la zona frontal para aportar mayor compresión y control abdominal."
+          }
+        },
+        "benefit_comfort": {
+          "type": "benefit",
+          "settings": {
+            "title": "Soporte completo",
+            "text": "Espalda reforzada y tirantes gruesos ajustables para una sensación más estable."
+          }
+        },
+        "benefit_confidence": {
+          "type": "benefit",
+          "settings": {
+            "title": "Comodidad diaria",
+            "text": "Zipper amplio en la zona íntima y encaje a media pierna para facilitar tu rutina."
+          }
+        },
+        "faq_start": {
+          "type": "faq",
+          "settings": {
+            "question": "¿La puedo usar todos los días?",
+            "answer": "<p>La Faja 031 está diseñada para uso diario. Empieza de forma gradual y sigue las indicaciones de cuidado del producto.</p>"
+          }
+        },
+        "faq_size": {
+          "type": "faq",
+          "settings": {
+            "question": "¿Cómo elijo mi talla?",
+            "answer": "<p>Toma tus medidas actuales y compáralas con la guía. Si quedas entre dos tallas, solicita asesoría antes de comprar.</p>"
+          }
+        },
+        "faq_smaller": {
+          "type": "faq",
+          "settings": {
+            "question": "¿Conviene comprar una talla menor?",
+            "answer": "<p>No. Una talla menor puede causar incomodidad o una presión inadecuada. Elige según tus medidas actuales.</p>"
+          }
+        },
+        "faq_hours": {
+          "type": "faq",
+          "settings": {
+            "question": "¿Cuándo puedo usarla después de una cirugía?",
+            "answer": "<p>El momento depende del procedimiento y de tu recuperación. Sigue siempre la indicación de tu cirujano o profesional de salud.</p>"
+          }
+        },
+        "faq_care": {
+          "type": "faq",
+          "settings": {
+            "question": "¿Cómo debo lavarla?",
+            "answer": "<p>Sigue la etiqueta de cuidado, cierra los broches antes de lavar y evita calor intenso para proteger la elasticidad.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "trust_advice",
+        "trust_payment",
+        "trust_shipping",
+        "trust_support",
+        "benefit_compression",
+        "benefit_fit",
+        "benefit_comfort",
+        "benefit_confidence",
+        "faq_start",
+        "faq_size",
+        "faq_smaller",
+        "faq_hours",
+        "faq_care"
+      ],
+      "settings": {
+        "hero_title": "Faja 031: control firme que se adapta a ti.",
+        "hero_text": "Máxima compresión, látex frontal y soporte de espalda para moldear tu figura con un ajuste preciso.",
+        "image_flag": "MÁXIMA COMPRESIÓN",
+        "notice_text": "ASESORÍA DE TALLA DISPONIBLE ANTES DE TU COMPRA",
+        "background_color": "#efecec",
+        "surface_color": "#ffffff",
+        "text_color": "#252525",
+        "muted_color": "#666160",
+        "accent_color": "#b5a7a7",
+        "accent_soft_color": "#ddd5d5",
+        "button_color": "#2c332f",
+        "button_text_color": "#ffffff",
+        "border_color": "#d1caca",
+        "default_swatch_color": "#b5a7a7"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

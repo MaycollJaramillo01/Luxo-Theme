@@ -1,0 +1,2276 @@
+{% liquid
+  assign landing_product = section.settings.product
+  if landing_product == blank and product != blank
+    assign landing_product = product
+  endif
+
+  assign current_variant = landing_product.selected_or_first_available_variant
+  assign product_form_id = 'Luxo031Form-' | append: section.id
+  assign buy_anchor = '#luxo-031-buy-' | append: section.id
+  assign trust_blocks = section.blocks | where: 'type', 'trust'
+  assign benefit_blocks = section.blocks | where: 'type', 'benefit'
+  assign faq_blocks = section.blocks | where: 'type', 'faq'
+
+  assign primary_media = current_variant.featured_media
+  if primary_media == blank
+    assign primary_media = landing_product.featured_media
+  endif
+
+  assign editorial_media = landing_product.media[8]
+  if editorial_media == blank
+    assign editorial_media = landing_product.media[1]
+  endif
+
+  assign front_media = landing_product.media[9]
+  if front_media == blank
+    assign front_media = primary_media
+  endif
+
+  assign hooks_media = landing_product.media[7]
+  if hooks_media == blank
+    assign hooks_media = landing_product.media[4]
+  endif
+
+  assign comfort_media = landing_product.media[5]
+  if comfort_media == blank
+    assign comfort_media = landing_product.media[2]
+  endif
+
+  assign detail_media = landing_product.media[6]
+  if detail_media == blank
+    assign detail_media = landing_product.media[3]
+  endif
+%}
+
+<section
+  id="luxo-031-{{ section.id }}"
+  class="lx031"
+  style="
+    --lx-bg: {{ section.settings.background_color }};
+    --lx-paper: {{ section.settings.surface_color }};
+    --lx-ink: {{ section.settings.text_color }};
+    --lx-muted: {{ section.settings.muted_color }};
+    --lx-accent: {{ section.settings.accent_color }};
+    --lx-accent-soft: {{ section.settings.accent_soft_color }};
+    --lx-button: {{ section.settings.button_color }};
+    --lx-button-text: {{ section.settings.button_text_color }};
+    --lx-line: {{ section.settings.border_color }};
+    --lx-width: {{ section.settings.page_width }}px;
+    --lx-space: {{ section.settings.section_spacing }}px;
+  "
+>
+  <style>
+    #luxo-031-{{ section.id }} {
+      position: relative;
+      background: var(--lx-bg);
+      color: var(--lx-ink);
+      font-family: var(--font-body-family, Poppins, Arial, sans-serif);
+      font-size: 16px;
+      line-height: 1.55;
+      scroll-behavior: smooth;
+    }
+
+    #luxo-031-{{ section.id }} *,
+    #luxo-031-{{ section.id }} *::before,
+    #luxo-031-{{ section.id }} *::after {
+      box-sizing: border-box;
+    }
+
+    #luxo-031-{{ section.id }} h1,
+    #luxo-031-{{ section.id }} h2,
+    #luxo-031-{{ section.id }} h3,
+    #luxo-031-{{ section.id }} p,
+    #luxo-031-{{ section.id }} fieldset,
+    #luxo-031-{{ section.id }} legend {
+      margin-top: 0;
+    }
+
+    #luxo-031-{{ section.id }} h1,
+    #luxo-031-{{ section.id }} h2,
+    #luxo-031-{{ section.id }} h3 {
+      color: var(--lx-ink);
+      font-family: var(--font-heading-family, TheSeasonsHeading, Georgia, serif);
+      font-weight: var(--font-heading-weight, 700);
+      letter-spacing: -.035em;
+      text-wrap: balance;
+    }
+
+    #luxo-031-{{ section.id }} img,
+    #luxo-031-{{ section.id }} svg {
+      display: block;
+      max-width: 100%;
+    }
+
+    #luxo-031-{{ section.id }} button,
+    #luxo-031-{{ section.id }} input {
+      font: inherit;
+    }
+
+    #luxo-031-{{ section.id }} a {
+      color: inherit;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-shell {
+      width: min(calc(100% - 48px), var(--lx-width));
+      margin-inline: auto;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-section {
+      padding-block: var(--lx-space);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-kicker {
+      margin-bottom: 18px;
+      color: var(--lx-muted);
+      font-family: var(--font-body-family, Poppins, Arial, sans-serif);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .16em;
+      line-height: 1.4;
+      text-transform: uppercase;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-display {
+      max-width: 900px;
+      margin-bottom: 22px;
+      font-size: clamp(44px, 6.4vw, 90px);
+      line-height: .98;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-lead {
+      max-width: 620px;
+      margin-bottom: 0;
+      color: var(--lx-muted);
+      font-size: clamp(17px, 1.7vw, 21px);
+      line-height: 1.65;
+      text-wrap: pretty;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-rte p:last-child {
+      margin-bottom: 0;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-announcement {
+      border-bottom: 1px solid var(--lx-line);
+      background: var(--lx-paper);
+      color: var(--lx-ink);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-announcement__inner {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      line-height: 1.35;
+      text-transform: uppercase;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.22fr) minmax(390px, .78fr);
+      gap: clamp(42px, 6vw, 96px);
+      align-items: start;
+      padding-block: clamp(38px, 5vw, 72px) clamp(64px, 7vw, 104px);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-gallery {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 84px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-gallery__rail {
+      display: grid;
+      gap: 10px;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-thumb {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+      padding: 0;
+      border: 1px solid transparent;
+      border-radius: 0;
+      background: var(--lx-paper);
+      cursor: pointer;
+      transition: border-color .2s ease, opacity .2s ease, transform .2s ease;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-thumb:hover {
+      border-color: var(--lx-muted);
+      transform: translateX(2px);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-thumb[aria-current="true"] {
+      border-color: var(--lx-ink);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-gallery__main {
+      position: relative;
+      min-height: 690px;
+      overflow: hidden;
+      background: var(--lx-paper);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-gallery__main img,
+    #luxo-031-{{ section.id }} .lx031-gallery__main .placeholder-svg {
+      width: 100%;
+      height: 100%;
+      min-height: 690px;
+      object-fit: cover;
+      object-position: center;
+      transition: opacity .25s ease, transform .6s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-gallery__main:hover img {
+      transform: scale(1.015);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-gallery__flag {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      padding: 9px 12px;
+      background: var(--lx-button);
+      color: var(--lx-button-text);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-buy {
+      position: sticky;
+      top: 24px;
+      padding-top: 8px;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-product-name {
+      margin-bottom: 12px;
+      color: var(--lx-muted);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: .08em;
+      line-height: 1.4;
+      text-transform: uppercase;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-buy__title {
+      max-width: 560px;
+      margin-bottom: 16px;
+      font-size: clamp(46px, 5vw, 72px);
+      line-height: .98;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-buy__copy {
+      max-width: 520px;
+      margin-bottom: 24px;
+      color: var(--lx-muted);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-price-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 28px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--lx-line);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-price {
+      color: var(--lx-ink);
+      font-size: 24px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -.02em;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-compare {
+      color: var(--lx-muted);
+      font-size: 15px;
+      text-decoration: line-through;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-options {
+      display: grid;
+      gap: 24px;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-option {
+      min-width: 0;
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-option__top {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 11px;
+      color: var(--lx-ink);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .05em;
+      line-height: 1.4;
+      text-transform: uppercase;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-option__selected {
+      color: var(--lx-muted);
+      font-weight: 400;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-size-link {
+      color: var(--lx-ink);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0;
+      text-underline-offset: 4px;
+      text-transform: none;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-option__values {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-option input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-choice {
+      min-width: 46px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 10px 14px;
+      border: 1px solid var(--lx-line);
+      background: transparent;
+      color: var(--lx-ink);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1;
+      transition: background-color .2s ease, border-color .2s ease, color .2s ease, transform .2s ease, opacity .2s ease;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-choice:hover {
+      border-color: var(--lx-ink);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-option input:checked + .lx031-choice {
+      border-color: var(--lx-ink);
+      background: var(--lx-ink);
+      color: var(--lx-paper);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-option input:focus-visible + .lx031-choice {
+      outline: 2px solid var(--lx-ink);
+      outline-offset: 3px;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-option input:disabled + .lx031-choice {
+      cursor: not-allowed;
+      opacity: .35;
+      text-decoration: line-through;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-swatch {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 16px;
+      border: 1px solid rgba(37, 37, 37, .22);
+      background: var(--swatch-color, var(--lx-accent));
+    }
+
+    #luxo-031-{{ section.id }} .lx031-option input:checked + .lx031-choice .lx031-swatch {
+      border-color: rgba(255, 255, 255, .7);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-stock {
+      min-height: 22px;
+      margin: 18px 0 12px;
+      color: var(--lx-muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-stock[data-low-stock="true"] {
+      color: var(--lx-ink);
+      font-weight: 600;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-button {
+      min-height: 58px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 24px;
+      border: 1px solid var(--lx-button);
+      border-radius: 0;
+      background: var(--lx-button);
+      color: var(--lx-button-text);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      line-height: 1.2;
+      text-align: center;
+      text-decoration: none;
+      text-transform: uppercase;
+      white-space: nowrap;
+      transition: background-color .25s ease, color .25s ease, transform .2s ease;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-button:hover {
+      background: transparent;
+      color: var(--lx-button);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-button:active {
+      transform: translateY(1px) scale(.99);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-button:focus-visible,
+    #luxo-031-{{ section.id }} .lx031-thumb:focus-visible {
+      outline: 2px solid var(--lx-ink);
+      outline-offset: 3px;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-button[disabled] {
+      cursor: not-allowed;
+      opacity: .45;
+      transform: none;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-add {
+      width: 100%;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-assurance {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 18px;
+      border-top: 1px solid var(--lx-line);
+      border-bottom: 1px solid var(--lx-line);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-assurance__item {
+      padding: 15px 12px 15px 0;
+      color: var(--lx-muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-assurance__item + .lx031-assurance__item {
+      padding-left: 16px;
+      border-left: 1px solid var(--lx-line);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-advice {
+      display: inline-block;
+      margin-top: 18px;
+      color: var(--lx-ink);
+      font-size: 12px;
+      font-weight: 500;
+      text-underline-offset: 4px;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-trust {
+      border-top: 1px solid var(--lx-line);
+      border-bottom: 1px solid var(--lx-line);
+      background: var(--lx-paper);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-trust__grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    #luxo-031-{{ section.id }} .lx031-trust__item {
+      min-height: 92px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 24px;
+      color: var(--lx-ink);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      line-height: 1.45;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-trust__item + .lx031-trust__item {
+      border-left: 1px solid var(--lx-line);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-story {
+      padding-block: clamp(94px, 11vw, 170px) clamp(76px, 9vw, 132px);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-story__header {
+      width: min(100%, 970px);
+      margin: 0 auto clamp(54px, 8vw, 100px);
+      text-align: center;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-story__title {
+      margin-bottom: 26px;
+      font-size: clamp(48px, 7.6vw, 108px);
+      line-height: .94;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-story__text {
+      max-width: 690px;
+      margin: 0 auto;
+      color: var(--lx-muted);
+      font-size: clamp(18px, 2vw, 23px);
+      line-height: 1.7;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-story__media {
+      display: grid;
+      grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
+      gap: 18px;
+      align-items: end;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-story__image {
+      overflow: hidden;
+      background: var(--lx-paper);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-story__image:first-child {
+      margin-bottom: 9vw;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-story__image img {
+      width: 100%;
+      height: 100%;
+      min-height: 520px;
+      object-fit: cover;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-features {
+      background: var(--lx-paper);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-features__layout {
+      display: grid;
+      grid-template-columns: minmax(280px, .72fr) minmax(0, 1.28fr);
+      gap: clamp(56px, 9vw, 140px);
+      align-items: start;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-features__intro {
+      position: sticky;
+      top: 30px;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-features__title {
+      margin-bottom: 22px;
+      font-size: clamp(44px, 5.6vw, 76px);
+      line-height: .98;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-features__text {
+      max-width: 500px;
+      margin-bottom: 0;
+      color: var(--lx-muted);
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-feature-list {
+      border-top: 1px solid var(--lx-line);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-feature {
+      display: grid;
+      grid-template-columns: minmax(150px, .65fr) minmax(0, 1.35fr);
+      gap: 32px;
+      padding-block: 30px;
+      border-bottom: 1px solid var(--lx-line);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-feature__title {
+      margin-bottom: 0;
+      font-size: clamp(25px, 2.7vw, 36px);
+      line-height: 1.05;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-feature__text {
+      max-width: 470px;
+      margin-bottom: 0;
+      color: var(--lx-muted);
+      line-height: 1.7;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-feature-list__image {
+      margin-block: 18px 44px;
+      overflow: hidden;
+      background: var(--lx-bg);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-feature-list__image img {
+      width: 100%;
+      min-height: 460px;
+      object-fit: cover;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-adjustment {
+      padding-block: clamp(86px, 10vw, 150px);
+      background: var(--lx-accent-soft);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-adjustment__grid {
+      display: grid;
+      grid-template-columns: minmax(220px, .5fr) minmax(280px, .72fr) minmax(0, 1fr);
+      gap: clamp(30px, 5vw, 74px);
+      align-items: center;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-adjustment__number {
+      margin: 0;
+      color: var(--lx-ink);
+      font-family: var(--font-heading-family, TheSeasonsHeading, Georgia, serif);
+      font-size: clamp(140px, 19vw, 280px);
+      font-weight: var(--font-heading-weight, 700);
+      letter-spacing: -.08em;
+      line-height: .7;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-adjustment__title {
+      margin-bottom: 24px;
+      font-size: clamp(42px, 5.5vw, 74px);
+      line-height: .98;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-adjustment__text {
+      margin-bottom: 30px;
+      color: var(--lx-muted);
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-adjustment__media {
+      min-height: 560px;
+      overflow: hidden;
+      background: var(--lx-paper);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-adjustment__media img {
+      width: 100%;
+      height: 100%;
+      min-height: 560px;
+      object-fit: cover;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-uses {
+      background: var(--lx-bg);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-uses__grid {
+      display: grid;
+      grid-template-columns: minmax(300px, .8fr) minmax(0, 1.2fr);
+      gap: clamp(50px, 8vw, 120px);
+      align-items: center;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-uses__title {
+      margin-bottom: 22px;
+      font-size: clamp(46px, 6vw, 82px);
+      line-height: .98;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-uses__text {
+      margin-bottom: 36px;
+      color: var(--lx-muted);
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-use-list {
+      border-top: 1px solid var(--lx-line);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-use {
+      display: grid;
+      grid-template-columns: 130px minmax(0, 1fr);
+      gap: 28px;
+      padding-block: 20px;
+      border-bottom: 1px solid var(--lx-line);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-use strong {
+      color: var(--lx-ink);
+      font-weight: 600;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-use span {
+      color: var(--lx-muted);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-uses__media {
+      min-height: 680px;
+      overflow: hidden;
+      background: var(--lx-paper);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-uses__media img {
+      width: 100%;
+      height: 100%;
+      min-height: 680px;
+      object-fit: cover;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-size-help {
+      padding-block: clamp(74px, 9vw, 120px);
+      border-top: 1px solid var(--lx-line);
+      border-bottom: 1px solid var(--lx-line);
+      background: var(--lx-accent);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-size-help__grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 42px;
+      align-items: end;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-size-help__title {
+      max-width: 900px;
+      margin-bottom: 18px;
+      font-size: clamp(48px, 7vw, 94px);
+      line-height: .95;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-size-help__text {
+      max-width: 650px;
+      margin-bottom: 0;
+      color: var(--lx-ink);
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-size-help .lx031-button {
+      background: var(--lx-ink);
+      border-color: var(--lx-ink);
+      color: var(--lx-paper);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-size-help .lx031-button:hover {
+      background: transparent;
+      color: var(--lx-ink);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-faq {
+      background: var(--lx-paper);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-faq__header {
+      max-width: 740px;
+      margin-bottom: clamp(46px, 7vw, 82px);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-faq__title {
+      margin-bottom: 18px;
+      font-size: clamp(48px, 6.4vw, 82px);
+      line-height: .96;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-faq__intro {
+      margin-bottom: 0;
+      color: var(--lx-muted);
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-faq__grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: clamp(42px, 7vw, 100px);
+      border-top: 1px solid var(--lx-line);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-faq__item {
+      padding-block: 28px 34px;
+      border-bottom: 1px solid var(--lx-line);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-faq__question {
+      margin-bottom: 12px;
+      font-size: clamp(23px, 2.5vw, 31px);
+      line-height: 1.08;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-faq__answer {
+      max-width: 560px;
+      color: var(--lx-muted);
+      line-height: 1.7;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-final {
+      padding-block: clamp(80px, 10vw, 150px);
+      background: var(--lx-bg);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-final__grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, .95fr);
+      gap: clamp(48px, 8vw, 120px);
+      align-items: center;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-final__title {
+      margin-bottom: 20px;
+      font-size: clamp(52px, 7vw, 96px);
+      line-height: .94;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-final__text {
+      max-width: 600px;
+      margin-bottom: 34px;
+      color: var(--lx-muted);
+      font-size: 18px;
+      line-height: 1.65;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-final__media {
+      min-height: 590px;
+      overflow: hidden;
+      background: var(--lx-paper);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-final__media img {
+      width: 100%;
+      height: 100%;
+      min-height: 590px;
+      object-fit: cover;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-disclaimer {
+      padding: 24px 0 30px;
+      border-top: 1px solid var(--lx-line);
+      color: var(--lx-muted);
+      font-size: 11px;
+      line-height: 1.65;
+      text-align: center;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-empty {
+      min-height: 540px;
+      display: grid;
+      place-items: center;
+      padding: 48px;
+      background: var(--lx-paper);
+      text-align: center;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-empty h2 {
+      margin-bottom: 12px;
+      font-size: 46px;
+    }
+
+    #luxo-031-{{ section.id }} .lx031-empty p {
+      max-width: 520px;
+      margin-bottom: 0;
+      color: var(--lx-muted);
+    }
+
+    #luxo-031-{{ section.id }} .lx031-mobile-buy {
+      display: none;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      #luxo-031-{{ section.id }} .lx031-gallery {
+        animation: lx031-enter-media-{{ section.id }} .8s cubic-bezier(.16, 1, .3, 1) both;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-buy {
+        animation: lx031-enter-copy-{{ section.id }} .75s .08s cubic-bezier(.16, 1, .3, 1) both;
+      }
+
+      @keyframes lx031-enter-media-{{ section.id }} {
+        from { opacity: 0; transform: translateY(18px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes lx031-enter-copy-{{ section.id }} {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    }
+
+    @media (max-width: 989px) {
+      #luxo-031-{{ section.id }} .lx031-hero,
+      #luxo-031-{{ section.id }} .lx031-features__layout,
+      #luxo-031-{{ section.id }} .lx031-adjustment__grid,
+      #luxo-031-{{ section.id }} .lx031-uses__grid,
+      #luxo-031-{{ section.id }} .lx031-final__grid {
+        grid-template-columns: 1fr;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-buy,
+      #luxo-031-{{ section.id }} .lx031-features__intro {
+        position: static;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-hero {
+        gap: 48px;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-buy {
+        max-width: 680px;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-features__layout,
+      #luxo-031-{{ section.id }} .lx031-adjustment__grid,
+      #luxo-031-{{ section.id }} .lx031-uses__grid,
+      #luxo-031-{{ section.id }} .lx031-final__grid {
+        gap: 48px;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-adjustment__number {
+        font-size: 150px;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-adjustment__media,
+      #luxo-031-{{ section.id }} .lx031-adjustment__media img,
+      #luxo-031-{{ section.id }} .lx031-uses__media,
+      #luxo-031-{{ section.id }} .lx031-uses__media img,
+      #luxo-031-{{ section.id }} .lx031-final__media,
+      #luxo-031-{{ section.id }} .lx031-final__media img {
+        min-height: 560px;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-size-help__grid {
+        grid-template-columns: 1fr;
+        align-items: start;
+      }
+    }
+
+    @media (max-width: 749px) {
+      #luxo-031-{{ section.id }} {
+        padding-bottom: 76px;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-shell {
+        width: min(calc(100% - 32px), var(--lx-width));
+      }
+
+      #luxo-031-{{ section.id }} .lx031-section {
+        padding-block: clamp(72px, 19vw, 96px);
+      }
+
+      #luxo-031-{{ section.id }} .lx031-announcement__inner {
+        min-height: 40px;
+        font-size: 9px;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-hero {
+        gap: 38px;
+        padding-block: 20px 64px;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-gallery {
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 12px;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-gallery__rail {
+        width: 100%;
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-gallery__rail::-webkit-scrollbar {
+        display: none;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-thumb {
+        width: 68px;
+        flex: 0 0 68px;
+        scroll-snap-align: start;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-gallery__main,
+      #luxo-031-{{ section.id }} .lx031-gallery__main img,
+      #luxo-031-{{ section.id }} .lx031-gallery__main .placeholder-svg {
+        min-height: 500px;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-buy__title {
+        font-size: clamp(44px, 13vw, 60px);
+      }
+
+      #luxo-031-{{ section.id }} .lx031-assurance {
+        grid-template-columns: 1fr;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-assurance__item + .lx031-assurance__item {
+        padding-left: 0;
+        border-top: 1px solid var(--lx-line);
+        border-left: 0;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-trust__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      #luxo-031-{{ section.id }} .lx031-trust__item {
+        min-height: 78px;
+        padding: 16px 10px;
+        font-size: 9px;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-trust__item + .lx031-trust__item {
+        border-left: 0;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-trust__item:nth-child(even) {
+        border-left: 1px solid var(--lx-line);
+      }
+
+      #luxo-031-{{ section.id }} .lx031-trust__item:nth-child(n+3) {
+        border-top: 1px solid var(--lx-line);
+      }
+
+      #luxo-031-{{ section.id }} .lx031-story {
+        padding-block: 84px 76px;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-story__header {
+        margin-bottom: 48px;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-story__media {
+        grid-template-columns: 1fr;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-story__image:first-child {
+        margin: 0 44px 0 0;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-story__image:last-child {
+        margin-left: 44px;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-story__image img {
+        min-height: 430px;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-feature {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-feature-list__image img {
+        min-height: 420px;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-adjustment__number {
+        margin-bottom: -8px;
+        font-size: 128px;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-adjustment__media,
+      #luxo-031-{{ section.id }} .lx031-adjustment__media img,
+      #luxo-031-{{ section.id }} .lx031-uses__media,
+      #luxo-031-{{ section.id }} .lx031-uses__media img,
+      #luxo-031-{{ section.id }} .lx031-final__media,
+      #luxo-031-{{ section.id }} .lx031-final__media img {
+        min-height: 480px;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-use {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-size-help__grid {
+        gap: 30px;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-size-help .lx031-button,
+      #luxo-031-{{ section.id }} .lx031-final .lx031-button {
+        width: 100%;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-faq__grid {
+        grid-template-columns: 1fr;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-mobile-buy {
+        position: fixed;
+        z-index: 12;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 12px;
+        align-items: center;
+        padding: 10px 14px;
+        border-top: 1px solid var(--lx-line);
+        background: var(--lx-paper);
+        box-shadow: 0 -12px 30px rgba(37, 37, 37, .08);
+      }
+
+      #luxo-031-{{ section.id }} .lx031-mobile-buy__meta {
+        min-width: 0;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-mobile-buy__title {
+        overflow: hidden;
+        margin-bottom: 2px;
+        color: var(--lx-ink);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: .04em;
+        line-height: 1.2;
+        text-overflow: ellipsis;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-mobile-buy__price {
+        color: var(--lx-muted);
+        font-size: 12px;
+        font-variant-numeric: tabular-nums;
+      }
+
+      #luxo-031-{{ section.id }} .lx031-mobile-buy .lx031-button {
+        min-height: 48px;
+        padding: 12px 16px;
+        font-size: 10px;
+      }
+    }
+  </style>
+
+  {% if section.settings.show_notice and section.settings.notice_text != blank %}
+    <div class="lx031-announcement">
+      <div class="lx031-announcement__inner">{{ section.settings.notice_text | escape }}</div>
+    </div>
+  {% endif %}
+
+  {% if landing_product != blank %}
+    <div class="lx031-shell">
+      <div class="lx031-hero">
+        <div class="lx031-gallery" data-gallery>
+          <div class="lx031-gallery__rail" aria-label="Galería del producto">
+            {% for media in landing_product.media limit: 8 %}
+              {% if media.media_type == 'image' %}
+                {% assign media_alt = media.alt | default: landing_product.title %}
+                <button
+                  class="lx031-thumb"
+                  type="button"
+                  aria-label="Ver {{ media_alt | escape }}"
+                  aria-current="{% if media.id == primary_media.id %}true{% else %}false{% endif %}"
+                  data-gallery-thumb
+                  data-image="{{ media.preview_image | image_url: width: 1800 }}"
+                  data-alt="{{ media_alt | escape }}"
+                >
+                  {{
+                    media.preview_image
+                    | image_url: width: 180
+                    | image_tag:
+                      widths: '90, 120, 180',
+                      sizes: '84px',
+                      loading: 'lazy',
+                      alt: media_alt
+                  }}
+                </button>
+              {% endif %}
+            {% endfor %}
+          </div>
+
+          <div class="lx031-gallery__main">
+            {% if primary_media != blank %}
+              {% assign primary_alt = primary_media.alt | default: landing_product.title %}
+              {{
+                primary_media.preview_image
+                | image_url: width: 1800
+                | image_tag:
+                  widths: '480, 720, 960, 1200, 1500, 1800',
+                  sizes: '(min-width: 990px) 54vw, 100vw',
+                  loading: 'eager',
+                  fetchpriority: 'high',
+                  alt: primary_alt,
+                  class: 'lx031-main-image'
+              }}
+            {% endif %}
+            {% if section.settings.image_flag != blank %}
+              <span class="lx031-gallery__flag">{{ section.settings.image_flag | escape }}</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div id="luxo-031-buy-{{ section.id }}" class="lx031-buy">
+          <p class="lx031-product-name">{{ landing_product.title | escape }}</p>
+          <h1 class="lx031-buy__title">{{ section.settings.hero_title | escape }}</h1>
+          <p class="lx031-buy__copy">{{ section.settings.hero_text | escape }}</p>
+
+          <div class="lx031-price-row" aria-live="polite">
+            <span class="lx031-price" data-price>{{ current_variant.price | money }}</span>
+            <span
+              class="lx031-compare"
+              data-compare
+              {% unless current_variant.compare_at_price > current_variant.price %}hidden{% endunless %}
+            >
+              {{ current_variant.compare_at_price | money }}
+            </span>
+          </div>
+
+          {% form 'product', landing_product, id: product_form_id, class: 'lx031-product-form' %}
+            <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
+            <input type="hidden" name="quantity" value="1">
+
+            <div class="lx031-options">
+              {% for option in landing_product.options_with_values %}
+                {% assign option_name_downcase = option.name | downcase %}
+                {% assign is_color = false %}
+                {% if option_name_downcase contains 'color' or option_name_downcase contains 'colour' %}
+                  {% assign is_color = true %}
+                {% endif %}
+
+                <fieldset class="lx031-option" data-option-position="{{ option.position }}">
+                  <legend class="lx031-option__top">
+                    <span>
+                      {{ option.name | escape }}:
+                      <span class="lx031-option__selected" data-option-selected>{{ option.selected_value | escape }}</span>
+                    </span>
+                    {% if option_name_downcase contains 'talla' or option_name_downcase contains 'size' %}
+                      {% if section.settings.size_guide_link != blank %}
+                        <a class="lx031-size-link" href="{{ section.settings.size_guide_link }}">
+                          {{ section.settings.size_guide_label | escape }}
+                        </a>
+                      {% endif %}
+                    {% endif %}
+                  </legend>
+
+                  <div class="lx031-option__values">
+                    {% for value in option.values %}
+                      {% assign choice_id = 'Luxo031-' | append: section.id | append: '-' | append: option.position | append: '-' | append: forloop.index %}
+                      {% assign value_downcase = value | downcase %}
+                      {% assign swatch_color = section.settings.default_swatch_color %}
+                      {% if value_downcase contains 'negro' or value_downcase contains 'black' %}
+                        {% assign swatch_color = '#171717' %}
+                      {% elsif value_downcase contains 'beige' or value_downcase contains 'nude' %}
+                        {% assign swatch_color = '#d9c4ae' %}
+                      {% endif %}
+
+                      <input
+                        id="{{ choice_id }}"
+                        type="radio"
+                        name="Luxo031Option-{{ section.id }}-{{ option.position }}"
+                        value="{{ value | escape }}"
+                        data-option-input
+                        {% if option.selected_value == value %}checked{% endif %}
+                      >
+                      <label class="lx031-choice" for="{{ choice_id }}">
+                        {% if is_color %}
+                          <span class="lx031-swatch" style="--swatch-color: {{ swatch_color }}" aria-hidden="true"></span>
+                        {% endif %}
+                        <span>{{ value | escape }}</span>
+                      </label>
+                    {% endfor %}
+                  </div>
+                </fieldset>
+              {% endfor %}
+            </div>
+
+            <p
+              class="lx031-stock"
+              data-stock
+              data-low-stock="{% if current_variant.inventory_management and current_variant.inventory_quantity > 0 and current_variant.inventory_quantity <= section.settings.low_stock_limit %}true{% else %}false{% endif %}"
+              aria-live="polite"
+            >
+              {% if current_variant.available %}
+                {% if current_variant.inventory_management and current_variant.inventory_quantity > 0 and current_variant.inventory_quantity <= section.settings.low_stock_limit %}
+                  Solo quedan {{ current_variant.inventory_quantity }} en esta combinación.
+                {% else %}
+                  Disponible para envío.
+                {% endif %}
+              {% else %}
+                Esta combinación está agotada.
+              {% endif %}
+            </p>
+
+            <button
+              class="lx031-button lx031-add"
+              type="submit"
+              name="add"
+              data-add
+              data-label="{{ section.settings.add_to_cart_label | escape }}"
+              data-sold-out="{{ section.settings.sold_out_label | escape }}"
+              {% unless current_variant.available %}disabled{% endunless %}
+            >
+              <span data-add-text>
+                {% if current_variant.available %}
+                  {{ section.settings.add_to_cart_label | escape }} - {{ current_variant.price | money }}
+                {% else %}
+                  {{ section.settings.sold_out_label | escape }}
+                {% endif %}
+              </span>
+            </button>
+          {% endform %}
+
+          <div class="lx031-assurance">
+            <div class="lx031-assurance__item">{{ section.settings.assurance_1 | escape }}</div>
+            <div class="lx031-assurance__item">{{ section.settings.assurance_2 | escape }}</div>
+          </div>
+
+          {% if section.settings.advice_link != blank and section.settings.advice_label != blank %}
+            <a class="lx031-advice" href="{{ section.settings.advice_link }}">
+              {{ section.settings.advice_label | escape }}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    {% if trust_blocks.size > 0 %}
+      <div class="lx031-trust" aria-label="Características principales">
+        <div class="lx031-shell lx031-trust__grid">
+          {% for block in trust_blocks %}
+            <div class="lx031-trust__item" {{ block.shopify_attributes }}>
+              {{ block.settings.text | escape }}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="lx031-story">
+      <div class="lx031-shell">
+        <div class="lx031-story__header">
+          <h2 class="lx031-story__title">{{ section.settings.story_title | escape }}</h2>
+          <div class="lx031-story__text lx031-rte">{{ section.settings.story_text }}</div>
+        </div>
+
+        <div class="lx031-story__media">
+          {% if editorial_media != blank %}
+            <div class="lx031-story__image">
+              {% assign editorial_alt = editorial_media.alt | default: landing_product.title %}
+              {{
+                editorial_media.preview_image
+                | image_url: width: 1400
+                | image_tag:
+                  widths: '480, 720, 960, 1200, 1400',
+                  sizes: '(min-width: 750px) 40vw, 88vw',
+                  loading: 'lazy',
+                  alt: editorial_alt
+              }}
+            </div>
+          {% endif %}
+
+          {% if front_media != blank %}
+            <div class="lx031-story__image">
+              {% assign front_alt = front_media.alt | default: landing_product.title %}
+              {{
+                front_media.preview_image
+                | image_url: width: 1600
+                | image_tag:
+                  widths: '480, 720, 960, 1200, 1600',
+                  sizes: '(min-width: 750px) 58vw, 88vw',
+                  loading: 'lazy',
+                  alt: front_alt
+              }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    {% if benefit_blocks.size > 0 %}
+      <div class="lx031-section lx031-features">
+        <div class="lx031-shell lx031-features__layout">
+          <div class="lx031-features__intro">
+            <h2 class="lx031-features__title">{{ section.settings.features_title | escape }}</h2>
+            <p class="lx031-features__text">{{ section.settings.features_text | escape }}</p>
+          </div>
+
+          <div class="lx031-feature-list">
+            {% for block in benefit_blocks %}
+              <article class="lx031-feature" {{ block.shopify_attributes }}>
+                <h3 class="lx031-feature__title">{{ block.settings.title | escape }}</h3>
+                <p class="lx031-feature__text">{{ block.settings.text | escape }}</p>
+              </article>
+
+              {% if forloop.index == 2 and detail_media != blank %}
+                <div class="lx031-feature-list__image">
+                  {% assign detail_alt = detail_media.alt | default: landing_product.title %}
+                  {{
+                    detail_media.preview_image
+                    | image_url: width: 1500
+                    | image_tag:
+                      widths: '480, 720, 960, 1200, 1500',
+                      sizes: '(min-width: 990px) 55vw, 100vw',
+                      loading: 'lazy',
+                      alt: detail_alt
+                  }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="lx031-adjustment">
+      <div class="lx031-shell lx031-adjustment__grid">
+        <p class="lx031-adjustment__number" aria-label="Cuatro">04</p>
+        <div>
+          <h2 class="lx031-adjustment__title">{{ section.settings.adjustment_title | escape }}</h2>
+          <p class="lx031-adjustment__text">{{ section.settings.adjustment_text | escape }}</p>
+          <a class="lx031-button" href="{{ buy_anchor }}">{{ section.settings.adjustment_button_label | escape }}</a>
+        </div>
+
+        {% if hooks_media != blank %}
+          <div class="lx031-adjustment__media">
+            {% assign hooks_alt = hooks_media.alt | default: landing_product.title %}
+            {{
+              hooks_media.preview_image
+              | image_url: width: 1500
+              | image_tag:
+                widths: '480, 720, 960, 1200, 1500',
+                sizes: '(min-width: 990px) 42vw, 100vw',
+                loading: 'lazy',
+                alt: hooks_alt
+            }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="lx031-section lx031-uses">
+      <div class="lx031-shell lx031-uses__grid">
+        <div>
+          <h2 class="lx031-uses__title">{{ section.settings.uses_title | escape }}</h2>
+          <p class="lx031-uses__text">{{ section.settings.uses_text | escape }}</p>
+
+          <div class="lx031-use-list">
+            <div class="lx031-use">
+              <strong>{{ section.settings.use_1_title | escape }}</strong>
+              <span>{{ section.settings.use_1_text | escape }}</span>
+            </div>
+            <div class="lx031-use">
+              <strong>{{ section.settings.use_2_title | escape }}</strong>
+              <span>{{ section.settings.use_2_text | escape }}</span>
+            </div>
+            <div class="lx031-use">
+              <strong>{{ section.settings.use_3_title | escape }}</strong>
+              <span>{{ section.settings.use_3_text | escape }}</span>
+            </div>
+          </div>
+        </div>
+
+        {% if comfort_media != blank %}
+          <div class="lx031-uses__media">
+            {% assign comfort_alt = comfort_media.alt | default: landing_product.title %}
+            {{
+              comfort_media.preview_image
+              | image_url: width: 1600
+              | image_tag:
+                widths: '480, 720, 960, 1200, 1600',
+                sizes: '(min-width: 990px) 56vw, 100vw',
+                loading: 'lazy',
+                alt: comfort_alt
+            }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="lx031-size-help">
+      <div class="lx031-shell lx031-size-help__grid">
+        <div>
+          <h2 class="lx031-size-help__title">{{ section.settings.size_help_title | escape }}</h2>
+          <p class="lx031-size-help__text">{{ section.settings.size_help_text | escape }}</p>
+        </div>
+        {% if section.settings.advice_link != blank %}
+          <a class="lx031-button" href="{{ section.settings.advice_link }}">
+            {{ section.settings.size_help_button_label | escape }}
+          </a>
+        {% else %}
+          <a class="lx031-button" href="{{ buy_anchor }}">
+            {{ section.settings.adjustment_button_label | escape }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if faq_blocks.size > 0 %}
+      <div class="lx031-section lx031-faq">
+        <div class="lx031-shell">
+          <div class="lx031-faq__header">
+            <h2 class="lx031-faq__title">{{ section.settings.faq_title | escape }}</h2>
+            <p class="lx031-faq__intro">{{ section.settings.faq_text | escape }}</p>
+          </div>
+
+          <div class="lx031-faq__grid">
+            {% for block in faq_blocks %}
+              <article class="lx031-faq__item" {{ block.shopify_attributes }}>
+                <h3 class="lx031-faq__question">{{ block.settings.question | escape }}</h3>
+                <div class="lx031-faq__answer lx031-rte">{{ block.settings.answer }}</div>
+              </article>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="lx031-final">
+      <div class="lx031-shell lx031-final__grid">
+        <div>
+          <h2 class="lx031-final__title">{{ section.settings.final_title | escape }}</h2>
+          <p class="lx031-final__text">{{ section.settings.final_text | escape }}</p>
+          <a class="lx031-button" href="{{ buy_anchor }}">{{ section.settings.final_button_label | escape }}</a>
+        </div>
+
+        {% if primary_media != blank %}
+          <div class="lx031-final__media">
+            {% assign final_alt = primary_media.alt | default: landing_product.title %}
+            {{
+              primary_media.preview_image
+              | image_url: width: 1500
+              | image_tag:
+                widths: '480, 720, 960, 1200, 1500',
+                sizes: '(min-width: 990px) 44vw, 100vw',
+                loading: 'lazy',
+                alt: final_alt
+            }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if section.settings.disclaimer != blank %}
+      <div class="lx031-shell lx031-disclaimer">{{ section.settings.disclaimer | escape }}</div>
+    {% endif %}
+
+    <div class="lx031-mobile-buy" aria-label="Compra rápida">
+      <div class="lx031-mobile-buy__meta">
+        <p class="lx031-mobile-buy__title">Faja 031</p>
+        <span class="lx031-mobile-buy__price" data-mobile-price>{{ current_variant.price | money }}</span>
+      </div>
+      <button
+        class="lx031-button"
+        type="submit"
+        form="{{ product_form_id }}"
+        name="add"
+        data-mobile-add
+        {% unless current_variant.available %}disabled{% endunless %}
+      >
+        <span data-mobile-add-text>
+          {% if current_variant.available %}
+            {{ section.settings.mobile_button_label | escape }}
+          {% else %}
+            {{ section.settings.sold_out_label | escape }}
+          {% endif %}
+        </span>
+      </button>
+    </div>
+
+    <script type="application/json" data-variants>
+      [
+        {% for variant in landing_product.variants %}
+          {
+            "id": {{ variant.id | json }},
+            "options": {{ variant.options | json }},
+            "available": {{ variant.available | json }},
+            "price": {{ variant.price | money | json }},
+            "compare": {{ variant.compare_at_price | money | json }},
+            "compareVisible": {% if variant.compare_at_price > variant.price %}true{% else %}false{% endif %},
+            "inventory": {{ variant.inventory_quantity | default: 0 | json }},
+            "inventoryManaged": {% if variant.inventory_management %}true{% else %}false{% endif %},
+            "image": {% if variant.featured_media != blank %}{{ variant.featured_media.preview_image | image_url: width: 1800 | json }}{% else %}null{% endif %}
+          }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ]
+    </script>
+
+    <script>
+      (() => {
+        const root = document.getElementById('luxo-031-{{ section.id }}');
+        if (!root || root.dataset.ready === 'true') return;
+        root.dataset.ready = 'true';
+
+        const variantData = root.querySelector('[data-variants]');
+        const form = root.querySelector('.lx031-product-form');
+        if (!variantData || !form) return;
+
+        const variants = JSON.parse(variantData.textContent);
+        const optionGroups = Array.from(root.querySelectorAll('[data-option-position]'));
+        const variantId = root.querySelector('[data-variant-id]');
+        const price = root.querySelector('[data-price]');
+        const compare = root.querySelector('[data-compare]');
+        const stock = root.querySelector('[data-stock]');
+        const add = root.querySelector('[data-add]');
+        const addText = root.querySelector('[data-add-text]');
+        const mobilePrice = root.querySelector('[data-mobile-price]');
+        const mobileAdd = root.querySelector('[data-mobile-add]');
+        const mobileAddText = root.querySelector('[data-mobile-add-text]');
+        const mainImage = root.querySelector('.lx031-main-image');
+        const lowStockLimit = {{ section.settings.low_stock_limit | json }};
+        const mobileLabel = {{ section.settings.mobile_button_label | json }};
+        const soldOutLabel = {{ section.settings.sold_out_label | json }};
+
+        const selectedOptions = () => optionGroups.map(group => {
+          const checked = group.querySelector('[data-option-input]:checked');
+          return checked ? checked.value : '';
+        });
+
+        const findVariant = options => variants.find(variant =>
+          variant.options.every((value, index) => value === options[index])
+        );
+
+        const setMainImage = (src, alt) => {
+          if (!mainImage || !src) return;
+          mainImage.style.opacity = '0';
+          window.setTimeout(() => {
+            mainImage.src = src;
+            mainImage.removeAttribute('srcset');
+            if (alt) mainImage.alt = alt;
+            mainImage.style.opacity = '1';
+          }, 120);
+        };
+
+        const syncAvailability = options => {
+          optionGroups.forEach((group, groupIndex) => {
+            group.querySelectorAll('[data-option-input]').forEach(input => {
+              const candidate = [...options];
+              candidate[groupIndex] = input.value;
+              const matching = findVariant(candidate);
+              input.disabled = !matching || !matching.available;
+            });
+          });
+        };
+
+        const syncVariant = () => {
+          const options = selectedOptions();
+          const variant = findVariant(options);
+
+          optionGroups.forEach(group => {
+            const checked = group.querySelector('[data-option-input]:checked');
+            const selected = group.querySelector('[data-option-selected]');
+            if (checked && selected) selected.textContent = checked.value;
+          });
+
+          syncAvailability(options);
+
+          if (!variant) {
+            if (add) add.disabled = true;
+            if (mobileAdd) mobileAdd.disabled = true;
+            if (addText) addText.textContent = soldOutLabel;
+            if (mobileAddText) mobileAddText.textContent = soldOutLabel;
+            if (stock) stock.textContent = 'Esta combinación no está disponible.';
+            return;
+          }
+
+          if (variantId) variantId.value = variant.id;
+          if (price) price.textContent = variant.price;
+          if (mobilePrice) mobilePrice.textContent = variant.price;
+
+          if (compare) {
+            compare.textContent = variant.compare || '';
+            compare.hidden = !variant.compareVisible;
+          }
+
+          if (add) add.disabled = !variant.available;
+          if (mobileAdd) mobileAdd.disabled = !variant.available;
+
+          if (addText) {
+            addText.textContent = variant.available
+              ? `${add.dataset.label} - ${variant.price}`
+              : add.dataset.soldOut;
+          }
+
+          if (mobileAddText) {
+            mobileAddText.textContent = variant.available ? mobileLabel : soldOutLabel;
+          }
+
+          if (stock) {
+            const low = variant.available && variant.inventoryManaged && variant.inventory > 0 && variant.inventory <= lowStockLimit;
+            stock.dataset.lowStock = low ? 'true' : 'false';
+            if (!variant.available) {
+              stock.textContent = 'Esta combinación está agotada.';
+            } else if (low) {
+              stock.textContent = `Solo quedan ${variant.inventory} en esta combinación.`;
+            } else {
+              stock.textContent = 'Disponible para envío.';
+            }
+          }
+
+          if (variant.image) setMainImage(variant.image, {{ landing_product.title | json }});
+
+          if (window.history && window.history.replaceState) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('variant', variant.id);
+            window.history.replaceState({}, '', url.toString());
+          }
+        };
+
+        root.querySelectorAll('[data-option-input]').forEach(input => {
+          input.addEventListener('change', syncVariant);
+        });
+
+        root.querySelectorAll('[data-gallery-thumb]').forEach(thumb => {
+          thumb.addEventListener('click', () => {
+            root.querySelectorAll('[data-gallery-thumb]').forEach(item => item.setAttribute('aria-current', 'false'));
+            thumb.setAttribute('aria-current', 'true');
+            setMainImage(thumb.dataset.image, thumb.dataset.alt);
+          });
+        });
+
+        syncVariant();
+      })();
+    </script>
+  {% else %}
+    <div class="lx031-shell lx031-section">
+      <div class="lx031-empty">
+        <div>
+          <h2>Selecciona la Faja 031</h2>
+          <p>Abre esta sección en el editor del theme y elige el producto que debe mostrarse.</p>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Landing postoperatorio",
+  "tag": "section",
+  "class": "section-postoperatorio",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Producto y compra"
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Producto",
+      "info": "En una plantilla de producto se usa automáticamente el producto actual."
+    },
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Título principal",
+      "default": "Faja 031: control firme que se adapta a ti."
+    },
+    {
+      "type": "textarea",
+      "id": "hero_text",
+      "label": "Texto principal",
+      "default": "Máxima compresión, látex frontal y soporte de espalda para moldear tu figura con un ajuste preciso."
+    },
+    {
+      "type": "text",
+      "id": "image_flag",
+      "label": "Etiqueta sobre la imagen",
+      "default": "MÁXIMA COMPRESIÓN"
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_label",
+      "label": "Botón de compra",
+      "default": "QUIERO MI FAJA 031"
+    },
+    {
+      "type": "text",
+      "id": "mobile_button_label",
+      "label": "Botón fijo en móvil",
+      "default": "COMPRAR"
+    },
+    {
+      "type": "text",
+      "id": "sold_out_label",
+      "label": "Texto de agotado",
+      "default": "AGOTADO"
+    },
+    {
+      "type": "range",
+      "id": "low_stock_limit",
+      "label": "Avisar inventario bajo desde",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "size_guide_label",
+      "label": "Texto de guía de tallas",
+      "default": "Guía de tallas"
+    },
+    {
+      "type": "url",
+      "id": "size_guide_link",
+      "label": "Enlace de guía de tallas"
+    },
+    {
+      "type": "text",
+      "id": "assurance_1",
+      "label": "Confianza de compra 1",
+      "default": "PAGO PROTEGIDO"
+    },
+    {
+      "type": "text",
+      "id": "assurance_2",
+      "label": "Confianza de compra 2",
+      "default": "ENVÍO CON SEGUIMIENTO"
+    },
+    {
+      "type": "text",
+      "id": "advice_label",
+      "label": "Texto de asesoría",
+      "default": "¿Dudas con tu talla? Recibe asesoría personalizada"
+    },
+    {
+      "type": "url",
+      "id": "advice_link",
+      "label": "Enlace de asesoría"
+    },
+    {
+      "type": "header",
+      "content": "Barra y narrativa"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_notice",
+      "label": "Mostrar barra superior",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "notice_text",
+      "label": "Texto de la barra",
+      "default": "ASESORÍA DE TALLA DISPONIBLE ANTES DE TU COMPRA"
+    },
+    {
+      "type": "text",
+      "id": "story_title",
+      "label": "Título editorial",
+      "default": "Una faja. Muchas etapas."
+    },
+    {
+      "type": "richtext",
+      "id": "story_text",
+      "label": "Texto editorial",
+      "default": "<p>La 031 combina máxima compresión y comodidad en una silueta diseñada para uso diario, postparto o postoperatorio.</p>"
+    },
+    {
+      "type": "text",
+      "id": "features_title",
+      "label": "Título de características",
+      "default": "No es solo compresión. Cada detalle cuenta."
+    },
+    {
+      "type": "textarea",
+      "id": "features_text",
+      "label": "Texto de características",
+      "default": "La construcción de la Faja 031 distribuye soporte donde más lo necesitas sin descuidar los detalles de uso diario."
+    },
+    {
+      "type": "header",
+      "content": "Cuatro niveles de ajuste"
+    },
+    {
+      "type": "text",
+      "id": "adjustment_title",
+      "label": "Título",
+      "default": "Cuatro niveles. Tú decides el ajuste."
+    },
+    {
+      "type": "textarea",
+      "id": "adjustment_text",
+      "label": "Texto",
+      "default": "Los cuatro niveles de broches permiten adaptar cintura y caderas con más precisión a medida que cambia tu cuerpo."
+    },
+    {
+      "type": "text",
+      "id": "adjustment_button_label",
+      "label": "Botón",
+      "default": "ELEGIR COLOR Y TALLA"
+    },
+    {
+      "type": "header",
+      "content": "Momentos de uso"
+    },
+    {
+      "type": "text",
+      "id": "uses_title",
+      "label": "Título",
+      "default": "De tu recuperación a tu rutina."
+    },
+    {
+      "type": "textarea",
+      "id": "uses_text",
+      "label": "Texto",
+      "default": "Una sola faja para distintas etapas. En procesos postoperatorios o postparto, confirma el uso con tu profesional de salud."
+    },
+    {
+      "type": "text",
+      "id": "use_1_title",
+      "label": "Uso 1",
+      "default": "Uso diario"
+    },
+    {
+      "type": "textarea",
+      "id": "use_1_text",
+      "label": "Descripción 1",
+      "default": "Control firme, zipper íntimo y encaje a media pierna para acompañar tu día."
+    },
+    {
+      "type": "text",
+      "id": "use_2_title",
+      "label": "Uso 2",
+      "default": "Postparto"
+    },
+    {
+      "type": "textarea",
+      "id": "use_2_text",
+      "label": "Descripción 2",
+      "default": "Soporte completo y ajuste gradual según las indicaciones de tu profesional."
+    },
+    {
+      "type": "text",
+      "id": "use_3_title",
+      "label": "Uso 3",
+      "default": "Postoperatorio"
+    },
+    {
+      "type": "textarea",
+      "id": "use_3_text",
+      "label": "Descripción 3",
+      "default": "Compresión máxima para acompañar tu proceso cuando tu profesional lo indique."
+    },
+    {
+      "type": "header",
+      "content": "Asesoría de talla"
+    },
+    {
+      "type": "text",
+      "id": "size_help_title",
+      "label": "Título",
+      "default": "Tu talla correcta cambia todo."
+    },
+    {
+      "type": "textarea",
+      "id": "size_help_text",
+      "label": "Texto",
+      "default": "Comparte tus medidas actuales y te ayudamos a elegir el ajuste correcto antes de ordenar."
+    },
+    {
+      "type": "text",
+      "id": "size_help_button_label",
+      "label": "Botón",
+      "default": "QUIERO ASESORÍA"
+    },
+    {
+      "type": "header",
+      "content": "Preguntas y cierre"
+    },
+    {
+      "type": "text",
+      "id": "faq_title",
+      "label": "Título de preguntas",
+      "default": "Lo que debes saber antes de elegir."
+    },
+    {
+      "type": "textarea",
+      "id": "faq_text",
+      "label": "Texto de preguntas",
+      "default": "Información clara sobre talla, ajuste, cuidado y uso de la Faja 031."
+    },
+    {
+      "type": "text",
+      "id": "final_title",
+      "label": "Título final",
+      "default": "Tu Faja 031 está lista."
+    },
+    {
+      "type": "textarea",
+      "id": "final_text",
+      "label": "Texto final",
+      "default": "Elige negro o beige, encuentra tu talla y lleva el control completo de Luxo a tu rutina."
+    },
+    {
+      "type": "text",
+      "id": "final_button_label",
+      "label": "Botón final",
+      "default": "COMPRAR FAJA 031"
+    },
+    {
+      "type": "textarea",
+      "id": "disclaimer",
+      "label": "Aviso de salud",
+      "default": "Esta prenda no sustituye la evaluación ni las indicaciones de un profesional de salud. Consulta antes de usar compresión durante un proceso postoperatorio o postparto."
+    },
+    {
+      "type": "header",
+      "content": "Diseño Luxo"
+    },
+    {
+      "type": "range",
+      "id": "page_width",
+      "label": "Ancho máximo",
+      "min": 1100,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1380
+    },
+    {
+      "type": "range",
+      "id": "section_spacing",
+      "label": "Espaciado vertical",
+      "min": 64,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "default": 104
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Fondo Luxo",
+      "default": "#efecec"
+    },
+    {
+      "type": "color",
+      "id": "surface_color",
+      "label": "Superficie clara",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Texto principal",
+      "default": "#252525"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Texto secundario",
+      "default": "#666160"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Acento Luxo",
+      "default": "#b5a7a7"
+    },
+    {
+      "type": "color",
+      "id": "accent_soft_color",
+      "label": "Acento suave",
+      "default": "#ddd5d5"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Botones",
+      "default": "#2c332f"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Texto de botones",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Líneas",
+      "default": "#d1caca"
+    },
+    {
+      "type": "color",
+      "id": "default_swatch_color",
+      "label": "Color de muestra alternativo",
+      "default": "#b5a7a7"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "trust",
+      "name": "Dato principal",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Texto",
+          "default": "4 niveles de broches"
+        }
+      ]
+    },
+    {
+      "type": "benefit",
+      "name": "Característica",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "Ajuste preciso"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Texto",
+          "default": "Cuatro niveles de broches para adaptar cintura y caderas con más precisión."
+        }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "Pregunta frecuente",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Pregunta",
+          "default": "¿Cómo elijo mi talla?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Respuesta",
+          "default": "<p>Toma tus medidas actuales y compáralas con la guía. Si quedas entre dos tallas, solicita asesoría antes de comprar.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Landing postoperatorio",
+      "blocks": [
+        {
+          "type": "trust",
+          "settings": { "text": "4 niveles de broches" }
+        },
+        {
+          "type": "trust",
+          "settings": { "text": "Máxima compresión" }
+        },
+        {
+          "type": "trust",
+          "settings": { "text": "Zipper íntimo" }
+        },
+        {
+          "type": "trust",
+          "settings": { "text": "Tirantes ajustables" }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "title": "Ajuste preciso",
+            "text": "Cuatro niveles de broches para adaptar cintura y caderas con más precisión."
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "title": "Abdomen definido",
+            "text": "Látex en la zona frontal para aportar mayor compresión y control abdominal."
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "title": "Soporte completo",
+            "text": "Espalda reforzada y tirantes gruesos ajustables para una sensación más estable."
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "title": "Comodidad diaria",
+            "text": "Zipper amplio en la zona íntima y encaje a media pierna para facilitar tu rutina."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "¿Cómo elijo mi talla?",
+            "answer": "<p>Toma tus medidas actuales y compáralas con la guía. Si quedas entre dos tallas, solicita asesoría antes de comprar.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "¿Conviene comprar una talla menor?",
+            "answer": "<p>No. Una talla menor puede causar incomodidad o una presión inadecuada. Elige según tus medidas actuales.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "¿La puedo usar todos los días?",
+            "answer": "<p>La Faja 031 está diseñada para uso diario. Empieza de forma gradual y sigue las indicaciones de cuidado del producto.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "¿Cuándo puedo usarla después de una cirugía?",
+            "answer": "<p>El momento depende del procedimiento y de tu recuperación. Sigue siempre la indicación de tu cirujano o profesional de salud.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "¿Cómo debo lavarla?",
+            "answer": "<p>Sigue la etiqueta de cuidado, cierra los broches antes de lavar y evita calor intenso para proteger la elasticidad.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
